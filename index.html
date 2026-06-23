@@ -1,0 +1,3624 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Digital Room | Interactive 3D Portfolio</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background-color: #0c0a0f;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(31, 41, 55, 0.5);
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.5);
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 92, 246, 0.8);
+        }
+        #crosshair {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            mix-blend-mode: difference;
+            transition: all 0.15s ease;
+            z-index: 40;
+        }
+        #crosshair.active {
+            width: 14px;
+            height: 14px;
+            background: #a78bfa;
+            border: 2px solid white;
+        }
+        .joystick-container {
+            width: min(22vw, 130px);
+            height: min(22vw, 130px);
+            min-width: 100px;
+            min-height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            touch-action: none;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .joystick-handle {
+            width: 40%;
+            height: 40%;
+            background: rgba(139, 92, 246, 0.85);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            position: absolute;
+            transition: background 0.2s;
+            pointer-events: none;
+        }
+        #dialogue-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            width: 26px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #9ca3af;
+            transition: background 0.2s, color 0.2s;
+            pointer-events: all;
+        }
+        #dialogue-close-btn:hover {
+            background: rgba(245, 158, 11, 0.3);
+            color: #fff;
+        }
+        #ig-lightbox {
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            background: rgba(8, 8, 20, 0.98);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        #ig-lightbox.open {
+            display: flex;
+        }
+        #ig-lightbox-close {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            font-size: 14px;
+        }
+        #ig-lightbox-close:hover {
+            background: rgba(236, 72, 153, 0.4);
+        }
+        .ig-photo-tile {
+            aspect-ratio: 1;
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 8px;
+            position: relative;
+        }
+        .ig-photo-tile:hover .ig-tile-overlay {
+            opacity: 1;
+        }
+        .ig-tile-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        @media (max-width: 768px) {
+            #ui-panel {
+                border-radius: 16px !important;
+            }
+            #ui-panel .grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        #dialogue-timer-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            background: rgba(245, 158, 11, 0.6);
+            border-radius: 0 0 16px 16px;
+            width: 100%;
+            transform-origin: left;
+        }
+        .yt-embed-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #0a0a1a;
+        }
+        .yt-embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .project-thumb {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+        .project-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .project-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.15);
+        }
+        .music-visualizer {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 24px;
+        }
+        .music-visualizer .bar {
+            width: 4px;
+            background: #a78bfa;
+            border-radius: 2px;
+            animation: musicBounce 0.6s ease-in-out infinite alternate;
+        }
+        .music-visualizer .bar:nth-child(1) {
+            height: 8px;
+            animation-delay: 0s;
+        }
+        .music-visualizer .bar:nth-child(2) {
+            height: 16px;
+            animation-delay: 0.1s;
+        }
+        .music-visualizer .bar:nth-child(3) {
+            height: 12px;
+            animation-delay: 0.2s;
+        }
+        .music-visualizer .bar:nth-child(4) {
+            height: 20px;
+            animation-delay: 0.3s;
+        }
+        .music-visualizer .bar:nth-child(5) {
+            height: 10px;
+            animation-delay: 0.4s;
+        }
+        .music-visualizer .bar:nth-child(6) {
+            height: 18px;
+            animation-delay: 0.15s;
+        }
+        .music-visualizer .bar:nth-child(7) {
+            height: 14px;
+            animation-delay: 0.35s;
+        }
+        @keyframes musicBounce {
+            0% {
+                transform: scaleY(0.3);
+            }
+            100% {
+                transform: scaleY(1);
+            }
+        }
+        .volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 60px;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            transition: background 0.2s;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #a78bfa;
+            cursor: pointer;
+        }
+        .volume-slider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #a78bfa;
+            cursor: pointer;
+            border: none;
+        }
+        /* DVD screensaver canvas */
+        #tv-dvd-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: #020617;
+        }
+        .tv-screen-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #020617;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .tv-screen-wrapper canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+        }
+    </style>
+</head>
+<body class="text-gray-100">
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center p-6 text-center">
+        <div class="relative w-24 h-24 mb-6">
+            <div class="absolute inset-0 border-4 border-violet-500/20 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-t-violet-500 rounded-full animate-spin"></div>
+            <i class="fa-solid fa-gamepad text-3xl text-violet-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2 bg-gradient-to-r from-violet-400 to-fuchsia-500 bg-clip-text text-transparent">
+            Bilik Bujang BlankedWave
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xs mb-8">Memuatkan barangan bilik hostel typical Malaysia...</p>
+        <div class="w-64 bg-slate-800 rounded-full h-1.5 mb-8 overflow-hidden">
+            <div id="loading-bar" class="bg-violet-500 h-full w-0 transition-all duration-300"></div>
+        </div>
+        <button id="start-btn" class="hidden px-8 py-3 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl shadow-lg shadow-violet-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
+            BANGUN DARI TIDUR 😴
+        </button>
+        <span id="loading-text" class="text-xs text-gray-500 code-font">Membina sejadah & baju melayu...</span>
+    </div>
+
+    <div id="canvas-container" class="absolute inset-0 w-full h-full z-0"></div>
+    <div id="crosshair" class="hidden md:block"></div>
+
+    <!-- Desktop Help -->
+    <div id="desktop-instructions" class="hidden md:flex fixed bottom-6 left-6 bg-slate-900/85 backdrop-blur-md border border-slate-700/50 p-3 rounded-xl flex-row items-center gap-4 text-xs code-font z-30 pointer-events-none shadow-xl">
+        <div class="flex items-center gap-1.5">
+            <span class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-[10px]">W</span>
+            <span class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-[10px]">A</span>
+            <span class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-[10px]">S</span>
+            <span class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-[10px]">D</span>
+            <span class="text-gray-400 text-[10px]">Gerak</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+            <span class="px-2 py-0.5 bg-slate-800 border border-slate-600 rounded text-[10px]">SPACE</span>
+            <span class="text-gray-400 text-[10px]">Lompat</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+            <span class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-[10px]">CTRL</span>
+            <span class="text-gray-400 text-[10px]">Crouch (hold)</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+            <span class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-[10px]">SHIFT</span>
+            <span class="text-gray-400 text-[10px]">Lari</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+            <span class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-[10px]">ESC</span>
+            <span class="text-gray-400 text-[10px]">Cursor</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+            <span class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-[10px]">E</span>
+            <span class="text-gray-400 text-[10px]">Interact</span>
+        </div>
+    </div>
+
+    <!-- Dialogue Box -->
+    <div id="dialogue-box" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-slate-950/95 border border-amber-500/50 px-8 py-5 rounded-2xl flex flex-col items-center gap-2 shadow-2xl transition-all duration-300 opacity-0 scale-90 pointer-events-none z-50 max-w-lg text-center" style="position:fixed;">
+        <button id="dialogue-close-btn" title="Tutup">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500 flex items-center justify-center text-amber-400 mb-1">
+            <i class="fa-solid fa-person-shelter"></i>
+        </div>
+        <p id="dialogue-text" class="text-sm font-semibold text-white tracking-wide leading-relaxed">...</p>
+        <span class="text-[10px] text-gray-500 uppercase font-mono mt-1">Tekan di sini atau tunggu untuk tutup</span>
+        <div id="dialogue-timer-bar"></div>
+    </div>
+
+    <!-- Interaction Prompt -->
+    <div id="interaction-prompt" class="fixed top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-900/90 border border-violet-500/40 px-6 py-4 rounded-2xl flex flex-col items-center gap-2 shadow-2xl transition-all duration-300 opacity-0 scale-90 pointer-events-none z-30 max-w-xs text-center">
+        <div class="w-10 h-10 rounded-full bg-violet-600/20 border border-violet-400 flex items-center justify-center text-violet-400 text-lg mb-1 animate-pulse">
+            <i class="fa-solid fa-hand-pointer"></i>
+        </div>
+        <span id="prompt-title" class="text-sm font-bold text-white tracking-wide">Interactive Object</span>
+        <span class="text-xs text-gray-400" id="prompt-key">Tekan <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-white font-mono">E</kbd> untuk buka</span>
+    </div>
+
+    <!-- Top Left Controls -->
+    <div class="fixed top-6 left-6 z-30 flex flex-col gap-2">
+        <div class="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md border border-slate-700/50 p-2 rounded-xl shadow-lg">
+            <button id="toggle-audio" class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition" title="Toggle Music">
+                <i class="fa-solid fa-music text-sm text-violet-400"></i>
+            </button>
+            <div class="flex items-center gap-1">
+                <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="50">
+            </div>
+            <button id="toggle-time" class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
+                <i class="fa-solid fa-moon text-sm text-amber-400"></i>
+            </button>
+            <button id="reset-position" class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
+                <i class="fa-solid fa-rotate text-sm text-gray-400"></i>
+            </button>
+            <div class="music-visualizer" id="music-visualizer">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+        </div>
+        <div id="achievement-banner" class="opacity-0 translate-y-2 pointer-events-none transition-all duration-500 flex items-center gap-3 bg-gradient-to-r from-emerald-950/90 to-slate-900/95 border border-emerald-500/40 p-3 rounded-xl shadow-xl max-w-sm">
+            <div class="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400">
+                <i class="fa-solid fa-trophy text-sm"></i>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Achievement Unlocked!</p>
+                <p id="achievement-text" class="text-xs text-white font-medium">Jumped on bed!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Right Stats -->
+    <div class="fixed top-6 right-6 z-30 flex items-center gap-3">
+        <div class="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 px-4 py-2 rounded-xl flex items-center gap-3 text-xs code-font shadow-lg">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-ping"></span> Live</span>
+            <span class="text-gray-500">|</span>
+            <span class="text-gray-300" id="fps-display">60 FPS</span>
+            <span class="text-gray-500">|</span>
+            <span class="text-gray-400" id="crouch-status">Standing</span>
+        </div>
+    </div>
+
+    <!-- Mobile Controls -->
+    <div id="mobile-controls" class="hidden fixed inset-0 pointer-events-none z-20 flex flex-col justify-end p-4 select-none">
+        <div class="w-full flex justify-between items-end gap-4">
+            <div class="pointer-events-auto flex items-center justify-center">
+                <div id="joystick-container" class="joystick-container">
+                    <div id="joystick-handle" class="joystick-handle"></div>
+                </div>
+            </div>
+            <div class="pointer-events-auto flex flex-col gap-2 items-end">
+                <div class="text-[10px] text-gray-400 code-font mb-1 select-none pointer-events-none bg-slate-950/60 px-2 py-1 rounded">
+                    Swipe to look
+                </div>
+                <button id="mobile-btn-interact" class="opacity-40 scale-95 w-14 h-14 rounded-full bg-violet-600 border-2 border-white flex flex-col items-center justify-center shadow-lg transition-all text-white">
+                    <i class="fa-solid fa-hand-pointer text-base"></i>
+                    <span class="text-[9px] font-bold mt-0.5 uppercase">Tap</span>
+                </button>
+                <div class="flex gap-2">
+                    <button id="mobile-btn-jump" class="w-12 h-12 rounded-full bg-slate-800/80 border border-slate-700/50 flex items-center justify-center shadow-lg text-white">
+                        <i class="fa-solid fa-arrow-up text-base"></i>
+                    </button>
+                    <button id="mobile-btn-sprint" class="w-12 h-12 rounded-full bg-slate-800/80 border border-slate-700/50 flex items-center justify-center shadow-lg text-white">
+                        <i class="fa-solid fa-person-running text-base text-gray-400"></i>
+                    </button>
+                    <button id="mobile-btn-crouch" class="w-12 h-12 rounded-full bg-slate-800/80 border border-slate-700/50 flex items-center justify-center shadow-lg text-white touch-none">
+                        <i class="fa-solid fa-arrow-down text-base"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel Overlay -->
+    <div id="ui-panel-overlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-40 opacity-0 pointer-events-none transition-all duration-300 flex items-center justify-center p-3 md:p-4">
+        <div id="ui-panel" class="w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] transition-all transform scale-95 opacity-0">
+            <div class="flex justify-between items-center px-5 py-3 border-b border-slate-800 bg-slate-900/50 flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div id="panel-icon-bg" class="w-9 h-9 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
+                        <i id="panel-icon" class="text-violet-400 text-base"></i>
+                    </div>
+                    <div>
+                        <h2 id="panel-title" class="text-lg font-extrabold text-white">Project Workstation</h2>
+                        <p id="panel-subtitle" class="text-xs text-gray-400">Inspecting connected system</p>
+                    </div>
+                </div>
+                <button id="close-panel-btn" class="w-9 h-9 rounded-full hover:bg-slate-800 flex items-center justify-center transition border border-transparent hover:border-slate-700 text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+            <div id="panel-body" class="flex-1 overflow-y-auto custom-scroll p-4 md:p-6 relative">
+                <!-- Dynamic content -->
+            </div>
+            <div class="px-5 py-3 border-t border-slate-800 bg-slate-950/40 flex justify-between items-center text-xs text-gray-500 flex-shrink-0">
+                <span class="code-font"><i class="fa-solid fa-code text-[10px] text-violet-400 mr-1"></i> digital-room://blankedwave-client</span>
+                <button id="panel-action-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition flex items-center gap-1.5 font-semibold">
+                    <span>Kembali Teroka</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates -->
+    <div id="templates" class="hidden">
+
+        <!-- PC / GitHub Projects -->
+        <div id="tpl-pc">
+            <div class="space-y-5">
+                <div class="bg-slate-950/40 border border-slate-800 p-5 rounded-2xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-brands fa-github text-lg text-violet-400"></i> My Projects
+                        </h3>
+                        <span class="text-xs bg-violet-500/10 text-violet-400 border border-violet-500/20 px-2 py-0.5 rounded-full code-font">BlankedWave</span>
+                    </div>
+                    <div id="github-projects-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    </div>
+                </div>
+                <div class="bg-slate-950/40 border border-slate-800 p-5 rounded-2xl">
+                    <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-code-fork text-violet-400"></i> Tech Stack & Focus
+                    </h3>
+                    <div class="space-y-4 text-sm">
+                        <div class="flex items-start gap-3 border-l-2 border-violet-500/50 pl-3">
+                            <div class="w-4 h-4 rounded-full bg-violet-500/20 border border-violet-500 flex items-center justify-center text-[9px] text-violet-400 font-bold mt-0.5">1</div>
+                            <div>
+                                <p class="font-semibold text-white">Full-Stack Web Design & Prototyping</p>
+                                <p class="text-xs text-gray-400">Dynamic responsive UIs & custom gameplay loops in browser.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 border-l-2 border-slate-800 pl-3">
+                            <div class="w-4 h-4 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[9px] text-slate-400 font-bold mt-0.5">2</div>
+                            <div>
+                                <p class="font-semibold text-gray-300">Retro Graphics & Shaders</p>
+                                <p class="text-xs text-gray-500">Procedural geometries & canvas-based shaders for aesthetics.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TV / YouTube -->
+        <div id="tpl-tv">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="md:col-span-2">
+                    <div class="yt-embed-container" id="yt-container">
+                        <iframe id="yt-iframe" src="https://www.youtube.com/embed/jNQXAC9IVRw?autoplay=0&playsinline=1&controls=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="mt-3 flex flex-wrap gap-2">
+                        <button onclick="playYouTubeVideo('jNQXAC9IVRw')" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg transition">🎮 Gaming</button>
+                        <button onclick="playYouTubeVideo('dQw4w9WgXcQ')" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg transition">🎵 Music</button>
+                        <button onclick="playYouTubeVideo('tgbNymZ7vqY')" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg transition">📺 VEVO</button>
+                        <button onclick="playYouTubeVideo('9bZkp7q19f0')" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg transition">🎤 Live</button>
+                        <button onclick="playYouTubeVideo('jNQXAC9IVRw')" class="px-3 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold rounded-lg transition">🔄 Reset</button>
+                    </div>
+                    <p class="text-[10px] text-gray-500 mt-2"><i class="fa-solid fa-info-circle mr-1"></i> Edit video links in CONFIG.youtubeVideos</p>
+                </div>
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-play text-rose-500"></i> Quick Access
+                    </h3>
+                    <div class="space-y-2 text-xs text-gray-400">
+                        <div class="p-3 border border-slate-800 rounded-xl bg-slate-900/40">
+                            <p class="font-bold text-white">YouTube Channels</p>
+                            <div class="mt-2 flex flex-col gap-1.5">
+                                <a href="https://www.youtube.com/@blankedwave" target="_blank" class="flex items-center gap-2 text-gray-300 hover:text-white transition">
+                                    <i class="fa-brands fa-youtube text-red-500"></i> @blankedwave
+                                </a>
+                                <a href="https://www.youtube.com/user/MuhammadAqilVEVO" target="_blank" class="flex items-center gap-2 text-gray-300 hover:text-white transition">
+                                    <i class="fa-brands fa-youtube text-red-500"></i> Muhammad Aqil VEVO
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Almari Baju -->
+        <div id="tpl-almari">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                <div class="md:col-span-1 space-y-4">
+                    <div class="bg-slate-950/30 border border-slate-800 p-4 rounded-xl">
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Rak Pakaian</h4>
+                        <div class="flex flex-wrap md:flex-col gap-1">
+                            <span class="px-3 py-1.5 text-xs rounded-lg bg-emerald-600 text-white font-semibold flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Baju Tradisional
+                            </span>
+                            <span class="px-3 py-1.5 text-xs rounded-lg text-gray-400 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-rose-400"></span> Kain Pelekat
+                            </span>
+                            <span class="px-3 py-1.5 text-xs rounded-lg text-gray-400 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-blue-400"></span> Baju Melayu Satin
+                            </span>
+                            <span class="px-3 py-1.5 text-xs rounded-lg text-gray-400 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-yellow-400"></span> Songkok Hitam
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:col-span-3 space-y-4">
+                    <div class="p-5 border border-slate-800 bg-slate-900/30 rounded-2xl text-left space-y-3">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-shirt text-violet-400"></i> Wardrobe Inventory
+                        </h3>
+                        <p class="text-xs text-gray-300 leading-relaxed">Almari ini memuatkan pakaian harian typical lelaki melayu:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+                            <div class="p-3 bg-slate-950/40 border border-slate-800 rounded-xl">
+                                <h4 class="text-xs font-bold text-violet-400">Baju Melayu Satin</h4>
+                                <p class="text-[10px] text-gray-400 mt-1">Untuk solat Jumaat, raya, atau kenduri.</p>
+                            </div>
+                            <div class="p-3 bg-slate-950/40 border border-slate-800 rounded-xl">
+                                <h4 class="text-xs font-bold text-emerald-400">Kain Pelekat</h4>
+                                <p class="text-[10px] text-gray-400 mt-1">Pakaian seragam melepak di bilik bujang.</p>
+                            </div>
+                            <div class="p-3 bg-slate-950/40 border border-slate-800 rounded-xl">
+                                <h4 class="text-xs font-bold text-amber-400">Songkok & Samping</h4>
+                                <p class="text-[10px] text-gray-400 mt-1">Lengkapkan penampilan tradisional.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Whiteboard -->
+        <div id="tpl-whiteboard">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="bg-amber-950/10 border border-amber-500/20 p-6 rounded-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl"></div>
+                    <h3 class="text-base font-bold text-amber-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-compass"></i> Current Target
+                    </h3>
+                    <p class="text-sm text-gray-300 leading-relaxed mb-4">Mengoptimumkan aset web ringan & visual WebGL untuk dimainkan terus dari pelayar web tanpa lag!</p>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between border-b border-slate-800 pb-1.5 text-gray-400">
+                            <span>Focus:</span><span class="text-white font-medium">Responsive Web Experiences</span>
+                        </div>
+                        <div class="flex justify-between text-gray-400">
+                            <span>Hub:</span><span class="text-white font-medium">BlankedWave Room Console</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-slate-950/40 border border-slate-800 p-5 rounded-2xl">
+                        <h4 class="text-xs font-bold text-violet-400 uppercase tracking-widest mb-3">Milestones</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
+                                <div class="w-2 h-2 rounded-full bg-purple-500"></div>
+                                <span class="text-xs text-white">Sliding Collision Resolution Loop</span>
+                            </div>
+                            <div class="flex items-center gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
+                                <div class="w-2 h-2 rounded-full bg-cyan-500"></div>
+                                <span class="text-xs text-white">3D Clothes Hangers & Wardrobe Model</span>
+                            </div>
+                            <div class="flex items-center gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
+                                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                <span class="text-xs text-white">XP Bliss Meme View Integration</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone -->
+        <div id="tpl-phone">
+            <div class="max-w-md mx-auto bg-slate-950/40 border border-slate-800 p-6 rounded-3xl text-center space-y-5">
+                <div class="relative w-20 h-20 mx-auto">
+                    <div class="absolute inset-0 bg-violet-600/20 rounded-full blur-md"></div>
+                    <div class="relative w-20 h-20 rounded-full border border-violet-500 flex items-center justify-center bg-slate-900 text-3xl text-violet-400">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white">Connect & Chat</h3>
+                    <p class="text-xs text-gray-400 max-w-xs mx-auto mt-1">Salin Discord ID atau buka social media.</p>
+                </div>
+                <div class="space-y-3">
+                    <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between text-left">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-brands fa-discord text-xl text-indigo-400 w-6 text-center"></i>
+                            <div>
+                                <p class="text-xs font-bold text-white">Discord</p>
+                                <p class="text-[10px] text-gray-400 code-font">blankedwave</p>
+                                <p class="text-[10px] text-gray-500 code-font">ID: 267958390389604362</p>
+                            </div>
+                        </div>
+                        <button id="btn-copy-discord" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px] rounded transition">Copy</button>
+                    </div>
+                    <div class="p-3 bg-gradient-to-r from-pink-950/40 to-purple-950/40 border border-pink-500/20 rounded-xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">Q</div>
+                            <div class="text-left">
+                                <p class="text-xs font-bold text-white">qil.jpeg</p>
+                                <p class="text-[10px] text-gray-400">Muhammad Aqil</p>
+                            </div>
+                            <a href="https://www.instagram.com/qil.jpeg" target="_blank" class="ml-auto px-3 py-1 bg-gradient-to-r from-pink-600 to-purple-600 text-white text-[10px] font-bold rounded-full transition hover:opacity-90">Buka IG</a>
+                        </div>
+                        <div class="grid grid-cols-3 gap-1">
+                            <div class="aspect-square rounded bg-gradient-to-br from-teal-800 to-indigo-900 flex items-center justify-center"><i class="fa-brands fa-instagram text-white/40 text-lg"></i></div>
+                            <div class="aspect-square rounded bg-gradient-to-br from-rose-800 to-purple-900 flex items-center justify-center"><i class="fa-solid fa-camera text-white/40 text-lg"></i></div>
+                            <div class="aspect-square rounded bg-gradient-to-br from-amber-800 to-rose-900 flex items-center justify-center"><i class="fa-solid fa-image text-white/40 text-lg"></i></div>
+                        </div>
+                    </div>
+                    <a href="https://github.com/BlankedWave" target="_blank" class="flex items-center justify-between p-3 bg-slate-900 hover:bg-slate-800 rounded-xl border border-slate-800 transition text-gray-300 hover:text-white">
+                        <span class="flex items-center gap-3 text-xs font-semibold">
+                            <i class="fa-brands fa-github text-xl text-violet-400 w-6 text-center"></i> GitHub
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo Wall -->
+        <div id="tpl-photowall">
+            <div class="relative">
+                <div id="ig-lightbox">
+                    <button id="ig-lightbox-close"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="w-full max-w-sm">
+                        <div id="ig-lightbox-img" class="w-full aspect-square rounded-2xl mb-4"></div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">Q</div>
+                            <span class="text-sm font-bold text-white">qil.jpeg</span>
+                        </div>
+                        <p id="ig-lightbox-caption" class="text-xs text-gray-300 leading-relaxed mb-3"></p>
+                        <div class="flex items-center gap-4 text-gray-400 text-xs mb-4">
+                            <span><i class="fa-solid fa-heart text-rose-500 mr-1"></i> <span id="ig-lightbox-likes">--</span></span>
+                            <span><i class="fa-regular fa-comment mr-1"></i> --</span>
+                        </div>
+                        <a href="https://www.instagram.com/qil.jpeg" target="_blank" class="block w-full py-2 text-center bg-gradient-to-r from-pink-600 to-purple-600 text-white text-xs font-bold rounded-xl">
+                            <i class="fa-brands fa-instagram mr-1"></i> Lihat di Instagram
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 p-0.5">
+                            <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center">
+                                <span class="text-xl font-bold text-white">Q</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white">qil.jpeg</h3>
+                            <p class="text-xs text-gray-400">Muhammad Aqil</p>
+                        </div>
+                    </div>
+                    <a href="https://www.instagram.com/qil.jpeg" target="_blank" class="px-4 py-1.5 bg-gradient-to-r from-pink-600 to-purple-600 text-white text-xs font-bold rounded-full hover:opacity-90 transition flex items-center gap-1.5">
+                        <i class="fa-brands fa-instagram"></i> Buka Profil
+                    </a>
+                </div>
+
+                <div class="flex gap-3 mb-5 overflow-x-auto pb-2 custom-scroll">
+                    <div class="flex flex-col items-center gap-1 flex-shrink-0">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 p-0.5 cursor-pointer">
+                            <div class="w-full h-full rounded-full bg-gradient-to-br from-teal-800 to-indigo-900 flex items-center justify-center">
+                                <i class="fa-solid fa-camera text-white/70 text-lg"></i>
+                            </div>
+                        </div>
+                        <span class="text-[9px] text-gray-400">New Story</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1 flex-shrink-0">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-rose-500 p-0.5 cursor-pointer">
+                            <div class="w-full h-full rounded-full bg-gradient-to-br from-rose-900 to-purple-900 flex items-center justify-center">
+                                <i class="fa-solid fa-gamepad text-white/70 text-lg"></i>
+                            </div>
+                        </div>
+                        <span class="text-[9px] text-gray-400">Gaming</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1 flex-shrink-0">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 p-0.5 cursor-pointer">
+                            <div class="w-full h-full rounded-full bg-gradient-to-br from-emerald-900 to-teal-900 flex items-center justify-center">
+                                <i class="fa-solid fa-music text-white/70 text-lg"></i>
+                            </div>
+                        </div>
+                        <span class="text-[9px] text-gray-400">Music</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1 flex-shrink-0">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 p-0.5 cursor-pointer">
+                            <div class="w-full h-full rounded-full bg-gradient-to-br from-blue-900 to-violet-900 flex items-center justify-center">
+                                <i class="fa-solid fa-laptop-code text-white/70 text-lg"></i>
+                            </div>
+                        </div>
+                        <span class="text-[9px] text-gray-400">Dev</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-1.5" id="gallery-container"></div>
+            </div>
+        </div>
+
+        <!-- Gaming Setup -->
+        <div id="tpl-gaming">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="bg-indigo-950/10 border border-indigo-500/20 p-5 rounded-2xl">
+                    <h3 class="text-base font-bold text-indigo-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-gamepad"></i> Setup & Specs
+                    </h3>
+                    <div class="space-y-2 text-xs text-gray-300">
+                        <div class="flex justify-between border-b border-slate-800/80 pb-2">
+                            <span>Console:</span><span class="text-white font-bold">PS5</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-800/80 pb-2">
+                            <span>PC:</span><span class="text-white font-bold">RTX 4080 | Ryzen 7</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-800/80 pb-2">
+                            <span>Handheld:</span><span class="text-white font-bold">Steam Deck OLED</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-950/40 border border-slate-800 p-5 rounded-2xl">
+                    <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-brands fa-discord text-indigo-400"></i> Games
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-indigo-950/50 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-400"><i class="fa-solid fa-gun"></i></div>
+                            <div><p class="text-xs font-bold text-white">Valorant</p><p class="text-[10px] text-gray-500">Competitive</p></div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-rose-950/50 border border-rose-500/30 flex items-center justify-center text-xs font-bold text-rose-400"><i class="fa-solid fa-crosshairs"></i></div>
+                            <div><p class="text-xs font-bold text-white">CS2</p><p class="text-[10px] text-gray-500">Custom maps</p></div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-amber-950/50 border border-amber-500/30 flex items-center justify-center text-xs font-bold text-amber-400"><i class="fa-solid fa-cube"></i></div>
+                            <div><p class="text-xs font-bold text-white">Minecraft</p><p class="text-[10px] text-gray-500">Survival</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secret -->
+        <div id="tpl-secret">
+            <div class="max-w-md mx-auto text-center space-y-6">
+                <div class="relative w-20 h-20 mx-auto">
+                    <div class="absolute inset-0 bg-emerald-600/20 rounded-full blur-md animate-pulse"></div>
+                    <div class="relative w-20 h-20 rounded-full border border-emerald-500 flex items-center justify-center bg-slate-900 text-3xl text-emerald-400"><i class="fa-solid fa-key"></i></div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-emerald-400">Archive Node Recovered!</h3>
+                    <p class="text-xs text-gray-300 mt-2">Awesome! You found the secret coordinates.</p>
+                </div>
+                <div class="p-4 bg-slate-950/50 rounded-xl text-left border border-slate-800 text-xs text-slate-400 leading-relaxed space-y-2">
+                    <p class="font-bold text-emerald-400 code-font">// COLD LOG #991</p>
+                    <p>"Sliding collision split resolver verifies X and Z sequentially. Smooth glide alongside wardrobe edges."</p>
+                    <p class="text-gray-500">— BlankedWave Architecture</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nasi Lemak -->
+        <div id="tpl-nasilemak">
+            <div class="max-w-md mx-auto text-center space-y-6">
+                <div class="relative w-20 h-20 mx-auto">
+                    <div class="absolute inset-0 bg-amber-600/20 rounded-full blur-md animate-pulse"></div>
+                    <div class="relative w-20 h-20 rounded-full border border-amber-500 flex items-center justify-center bg-slate-900 text-3xl text-amber-400"><i class="fa-solid fa-utensils"></i></div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-amber-400">Nasi Lemak Special!</h3>
+                    <p class="text-xs text-gray-300 mt-2">Hidden under the bed! 🍛</p>
+                </div>
+                <div class="p-4 bg-slate-950/50 rounded-xl text-left border border-amber-500/20 text-xs text-slate-400 leading-relaxed">
+                    <p class="font-bold text-amber-400">// RESEPI RAHSIA</p>
+                    <p class="mt-1">Sambal tumis, telur goreng mata, ikan bilis, timun, nasi panas. Sambal kena manis & pedas seimbang!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mirror Message -->
+        <div id="tpl-mirror-msg">
+            <div class="max-w-md mx-auto text-center space-y-6">
+                <div class="relative w-20 h-20 mx-auto">
+                    <div class="absolute inset-0 bg-cyan-600/20 rounded-full blur-md animate-pulse"></div>
+                    <div class="relative w-20 h-20 rounded-full border border-cyan-500 flex items-center justify-center bg-slate-900 text-3xl text-cyan-400"><i class="fa-regular fa-face-smile"></i></div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-cyan-400">Mirror Message</h3>
+                    <p class="text-xs text-gray-300 mt-2">"Yang penting kena confident, bro!" — Cermin</p>
+                </div>
+                <div class="p-4 bg-slate-950/50 rounded-xl text-left border border-cyan-500/20 text-xs text-slate-400 leading-relaxed">
+                    <p class="font-bold text-cyan-400">// SELF-AFFIRMATION</p>
+                    <p class="mt-1">You looked at yourself. Self-confidence +10. ✨</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fan Secret -->
+        <div id="tpl-fan-secret">
+            <div class="max-w-md mx-auto text-center space-y-6">
+                <div class="relative w-20 h-20 mx-auto">
+                    <div class="absolute inset-0 bg-blue-600/20 rounded-full blur-md animate-pulse"></div>
+                    <div class="relative w-20 h-20 rounded-full border border-blue-500 flex items-center justify-center bg-slate-900 text-3xl text-blue-400"><i class="fa-solid fa-wind"></i></div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-blue-400">Fan Whisperer</h3>
+                    <p class="text-xs text-gray-300 mt-2">"BlankedWave was here." — The fan</p>
+                </div>
+                <div class="p-4 bg-slate-950/50 rounded-xl text-left border border-blue-500/20 text-xs text-slate-400 leading-relaxed">
+                    <p class="font-bold text-blue-400">// FAN LOG #42</p>
+                    <p class="mt-1">1200 RPM. 60 FPS. Developer runs on coffee.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guitar -->
+        <div id="tpl-guitar">
+            <div class="max-w-md mx-auto text-center space-y-6">
+                <div class="relative w-20 h-20 mx-auto">
+                    <div class="absolute inset-0 bg-rose-600/20 rounded-full blur-md animate-pulse"></div>
+                    <div class="relative w-20 h-20 rounded-full border border-rose-500 flex items-center justify-center bg-slate-900 text-3xl text-rose-400"><i class="fa-solid fa-guitar"></i></div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-rose-400">Guitar Found!</h3>
+                    <p class="text-xs text-gray-300 mt-2">You found the hidden guitar behind the curtain! 🎸</p>
+                </div>
+                <div class="p-4 bg-slate-950/50 rounded-xl text-left border border-rose-500/20 text-xs text-slate-400 leading-relaxed">
+                    <p class="font-bold text-rose-400">// MUSIC LOG</p>
+                    <p class="mt-1">"BlankedWave plays guitar badly but with passion. Strum on, brother."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Easter Egg: Hidden TV Remote -->
+        <div id="tpl-remote">
+            <div class="max-w-md mx-auto text-center space-y-6">
+                <div class="relative w-20 h-20 mx-auto">
+                    <div class="absolute inset-0 bg-orange-600/20 rounded-full blur-md animate-pulse"></div>
+                    <div class="relative w-20 h-20 rounded-full border border-orange-500 flex items-center justify-center bg-slate-900 text-3xl text-orange-400"><i class="fa-solid fa-tv"></i></div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-orange-400">TV Remote Found!</h3>
+                    <p class="text-xs text-gray-300 mt-2">You found the TV remote behind the monitor! 📺</p>
+                </div>
+                <div class="p-4 bg-slate-950/50 rounded-xl text-left border border-orange-500/20 text-xs text-slate-400 leading-relaxed">
+                    <p class="font-bold text-orange-400">// REMOTE LOG</p>
+                    <p class="mt-1">"Channel up, volume down. The gamer's life is simple."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // CONFIGURATION
+        // ============================================================
+        const CONFIG = {
+            audioEnabled: true,
+            dayMode: false,
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+            gravity: -18,
+            jumpForce: 7.2,
+            moveSpeed: 4.2,
+            sprintMultiplier: 1.7,
+            playerHeight: 1.6,
+            crouchHeight: 0.9,
+            interactRange: 2.8,
+            youtubeVideos: [
+                { id: 'jNQXAC9IVRw', label: 'Gaming' },
+                { id: 'dQw4w9WgXcQ', label: 'Music' },
+                { id: 'tgbNymZ7vqY', label: 'VEVO' },
+                { id: '9bZkp7q19f0', label: 'Live' }
+            ],
+            projects: [{
+                name: 'BlankedWave Portfolio',
+                desc: 'Interactive 3D portfolio with Three.js',
+                url: 'https://github.com/BlankedWave/portfolio',
+                icon: 'fa-globe',
+                color: 'violet'
+            }, {
+                name: 'Game Engine Lite',
+                desc: 'Lightweight WebGL game framework',
+                url: 'https://github.com/BlankedWave/game-engine-lite',
+                icon: 'fa-gamepad',
+                color: 'emerald'
+            }, {
+                name: 'Shader Playground',
+                desc: 'Real-time GLSL shader experiments',
+                url: 'https://github.com/BlankedWave/shader-playground',
+                icon: 'fa-paint-brush',
+                color: 'rose'
+            }, {
+                name: 'Room Scanner 3D',
+                desc: '3D room reconstruction tool',
+                url: 'https://github.com/BlankedWave/room-scanner',
+                icon: 'fa-cube',
+                color: 'amber'
+            }]
+        };
+
+        const STATE = {
+            player: {
+                pos: new THREE.Vector3(0, 1.6, 1.5),
+                vel: new THREE.Vector3(),
+                rot: new THREE.Vector2(),
+                onGround: false,
+                isSprinting: false,
+                isCrouching: false,
+                targetHeight: 1.6,
+                movingForward: false,
+                movingBackward: false,
+                movingLeft: false,
+                movingRight: false,
+                preInteractPos: new THREE.Vector3(),
+                preInteractRot: new THREE.Vector2(),
+                wasOnGround: true,
+                jumpCount: 0,
+                isAwake: false
+            },
+            joystick: {
+                active: false,
+                touchId: null,
+                start: new THREE.Vector2(),
+                current: new THREE.Vector2(),
+                delta: new THREE.Vector2(),
+                maxRange: 45
+            },
+            touchLook: { touchId: null, lastX: 0, lastY: 0 },
+            pointerLocked: false,
+            activeInteraction: null,
+            viewingPanel: false,
+            cameraTween: null,
+            timeOfDay: 0.1,
+            achievements: {
+                jumpedOnBed: false,
+                foundSecret: false,
+                mirrorGazed: false,
+                fanWhisper: false,
+                foundNasiLemak: false,
+                foundGuitar: false,
+                foundRemote: false
+            },
+            easterEggs: {
+                mirrorGazeTimer: 0,
+                fanInteractTimer: 0,
+                guitarTimer: 0,
+                remoteTimer: 0
+            },
+            musicVolume: 0.5,
+            wakeUpComplete: false
+        };
+
+        const dialogueMonologues = [
+            "Aku introvert, kenapa aku nak keluar bilik? 🚪🚶‍♂️",
+            "Kat luar panas sangat la, air-cond bilik ni lagi syok. ❄️",
+            "Nanti jiran nampak kena bertegur sapa pulak... No, thanks! 🫣",
+            "Gamer tak perlu keluar bilik melainkan ada parcel Shopee sampai.",
+            "Tutup pintu tu rapat-rapat, dunia luar menakutkan.",
+            "Hidup ini indah di dalam bilik sendiri. 🏠",
+            "Bilik bujang = istana gamer. 👑"
+        ];
+
+        // ============================================================
+        // AUDIO ENGINE
+        // ============================================================
+        class AudioEngine {
+            constructor() {
+                this.ctx = null;
+                this.musicGain = null;
+                this.sfxGain = null;
+                this.musicBuffer = null;
+                this.musicSource = null;
+                this.isMusicPlaying = false;
+                this.isInitialized = false;
+                this._rainSource = null;
+                this._rainGain = null;
+            }
+
+            init() {
+                if (this.isInitialized) return;
+                try {
+                    this.ctx = new(window.AudioContext || window.webkitAudioContext)();
+                    this.musicGain = this.ctx.createGain();
+                    this.musicGain.gain.value = STATE.musicVolume * 0.25;
+                    this.musicGain.connect(this.ctx.destination);
+
+                    this.sfxGain = this.ctx.createGain();
+                    this.sfxGain.gain.value = 0.35;
+                    this.sfxGain.connect(this.ctx.destination);
+
+                    this.generateMusic();
+                    this.isInitialized = true;
+                    if (CONFIG.audioEnabled) this.startMusic();
+                } catch (e) { console.warn('Audio init error:', e); }
+            }
+
+            generateMusic() {
+                const sampleRate = this.ctx.sampleRate;
+                const duration = 5.0;
+                const buffer = this.ctx.createBuffer(1, sampleRate * duration, sampleRate);
+                const data = buffer.getChannelData(0);
+
+                const notes = [
+                    { freq: 261.63, dur: 0.5, amp: 0.12 },
+                    { freq: 329.63, dur: 0.5, amp: 0.10 },
+                    { freq: 392.00, dur: 0.5, amp: 0.12 },
+                    { freq: 440.00, dur: 0.6, amp: 0.14 },
+                    { freq: 392.00, dur: 0.5, amp: 0.12 },
+                    { freq: 329.63, dur: 0.5, amp: 0.10 },
+                    { freq: 261.63, dur: 1.0, amp: 0.16 },
+                ];
+
+                let time = 0;
+                notes.forEach(n => {
+                    const samples = Math.floor(n.dur * sampleRate);
+                    for (let i = 0; i < samples && time + i < data.length; i++) {
+                        const t = i / sampleRate;
+                        const env = Math.exp(-t * 2.5);
+                        data[time + i] += Math.sin(2 * Math.PI * n.freq * t) * n.amp * env;
+                    }
+                    time += samples;
+                    time += Math.floor(0.06 * sampleRate);
+                });
+
+                const padNotes = [261.63, 329.63, 392.00];
+                for (let i = 0; i < data.length; i++) {
+                    const t = i / sampleRate;
+                    let val = 0;
+                    padNotes.forEach((freq, idx) => {
+                        val += Math.sin(2 * Math.PI * freq * t + (idx / padNotes.length) * Math.PI * 2) * 0.025 *
+                            Math.sin(t * 0.4);
+                    });
+                    data[i] += val * 0.6;
+                }
+
+                for (let i = 0; i < data.length; i++) {
+                    const t = i / sampleRate;
+                    data[i] += Math.sin(2 * Math.PI * 130.81 * t) * 0.03 * Math.sin(t * 0.25);
+                }
+
+                this.musicBuffer = buffer;
+            }
+
+            startMusic() {
+                if (!this.isInitialized || !CONFIG.audioEnabled) return;
+                try {
+                    if (this.musicSource) { try { this.musicSource.stop(); } catch (e) {} }
+                    this.musicSource = this.ctx.createBufferSource();
+                    this.musicSource.buffer = this.musicBuffer;
+                    this.musicSource.loop = true;
+                    this.musicSource.connect(this.musicGain);
+                    this.musicSource.start(0);
+                    this.isMusicPlaying = true;
+                } catch (e) { console.warn('Music start error:', e); }
+            }
+
+            stopMusic() {
+                try {
+                    if (this.musicSource) { this.musicSource.stop();
+                        this.musicSource = null; }
+                    this.isMusicPlaying = false;
+                } catch (e) {}
+            }
+
+            toggleMusic() {
+                CONFIG.audioEnabled = !CONFIG.audioEnabled;
+                if (CONFIG.audioEnabled) { this.startMusic(); } else { this.stopMusic(); }
+                return CONFIG.audioEnabled;
+            }
+
+            setVolume(val) {
+                STATE.musicVolume = Math.max(0, Math.min(1, val));
+                if (this.musicGain) { this.musicGain.gain.value = STATE.musicVolume * 0.25; }
+            }
+
+            playSFX(type) {
+                if (!CONFIG.audioEnabled || !this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    gain.connect(this.sfxGain);
+
+                    switch (type) {
+                        case 'footstep':
+                            osc.type = 'triangle';
+                            osc.frequency.setValueAtTime(80 + Math.random() * 30, this.ctx.currentTime);
+                            gain.gain.setValueAtTime(0.035, this.ctx.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06);
+                            osc.connect(gain);
+                            osc.start();
+                            osc.stop(this.ctx.currentTime + 0.06);
+                            break;
+                        case 'footstep_crouch':
+                            osc.type = 'triangle';
+                            osc.frequency.setValueAtTime(50 + Math.random() * 20, this.ctx.currentTime);
+                            gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
+                            osc.connect(gain);
+                            osc.start();
+                            osc.stop(this.ctx.currentTime + 0.05);
+                            break;
+                        case 'jump':
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(200, this.ctx.currentTime);
+                            osc.frequency.exponentialRampToValueAtTime(450, this.ctx.currentTime + 0.12);
+                            gain.gain.setValueAtTime(0.07, this.ctx.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+                            osc.connect(gain);
+                            osc.start();
+                            osc.stop(this.ctx.currentTime + 0.15);
+                            break;
+                        case 'land':
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+                            osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + 0.1);
+                            gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
+                            osc.connect(gain);
+                            osc.start();
+                            osc.stop(this.ctx.currentTime + 0.12);
+                            break;
+                        case 'hit':
+                            osc.type = 'sawtooth';
+                            osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+                            osc.frequency.exponentialRampToValueAtTime(50, this.ctx.currentTime + 0.08);
+                            gain.gain.setValueAtTime(0.06, this.ctx.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
+                            osc.connect(gain);
+                            osc.start();
+                            osc.stop(this.ctx.currentTime + 0.1);
+                            break;
+                        case 'ambient':
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(110, this.ctx.currentTime);
+                            gain.gain.setValueAtTime(0.012, this.ctx.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.8);
+                            osc.connect(gain);
+                            osc.start();
+                            osc.stop(this.ctx.currentTime + 0.8);
+                            break;
+                        default:
+                            break;
+                    }
+                } catch (e) {}
+            }
+
+            playAmbientRain() {
+                if (!CONFIG.audioEnabled || !this.ctx) return;
+                try {
+                    const bufferSize = this.ctx.sampleRate * 0.5;
+                    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = (Math.random() * 2 - 1) * 0.015;
+                    }
+                    const source = this.ctx.createBufferSource();
+                    source.buffer = buffer;
+                    source.loop = true;
+                    const gain = this.ctx.createGain();
+                    gain.gain.value = 0.05;
+                    source.connect(gain);
+                    gain.connect(this.sfxGain);
+                    source.start(0);
+                    this._rainSource = source;
+                    this._rainGain = gain;
+                } catch (e) {}
+            }
+        }
+
+        const audio = new AudioEngine();
+        const sfx = {
+            playBeep: (f, t, d, v) => audio.playSFX('hit'),
+            playFootstep: () => audio.playSFX('footstep'),
+            playJump: () => audio.playSFX('jump'),
+            playInteractionSound: () => { audio.playSFX('hit');
+                setTimeout(() => audio.playSFX('hit'), 100); },
+            playEasterEgg: () => { audio.playSFX('hit');
+                setTimeout(() => audio.playSFX('hit'), 150);
+                setTimeout(() => audio.playSFX('hit'), 300); },
+            playLand: () => audio.playSFX('land'),
+            playCrouchFootstep: () => audio.playSFX('footstep_crouch'),
+            init: () => audio.init()
+        };
+
+        // ============================================================
+        // TEXTURE HELPERS
+        // ============================================================
+        function createSejadahTexture() {
+            const c = document.createElement('canvas');
+            c.width = 512;
+            c.height = 512;
+            const ctx = c.getContext('2d');
+            const grad = ctx.createLinearGradient(0, 0, 0, 512);
+            grad.addColorStop(0, '#0d6b5e');
+            grad.addColorStop(0.5, '#0a5a4f');
+            grad.addColorStop(1, '#084a40');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 512, 512);
+            ctx.strokeStyle = '#d4a843';
+            ctx.lineWidth = 6;
+            for (let i = 0; i < 8; i++) { const o = 20 + i * 28;
+                ctx.strokeRect(o, o, 512 - o * 2, 512 - o * 2); }
+            ctx.beginPath();
+            ctx.moveTo(120, 380);
+            ctx.quadraticCurveTo(256, 120, 392, 380);
+            ctx.strokeStyle = '#d4a843';
+            ctx.lineWidth = 5;
+            ctx.stroke();
+            ctx.fillStyle = '#d4a843';
+            for (let i = 0; i < 6; i++) { const x = 120 + i * 55,
+                    y = 440;
+                ctx.beginPath();
+                ctx.moveTo(x, y - 8);
+                ctx.lineTo(x + 8, y);
+                ctx.lineTo(x, y + 8);
+                ctx.lineTo(x - 8, y);
+                ctx.closePath();
+                ctx.fill(); }
+            ctx.fillStyle = '#e8c84a';
+            for (let i = 0; i < 12; i++) {
+                const a = (i / 12) * Math.PI * 2,
+                    r1 = 40,
+                    r2 = 25;
+                const x1 = 256 + Math.cos(a) * r1,
+                    y1 = 256 + Math.sin(a) * r1;
+                const x2 = 256 + Math.cos(a + 0.15) * r2,
+                    y2 = 256 + Math.sin(a + 0.15) * r2;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = '#e8c84a';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+            ctx.beginPath();
+            ctx.arc(256, 256, 18, 0, Math.PI * 2);
+            ctx.fillStyle = '#e8c84a';
+            ctx.fill();
+            for (let i = 0; i < 30; i++) { const x = 20 + i * 16;
+                ctx.beginPath();
+                ctx.moveTo(x, 10);
+                ctx.lineTo(x + 4, 30);
+                ctx.lineTo(x - 4, 30);
+                ctx.closePath();
+                ctx.fillStyle = '#b8952a';
+                ctx.fill(); }
+            return new THREE.CanvasTexture(c);
+        }
+
+        function createMatrixCanvas() {
+            const c = document.createElement('canvas');
+            c.width = 256;
+            c.height = 256;
+            const ctx = c.getContext('2d');
+            return {
+                canvas: c,
+                ctx,
+                texture: new THREE.CanvasTexture(c),
+                update(time) {
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(0, 0, 256, 256);
+                    ctx.fillStyle = '#00ff00';
+                    ctx.font = '11px Courier New';
+                    for (let i = 0; i < 20; i++) {
+                        const y = (time * 100 + i * 25) % 270;
+                        ctx.fillText("01011001 01101101 01111000", 15, y);
+                        ctx.fillText("SYSTEM LOADED [OK]", 20, (y + 12) % 270);
+                    }
+                    this.texture.needsUpdate = true;
+                }
+            };
+        }
+
+        function createGamingCanvas() {
+            const c = document.createElement('canvas');
+            c.width = 256;
+            c.height = 256;
+            const ctx = c.getContext('2d');
+            return {
+                canvas: c,
+                ctx,
+                texture: new THREE.CanvasTexture(c),
+                update(time) {
+                    ctx.fillStyle = '#0f172a';
+                    ctx.fillRect(0, 0, 256, 256);
+                    ctx.fillStyle = '#cbd5e1';
+                    ctx.fillRect(0, 200, 256, 56);
+                    ctx.fillRect(60, 130, 80, 20);
+                    ctx.fillRect(160, 80, 60, 20);
+                    ctx.fillStyle = '#f43f5e';
+                    const x = 100 + Math.sin(time * 3) * 50,
+                        y = 160 + Math.cos(time * 6) * 30;
+                    ctx.fillRect(x, y, 16, 16);
+                    ctx.fillStyle = '#e2e8f0';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.fillText("SCORE: 99420", 10, 25);
+                    ctx.fillText("LIVES: 3", 190, 25);
+                    this.texture.needsUpdate = true;
+                }
+            };
+        }
+
+        function createPhoneScreenTexture() {
+            const c = document.createElement('canvas');
+            c.width = 400;
+            c.height = 600;
+            const ctx = c.getContext('2d');
+            const grad = ctx.createLinearGradient(0, 0, 0, 600);
+            grad.addColorStop(0, '#1a1a2e');
+            grad.addColorStop(0.5, '#16213e');
+            grad.addColorStop(1, '#0f3460');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 400, 600);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('12:00', 200, 60);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(120, 0, 160, 30);
+            const apps = [
+                { icon: '💬', label: 'WhatsApp', x: 60, y: 150 },
+                { icon: '📸', label: 'IG', x: 170, y: 150 },
+                { icon: '🎵', label: 'Music', x: 280, y: 150 },
+                { icon: '📧', label: 'Email', x: 60, y: 270 },
+                { icon: '🌐', label: 'Chrome', x: 170, y: 270 },
+                { icon: '🎮', label: 'Game', x: 280, y: 270 },
+                { icon: '📱', label: 'Phone', x: 60, y: 390 },
+                { icon: '💬', label: 'Discord', x: 170, y: 390 },
+                { icon: '⚙️', label: 'Settings', x: 280, y: 390 },
+            ];
+            apps.forEach(a => {
+                ctx.fillStyle = 'rgba(255,255,255,0.1)';
+                ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.roundRect(a.x - 25, a.y - 20, 50, 50, 12);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#fff';
+                ctx.font = '22px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(a.icon, a.x, a.y + 6);
+                ctx.fillStyle = '#aaa';
+                ctx.font = '10px Arial';
+                ctx.fillText(a.label, a.x, a.y + 38);
+            });
+            ctx.fillStyle = 'rgba(255,255,255,0.05)';
+            ctx.beginPath();
+            ctx.roundRect(20, 500, 360, 60, 16);
+            ctx.fill();
+            const dockApps = ['🏠', '🔍', '📂'];
+            dockApps.forEach((icon, i) => { const x = 60 + i * 110;
+                ctx.fillStyle = '#fff';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(icon, x, 540); });
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.beginPath();
+            ctx.roundRect(140, 575, 120, 4, 2);
+            ctx.fill();
+            return new THREE.CanvasTexture(c);
+        }
+
+        // =// ============================================================
+// DVD SCREENSAVER for TV - DVD Style Blankedwave Logo
+// ============================================================
+function createDVDScreensaver() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 360;
+
+    const ctx = canvas.getContext('2d');
+
+    let x = 80;
+    let y = 60;
+    let dx = 1.6;
+    let dy = 1.4;
+
+    let hue = 0;
+    const text = 'blankedwave';
+    const fontSize = 36;
+
+    function update() {
+        const w = canvas.width;
+        const h = canvas.height;
+
+        // Background
+        ctx.fillStyle = '#020617';
+        ctx.fillRect(0, 0, w, h);
+
+        // DVD-style font
+        ctx.font = `italic bold ${fontSize}px Impact, Arial Black, sans-serif`;
+
+        const metrics = ctx.measureText(text);
+        const tw = metrics.width;
+        const th = fontSize * 1.15;
+
+        // Move logo
+        x += dx;
+        y += dy;
+
+        // Bounce + change color
+        if (x <= 0 || x + tw >= w) {
+            dx *= -1;
+            hue = (hue + 45) % 360;
+        }
+
+        if (y <= 0 || y + th >= h) {
+            dy *= -1;
+            hue = (hue + 45) % 360;
+        }
+
+        // Glow
+        ctx.shadowColor = `hsl(${hue}, 100%, 60%)`;
+        ctx.shadowBlur = 25;
+
+        // Gradient
+        const grad = ctx.createLinearGradient(
+            x,
+            y,
+            x + tw,
+            y + th
+        );
+
+        grad.addColorStop(
+            0,
+            `hsl(${hue}, 100%, 60%)`
+        );
+
+        grad.addColorStop(
+            0.5,
+            `hsl(${(hue + 40) % 360}, 100%, 70%)`
+        );
+
+        grad.addColorStop(
+            1,
+            `hsl(${(hue + 80) % 360}, 100%, 60%)`
+        );
+
+        // Draw DVD-style logo
+        ctx.save();
+
+        ctx.translate(x, y);
+
+        // Slight skew like DVD logo
+        ctx.transform(1, 0, -0.22, 1, 0, 0);
+
+        ctx.font = `italic bold ${fontSize}px Impact, Arial Black, sans-serif`;
+        ctx.textBaseline = 'top';
+
+        // White outline
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+        ctx.strokeText(text, 0, 0);
+
+        // Main fill
+        ctx.fillStyle = grad;
+        ctx.fillText(text, 0, 0);
+
+        // Inner shine
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
+        ctx.fillRect(
+            10,
+            6,
+            tw * 0.45,
+            4
+        );
+
+        ctx.restore();
+
+        // Decorative particles
+        ctx.shadowBlur = 0;
+
+        for (let i = 0; i < 12; i++) {
+            const px =
+                20 +
+                i * 50 +
+                Math.sin(
+                    i * 0.7 +
+                    Date.now() * 0.0005
+                ) * 10;
+
+            const py =
+                h - 15 +
+                Math.sin(
+                    i * 0.5 +
+                    Date.now() * 0.0007
+                ) * 5;
+
+            ctx.fillStyle = `hsla(${
+                hue + i * 15
+            }, 90%, 65%, 0.35)`;
+
+            ctx.beginPath();
+
+            ctx.arc(
+                px,
+                py,
+                2 +
+                    Math.sin(
+                        i +
+                        Date.now() * 0.001
+                    ),
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+        }
+
+        return { canvas, ctx };
+    }
+
+    return {
+        canvas,
+        ctx,
+        texture: new THREE.CanvasTexture(canvas),
+
+        update() {
+            update();
+            this.texture.needsUpdate = true;
+        },
+
+        getCanvas() {
+            return canvas;
+        }
+    };
+}
+
+        // ============================================================
+        // GAME ENGINE
+        // ============================================================
+        class GameEngine {
+            constructor() {
+                this.container = document.getElementById('canvas-container');
+                this.scene = new THREE.Scene();
+                this.scene.fog = new THREE.FogExp2(0x0c0a0f, 0.035);
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+                // Start camera at bed position for wake-up effect
+                this.camera.position.set(-1.8, 0.8, 1.0);
+                this.renderer = new THREE.WebGLRenderer({ antialias: !CONFIG.isMobile, powerPreference: "high-performance" });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.renderer.shadowMap.enabled = !CONFIG.isMobile;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                this.renderer.toneMappingExposure = 1.0;
+                this.container.appendChild(this.renderer.domElement);
+                this.raycaster = new THREE.Raycaster();
+                this.colliders = [];
+                this.interactiveObjects = [];
+                this.clock = new THREE.Clock();
+
+                this.matrixScreen = createMatrixCanvas();
+                this.gamingScreen = createGamingCanvas();
+                this.phoneScreenTex = createPhoneScreenTexture();
+                this.dvdScreensaver = createDVDScreensaver();
+
+                this.animatedObjects = {
+                    fan: null,
+                    dust: null,
+                    rain: null,
+                    computerGlow: null,
+                    almariLeftDoor: null,
+                    almariRightDoor: null,
+                    standFanBlade: null,
+                    ceilingFanBlades: null
+                };
+                this.easterEggTriggers = {
+                    mirror: null,
+                    fan: null,
+                    guitar: null,
+                    nasiLemak: null,
+                    remote: null
+                };
+                this._blissTexture = null;
+                this.setupLights();
+                this.buildMalaysianCozyRoom();
+                this.setupSky();
+                window.addEventListener('resize', () => this.onWindowResize());
+                this.loadBlissTexture();
+                setTimeout(() => audio.playAmbientRain(), 2000);
+                // Start the wake-up animation after a moment
+                setTimeout(() => this.wakeUpAnimation(), 500);
+            }
+
+            wakeUpAnimation() {
+                // Animate camera from bed to standing position
+                const startPos = new THREE.Vector3(-1.8, 0.8, 1.0);
+                const endPos = new THREE.Vector3(0, CONFIG.playerHeight, 2.5);
+                const startRot = new THREE.Vector2(0, -0.3);
+                const endRot = new THREE.Vector2(0, 0);
+
+                // First, look up from bed
+                gsap.to(STATE.player.rot, {
+                    x: 0,
+                    y: -0.2,
+                    duration: 0.5,
+                    ease: "power2.out"
+                });
+
+                // Then rise up
+                gsap.to(this.camera.position, {
+                    x: endPos.x,
+                    y: endPos.y,
+                    z: endPos.z,
+                    duration: 1.8,
+                    ease: "power3.inOut",
+                    delay: 0.3,
+                    onUpdate: () => {
+                        STATE.player.pos.copy(this.camera.position);
+                    },
+                    onComplete: () => {
+                        STATE.player.pos.set(endPos.x, endPos.y, endPos.z);
+                        STATE.player.isAwake = true;
+                        STATE.wakeUpComplete = true;
+                        uiManager.triggerAchievement("Bangun dari tidur! ☀️ Selamat pagi!");
+                        // Start ambient sounds
+                        setTimeout(() => audio.playSFX('ambient'), 500);
+                    }
+                });
+            }
+
+            loadBlissTexture() {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => {
+                    const c = document.createElement('canvas');
+                    c.width = img.width;
+                    c.height = img.height;
+                    const ctx = c.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    this._blissTexture = new THREE.CanvasTexture(c);
+                    this.updateWindowTexture();
+                };
+                img.onerror = () => {
+                    const c = document.createElement('canvas');
+                    c.width = 1024;
+                    c.height = 768;
+                    const ctx = c.getContext('2d');
+                    const grad = ctx.createLinearGradient(0, 0, 0, 768);
+                    grad.addColorStop(0, '#4a90d9');
+                    grad.addColorStop(0.35, '#87CEEB');
+                    grad.addColorStop(0.5, '#2ecc71');
+                    grad.addColorStop(0.7, '#27ae60');
+                    grad.addColorStop(1, '#1a6e3a');
+                    ctx.fillStyle = grad;
+                    ctx.fillRect(0, 0, 1024, 768);
+                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                    ctx.beginPath();
+                    ctx.arc(150, 120, 80, 0, Math.PI * 2);
+                    ctx.arc(230, 100, 100, 0, Math.PI * 2);
+                    ctx.arc(320, 130, 80, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(700, 160, 70, 0, Math.PI * 2);
+                    ctx.arc(780, 140, 90, 0, Math.PI * 2);
+                    ctx.arc(870, 170, 70, 0, Math.PI * 2);
+                    ctx.fill();
+                    this._blissTexture = new THREE.CanvasTexture(c);
+                    this.updateWindowTexture();
+                };
+                img.src = 'https://upload.wikimedia.org/wikipedia/en/2/27/Bliss_%28Windows_XP%29.png';
+            }
+
+            updateWindowTexture() {
+                if (!this._blissTexture) return;
+                this.scene.traverse(child => {
+                    if (child.isMesh && child.name === 'window-landscape') {
+                        child.material.map = this._blissTexture;
+                        child.material.needsUpdate = true;
+                    }
+                });
+            }
+
+            setupLights() {
+                this.ambientLight = new THREE.AmbientLight(0x2d2244, 0.7);
+                this.scene.add(this.ambientLight);
+                this.overheadLight = new THREE.PointLight(0xffdfb3, 2.2, 12);
+                this.overheadLight.position.set(0, 3.2, 0);
+                this.overheadLight.castShadow = !CONFIG.isMobile;
+                this.overheadLight.shadow.bias = -0.002;
+                this.scene.add(this.overheadLight);
+                this.deskStrip = new THREE.PointLight(0x8b5cf6, 2.0, 6);
+                this.deskStrip.position.set(0, 1.1, -3.9);
+                this.scene.add(this.deskStrip);
+                this.moonLight = new THREE.DirectionalLight(0x4f46e5, 1.4);
+                this.moonLight.position.set(8, 4, -2);
+                this.scene.add(this.moonLight);
+                const bedLight = new THREE.PointLight(0xff8844, 0.8, 4);
+                bedLight.position.set(-1.8, 1.0, 3.5);
+                this.scene.add(bedLight);
+                const tvGlow = new THREE.PointLight(0x4f46e5, 0.8, 3);
+                tvGlow.position.set(-4.0, 1.2, 0);
+                this.scene.add(tvGlow);
+            }
+
+            setupSky() {
+                const starGeo = new THREE.BufferGeometry();
+                const starCount = 300;
+                const starPos = new Float32Array(starCount * 3);
+                for (let i = 0; i < starCount * 3; i += 3) {
+                    starPos[i] = (Math.random() - 0.5) * 80;
+                    starPos[i + 1] = Math.random() * 40 + 5;
+                    starPos[i + 2] = (Math.random() - 0.5) * 80;
+                }
+                starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+                const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.15, transparent: true });
+                this.scene.add(new THREE.Points(starGeo, starMat));
+            }
+
+            buildMalaysianCozyRoom() {
+                const wallMat = new THREE.MeshStandardMaterial({ color: 0x1e1b2b, roughness: 0.85 });
+                const floorMat = new THREE.MeshStandardMaterial({ color: 0x2d2319, roughness: 0.75 });
+                const woodTeak = new THREE.MeshStandardMaterial({ color: 0x4a2e1b, roughness: 0.65 });
+                const metalDark = new THREE.MeshStandardMaterial({ color: 0x151515, metalness: 0.8, roughness: 0.2 });
+                const plasticWhite = new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.4 });
+                const clothGreen = new THREE.MeshStandardMaterial({ color: 0x0f766e, roughness: 0.9 });
+                const roomSize = { w: 9, h: 4, d: 9 };
+
+                // Floor
+                const floor = new THREE.Mesh(new THREE.BoxGeometry(roomSize.w, 0.2, roomSize.d), floorMat);
+                floor.position.y = -0.1;
+                floor.receiveShadow = true;
+                this.scene.add(floor);
+
+                // Walls — all same color
+                const wallMatSame = new THREE.MeshStandardMaterial({ color: 0x1e1b2b, roughness: 0.85 });
+                const backWall = new THREE.Mesh(new THREE.BoxGeometry(roomSize.w, roomSize.h, 0.2), wallMatSame);
+                backWall.position.set(0, roomSize.h / 2, -roomSize.d / 2);
+                this.scene.add(backWall);
+                const frontWall = new THREE.Mesh(new THREE.BoxGeometry(roomSize.w, roomSize.h, 0.2), wallMatSame);
+                frontWall.position.set(0, roomSize.h / 2, roomSize.d / 2);
+                this.scene.add(frontWall);
+                const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.2, roomSize.h, roomSize.d), wallMatSame);
+                leftWall.position.set(-roomSize.w / 2, roomSize.h / 2, 0);
+                this.scene.add(leftWall);
+                const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.2, roomSize.h, roomSize.d), wallMatSame);
+                rightWall.position.set(roomSize.w / 2, roomSize.h / 2, 0);
+                this.scene.add(rightWall);
+                const ceiling = new THREE.Mesh(new THREE.BoxGeometry(roomSize.w, 0.2, roomSize.d), wallMatSame);
+                ceiling.position.y = roomSize.h + 0.1;
+                this.scene.add(ceiling);
+
+                // --- DOOR ---
+                const doorGroup = new THREE.Group();
+                doorGroup.position.set(0, 1.0, 4.35);
+                const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.1, 0.1), woodTeak);
+                doorGroup.add(doorFrame);
+                const doorPanel = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.95, 0.08), new THREE
+                    .MeshStandardMaterial({ color: 0x3d200e }));
+                doorPanel.position.set(0, 0, 0.01);
+                doorGroup.add(doorPanel);
+                const handle = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), new THREE
+                    .MeshStandardMaterial({ color: 0xd97706, metalness: 0.9 }));
+                handle.position.set(0.35, -0.1, 0.07);
+                doorGroup.add(handle);
+                const doorTrigger = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.1, 0.4), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                doorTrigger.name = "Pintu Keluar";
+                doorTrigger.userData = { id: "door", subtitle: "Balik ke dunia realiti" };
+                doorGroup.add(doorTrigger);
+                this.interactiveObjects.push(doorTrigger);
+                const doorCollider = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.1, 0.3), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                doorCollider.position.set(0, 1.0, 0);
+                doorGroup.add(doorCollider);
+                this.colliders.push(doorCollider);
+                this.scene.add(doorGroup);
+
+                // --- WINDOW — see-through with landscape ---
+                const windowGroup = new THREE.Group();
+                windowGroup.position.set(-4.4, 2.0, -1.5);
+                windowGroup.rotation.y = Math.PI / 2;
+
+                // Frame only
+                const frameOuter = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.6, 0.12), woodTeak);
+                windowGroup.add(frameOuter);
+
+                // Landscape plane far behind
+                const landscapeGeo = new THREE.PlaneGeometry(10.0, 6.0);
+                const landscapeMat = new THREE.MeshBasicMaterial({ color: 0x4a90d9, side: THREE.DoubleSide });
+                const landscape = new THREE.Mesh(landscapeGeo, landscapeMat);
+                landscape.name = 'window-landscape';
+                landscape.position.set(0, 0, -4.5);
+                windowGroup.add(landscape);
+
+                // Window dividers
+                const divH = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.06, 0.06), woodTeak);
+                divH.position.set(0, 0, 0.04);
+                windowGroup.add(divH);
+                const divV = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.6, 0.06), woodTeak);
+                divV.position.set(0, 0, 0.04);
+                windowGroup.add(divV);
+
+                // Almost invisible glass
+                const glassMat = new THREE.MeshStandardMaterial({
+                    color: 0xadd8e6,
+                    transparent: true,
+                    opacity: 0.03,
+                    roughness: 0.05,
+                    metalness: 0.05,
+                    side: THREE.DoubleSide
+                });
+                const glass = new THREE.Mesh(new THREE.PlaneGeometry(2.22, 1.48), glassMat);
+                glass.position.set(0, 0, 0.01);
+                windowGroup.add(glass);
+
+                this.scene.add(windowGroup);
+
+                // --- CALENDAR ---
+                const calendarGroup = new THREE.Group();
+                calendarGroup.position.set(-4.38, 1.8, 2.6);
+                calendarGroup.rotation.y = Math.PI / 2;
+                const calHeader = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.3), new THREE
+                    .MeshBasicMaterial({ color: 0xd97706 }));
+                calendarGroup.add(calHeader);
+                const calBody = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.5), new THREE
+                    .MeshBasicMaterial({ color: 0xfafafa }));
+                calBody.position.y = -0.4;
+                calendarGroup.add(calBody);
+                this.scene.add(calendarGroup);
+
+                // --- SEJADAH ---
+                const sejadahTex = createSejadahTexture();
+                const sejadahMat = new THREE.MeshStandardMaterial({ map: sejadahTex, roughness: 0.8 });
+                const sejadah = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.015, 2.6), sejadahMat);
+                sejadah.position.set(1.5, 0.01, 1.5);
+                sejadah.rotation.y = -0.15;
+                this.scene.add(sejadah);
+
+                // --- TOWEL RACK ---
+                const rackGroup = new THREE.Group();
+                rackGroup.position.set(3.4, 0, 3.4);
+                const legGeo = new THREE.BoxGeometry(0.08, 1.6, 0.08);
+                const legL = new THREE.Mesh(legGeo, woodTeak);
+                legL.position.set(-0.6, 0.8, 0);
+                rackGroup.add(legL);
+                this.colliders.push(legL);
+                const legR = legL.clone();
+                legR.position.x = 0.6;
+                rackGroup.add(legR);
+                this.colliders.push(legR);
+                const barGeo = new THREE.CylinderGeometry(0.02, 0.02, 1.6);
+                const crossBar = new THREE.Mesh(barGeo, woodTeak);
+                crossBar.rotation.z = Math.PI / 2;
+                crossBar.position.set(0, 1.5, 0);
+                rackGroup.add(crossBar);
+                const midBar = crossBar.clone();
+                midBar.position.y = 1.0;
+                rackGroup.add(midBar);
+                const towel = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.8, 0.04), new THREE
+                    .MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.95 }));
+                towel.position.set(0.1, 1.1, 0);
+                rackGroup.add(towel);
+                const hangingSejadah = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.6, 0.04), clothGreen);
+                hangingSejadah.position.set(-0.3, 0.7, 0);
+                rackGroup.add(hangingSejadah);
+                this.scene.add(rackGroup);
+
+                // --- STAND FAN (fixed blades) ---
+                const standFan = new THREE.Group();
+                standFan.position.set(-3.5, 0, -2.5);
+                const fanBase = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.04), plasticWhite);
+                fanBase.position.y = 0.02;
+                standFan.add(fanBase);
+                this.colliders.push(fanBase);
+                const fanPole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.4), metalDark);
+                fanPole.position.y = 0.7;
+                standFan.add(fanPole);
+                const fanMotor = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.1), metalDark);
+                fanMotor.position.set(0, 1.4, 0);
+                fanMotor.rotation.x = Math.PI / 2;
+                standFan.add(fanMotor);
+                // Proper fan blades with guard
+                const fanBladesGroup = new THREE.Group();
+                fanBladesGroup.position.set(0, 1.4, 0.05);
+                for (let i = 0; i < 3; i++) {
+                    const angle = (i / 3) * Math.PI * 2;
+                    const blade = new THREE.Mesh(
+                        new THREE.BoxGeometry(0.04, 0.35, 0.01),
+                        new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.3, metalness: 0.1 })
+                    );
+                    blade.position.set(Math.sin(angle) * 0.18, Math.cos(angle) * 0.18, 0);
+                    blade.rotation.z = angle;
+                    blade.scale.x = 0.5 + Math.sin(angle) * 0.3;
+                    fanBladesGroup.add(blade);
+                }
+                // Center cap
+                const cap = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), new THREE
+                    .MeshStandardMaterial({ color: 0x888888, metalness: 0.5 }));
+                cap.position.set(0, 0, 0);
+                fanBladesGroup.add(cap);
+                // Fan guard ring
+                const ringGeo = new THREE.TorusGeometry(0.22, 0.005, 8, 24);
+                const ringMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.3 });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.position.set(0, 0, 0);
+                ring.rotation.x = Math.PI / 2;
+                fanBladesGroup.add(ring);
+                // Cross guard
+                const guardMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.2 });
+                for (let i = 0; i < 4; i++) {
+                    const a = (i / 4) * Math.PI * 2;
+                    const bar = new THREE.Mesh(new THREE.BoxGeometry(0.005, 0.005, 0.4), guardMat);
+                    bar.position.set(Math.sin(a) * 0.14, Math.cos(a) * 0.14, 0);
+                    bar.rotation.z = a;
+                    fanBladesGroup.add(bar);
+                }
+                standFan.add(fanBladesGroup);
+                this.animatedObjects.standFanBlade = fanBladesGroup;
+                this.scene.add(standFan);
+
+                // --- DESK ---
+                const desk = new THREE.Group();
+                desk.position.set(0, 0, -3.8);
+                const deskTop = new THREE.Mesh(new THREE.BoxGeometry(5.5, 0.1, 1.8), woodTeak);
+                deskTop.position.y = 0.75;
+                deskTop.castShadow = true;
+                desk.add(deskTop);
+                this.colliders.push(deskTop);
+                const pedestalL = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.7, 1.4), woodTeak);
+                pedestalL.position.set(-2, 0.35, 0);
+                desk.add(pedestalL);
+                this.colliders.push(pedestalL);
+                const pedestalR = pedestalL.clone();
+                pedestalR.position.x = 2;
+                desk.add(pedestalR);
+                this.colliders.push(pedestalR);
+                this.scene.add(desk);
+
+                // --- GAMING CHAIR (facing desk) ---
+                const chairGroup = new THREE.Group();
+                chairGroup.position.set(0, 0, -1.8);
+                chairGroup.rotation.y = 0;
+
+                // Base
+                const baseMat = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.5, roughness: 0.3 });
+                const basePlate = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.04, 24), baseMat);
+                basePlate.position.y = 0.02;
+                chairGroup.add(basePlate);
+
+                // Wheels
+                const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+                for (let i = 0; i < 5; i++) {
+                    const a = (i / 5) * Math.PI * 2 + Math.PI / 2;
+                    const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.04, 0.025, 6, 8), wheelMat);
+                    wheel.position.set(Math.sin(a) * 0.3, 0.02, Math.cos(a) * 0.3);
+                    wheel.rotation.x = Math.PI / 2;
+                    chairGroup.add(wheel);
+                    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.3), baseMat);
+                    arm.position.set(Math.sin(a) * 0.18, 0.04, Math.cos(a) * 0.18);
+                    arm.rotation.y = -a;
+                    chairGroup.add(arm);
+                }
+
+                // Center post
+                const postMat = new THREE.MeshStandardMaterial({ color: 0x444444, metalness: 0.7, roughness: 0.2 });
+                const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 0.4, 12), postMat);
+                post.position.set(0, 0.22, 0);
+                chairGroup.add(post);
+
+                // Gas cylinder
+                const gas = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.035, 0.12, 10), new THREE
+                    .MeshStandardMaterial({ color: 0x555555, metalness: 0.8, roughness: 0.2 }));
+                gas.position.set(0, 0.38, 0);
+                chairGroup.add(gas);
+
+                // Seat
+                const seatMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.5 });
+                const seatCushionMat = new THREE.MeshStandardMaterial({ color: 0x2d1b69, roughness: 0.6 });
+                const seatBase = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.06, 0.7), seatMat);
+                seatBase.position.set(0, 0.5, 0);
+                chairGroup.add(seatBase);
+                const seatCushion = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.1, 0.65), seatCushionMat);
+                seatCushion.position.set(0, 0.56, 0.02);
+                chairGroup.add(seatCushion);
+
+                // Backrest with bucket shape
+                const backMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.5 });
+                const backCushionMat = new THREE.MeshStandardMaterial({ color: 0x2d1b69, roughness: 0.6 });
+                const backrest = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 0.06), backMat);
+                backrest.position.set(0, 0.9, -0.38);
+                chairGroup.add(backrest);
+                const backCushion = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.04), backCushionMat);
+                backCushion.position.set(0, 0.9, -0.36);
+                chairGroup.add(backCushion);
+
+                // Side bolsters
+                const bolsterMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.5 });
+                const bolsterL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.5, 0.2), bolsterMat);
+                bolsterL.position.set(-0.38, 0.85, -0.3);
+                chairGroup.add(bolsterL);
+                const bolsterR = bolsterL.clone();
+                bolsterR.position.x = 0.38;
+                chairGroup.add(bolsterR);
+                const bolsterCushionMat = new THREE.MeshStandardMaterial({ color: 0x2d1b69, roughness: 0.6 });
+                const bcL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.4, 0.15), bolsterCushionMat);
+                bcL.position.set(-0.37, 0.85, -0.3);
+                chairGroup.add(bcL);
+                const bcR = bcL.clone();
+                bcR.position.x = 0.37;
+                chairGroup.add(bcR);
+
+                // Armrests
+                const armMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.5, roughness: 0.3 });
+                const armCushionMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.6 });
+                const armL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.3), armCushionMat);
+                armL.position.set(-0.45, 0.65, 0.05);
+                chairGroup.add(armL);
+                const armR = armL.clone();
+                armR.position.x = 0.45;
+                chairGroup.add(armR);
+                const armSupL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.15, 0.04), armMat);
+                armSupL.position.set(-0.45, 0.52, 0.05);
+                chairGroup.add(armSupL);
+                const armSupR = armSupL.clone();
+                armSupR.position.x = 0.45;
+                chairGroup.add(armSupR);
+
+                // Bucket seat styling — racing stripes
+                const stripeMat = new THREE.MeshStandardMaterial({ color: 0x4f46e5, roughness: 0.3, metalness: 0.1 });
+                const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.08, 0.6), stripeMat);
+                stripe.position.set(0, 0.9, -0.35);
+                chairGroup.add(stripe);
+
+                this.scene.add(chairGroup);
+
+                // --- MONITORS ---
+                const monitorGroup = new THREE.Group();
+                monitorGroup.position.set(0, 0.8, -3.8);
+                const standY = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.4), metalDark);
+                standY.position.set(0, 0.2, 0);
+                monitorGroup.add(standY);
+                const basePlank = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.02, 0.4), metalDark);
+                basePlank.position.set(0, 0.01, 0);
+                monitorGroup.add(basePlank);
+
+                const fLeft = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.8, 0.05), metalDark);
+                fLeft.position.set(-0.75, 0.6, 0.1);
+                fLeft.rotation.y = 0.25;
+                monitorGroup.add(fLeft);
+                const screenL = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.75, 0.01), new THREE
+                    .MeshBasicMaterial({ map: this.matrixScreen.texture }));
+                screenL.position.set(-0.75, 0.6, 0.13);
+                screenL.rotation.y = 0.25;
+                monitorGroup.add(screenL);
+
+                const fRight = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.8, 0.05), metalDark);
+                fRight.position.set(0.75, 0.6, 0.1);
+                fRight.rotation.y = -0.25;
+                monitorGroup.add(fRight);
+                const screenR = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.75, 0.01), new THREE
+                    .MeshBasicMaterial({ map: this.gamingScreen.texture }));
+                screenR.position.set(0.75, 0.6, 0.13);
+                screenR.rotation.y = -0.25;
+                monitorGroup.add(screenR);
+
+                const monitorTrigger = new THREE.Mesh(new THREE.BoxGeometry(2.5, 1.2, 0.8), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                monitorTrigger.position.set(0, 0.5, 0);
+                monitorTrigger.name = "PC Monitor";
+                monitorTrigger.userData = { id: "pc", subtitle: "GitHub Projects & Dev Workstation" };
+                monitorGroup.add(monitorTrigger);
+                this.interactiveObjects.push(monitorTrigger);
+                this.scene.add(monitorGroup);
+
+                // --- MILO TIN ---
+                const miloTin = new THREE.Group();
+                miloTin.position.set(-1.2, 0.8, -3.4);
+                const tinCylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.24, 16), new THREE
+                    .MeshStandardMaterial({ color: 0x15803d, roughness: 0.3, metalness: 0.8 }));
+                miloTin.add(tinCylinder);
+                const miloLabel = new THREE.Mesh(new THREE.CylinderGeometry(0.082, 0.082, 0.18, 16), new THREE
+                    .MeshBasicMaterial({
+                        map: new THREE.CanvasTexture((function() {
+                            const c = document.createElement('canvas');
+                            c.width = 128;
+                            c.height = 64;
+                            const ctx = c.getContext('2d');
+                            ctx.fillStyle = '#15803d';
+                            ctx.fillRect(0, 0, 128, 64);
+                            ctx.fillStyle = '#ffffff';
+                            ctx.font = 'bold 22px Times New Roman';
+                            ctx.fillText("MILO", 28, 40);
+                            return c;
+                        })())
+                    }));
+                miloLabel.position.y = 0.01;
+                miloTin.add(miloLabel);
+                const penGeo = new THREE.CylinderGeometry(0.006, 0.006, 0.2);
+                const pen1 = new THREE.Mesh(penGeo, new THREE.MeshBasicMaterial({ color: 0xd97706 }));
+                pen1.position.set(-0.02, 0.12, 0);
+                pen1.rotation.z = 0.2;
+                miloTin.add(pen1);
+                const pen2 = new THREE.Mesh(penGeo, new THREE.MeshBasicMaterial({ color: 0x2563eb }));
+                pen2.position.set(0.02, 0.12, 0.01);
+                pen2.rotation.z = -0.25;
+                miloTin.add(pen2);
+                this.scene.add(miloTin);
+
+                // --- PC TOWER ---
+                const pcTower = new THREE.Group();
+                pcTower.position.set(2.2, 0.8, -3.8);
+                const pcCase = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.6, 0.6), metalDark);
+                pcCase.position.y = 0.3;
+                pcTower.add(pcCase);
+                const pcInterior = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.52, 0.52), new THREE
+                    .MeshBasicMaterial({ color: 0xec4899 }));
+                pcInterior.position.set(-0.02, 0.3, 0);
+                pcTower.add(pcInterior);
+                this.animatedObjects.computerGlow = pcInterior;
+                this.scene.add(pcTower);
+
+                const kbd = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.02, 0.3), new THREE
+                    .MeshStandardMaterial({ color: 0x111111, roughness: 0.8 }));
+                kbd.position.set(0, 0.81, -3.2);
+                this.scene.add(kbd);
+                const mouse = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.02, 0.16), new THREE
+                    .MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 }));
+                mouse.position.set(0.6, 0.81, -3.2);
+                this.scene.add(mouse);
+
+                // --- PHOTO FRAME ---
+                const photoFrameStand = new THREE.Group();
+                photoFrameStand.position.set(-2.2, 0.8, -3.2);
+                photoFrameStand.rotation.y = 0.4;
+                const frameBase = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.04, 0.24), woodTeak);
+                frameBase.position.y = 0.02;
+                photoFrameStand.add(frameBase);
+                const frameRim = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.48, 0.03), woodTeak);
+                frameRim.position.set(0, 0.26, 0);
+                photoFrameStand.add(frameRim);
+                const profileImg = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.44, 0.012), new THREE
+                    .MeshBasicMaterial({ color: 0x8b5cf6 }));
+                profileImg.position.set(0, 0.26, 0.015);
+                photoFrameStand.add(profileImg);
+                const imgLoader = new THREE.TextureLoader();
+                imgLoader.load('https://blankedwave.name.my/assets/profileStudioCropped.png', (tex) => {
+                    profileImg.material = new THREE.MeshBasicMaterial({ map: tex });
+                    profileImg.material.needsUpdate = true;
+                }, undefined, () => {
+                    profileImg.material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6 });
+                });
+
+                const photoFrameTrigger = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.6, 0.4), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                photoFrameTrigger.position.set(0, 0.25, 0);
+                photoFrameTrigger.name = "Instagram Frame";
+                photoFrameTrigger.userData = { id: "photowall", subtitle: "Album @qil.jpeg" };
+                photoFrameStand.add(photoFrameTrigger);
+                this.interactiveObjects.push(photoFrameTrigger);
+                this.scene.add(photoFrameStand);
+
+                // --- TV with DVD screensaver ---
+                const tvUnit = new THREE.Group();
+                tvUnit.position.set(-4.0, 0, 0);
+                tvUnit.rotation.y = Math.PI / 2;
+                const tvBench = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.35, 0.6), woodTeak);
+                tvBench.position.y = 0.175;
+                tvUnit.add(tvBench);
+                this.colliders.push(tvBench);
+                const tvStandNeck = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.16), metalDark);
+                tvStandNeck.position.set(0, 0.45, 0);
+                tvUnit.add(tvStandNeck);
+                const tvDisplayFrame = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.25, 0.04), metalDark);
+                tvDisplayFrame.position.set(0, 1.15, 0);
+                tvUnit.add(tvDisplayFrame);
+                // TV screen with DVD screensaver
+                const tvScreenMat = new THREE.MeshBasicMaterial({ map: this.dvdScreensaver.texture });
+                const tvDisplayGlass = new THREE.Mesh(new THREE.BoxGeometry(2.14, 1.19, 0.02), tvScreenMat);
+                tvDisplayGlass.position.set(0, 1.15, 0.02);
+                tvUnit.add(tvDisplayGlass);
+                const tvTriggerBox = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.5, 0.6), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                tvTriggerBox.position.set(0, 0.8, 0.1);
+                tvTriggerBox.name = "Media TV";
+                tvTriggerBox.userData = { id: "tv", subtitle: "YouTube Player" };
+                tvUnit.add(tvTriggerBox);
+                this.interactiveObjects.push(tvTriggerBox);
+
+                // PS5
+                const ps5Group = new THREE.Group();
+                ps5Group.position.set(1.2, 0.35, 0);
+                const ps5LeftPlate = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.38, 0.3), plasticWhite);
+                ps5LeftPlate.position.x = -0.05;
+                ps5LeftPlate.rotation.z = -0.06;
+                ps5Group.add(ps5LeftPlate);
+                const ps5RightPlate = ps5LeftPlate.clone();
+                ps5RightPlate.position.x = 0.05;
+                ps5RightPlate.rotation.z = 0.06;
+                ps5Group.add(ps5RightPlate);
+                const ps5Core = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.36, 0.28), metalDark);
+                ps5Group.add(ps5Core);
+                const padGeo = new THREE.BoxGeometry(0.12, 0.04, 0.08);
+                const c1 = new THREE.Mesh(padGeo, plasticWhite);
+                c1.position.set(-0.3, 0.02, 0.05);
+                ps5Group.add(c1);
+                const c2 = c1.clone();
+                c2.position.set(-0.48, 0.02, 0.01);
+                c2.rotation.y = 0.4;
+                ps5Group.add(c2);
+                const gamingShelfTrigger = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.5, 0.5), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                gamingShelfTrigger.name = "PlayStation 5";
+                gamingShelfTrigger.userData = { id: "gaming", subtitle: "Steam / Discord Games Played Setup" };
+                ps5Group.add(gamingShelfTrigger);
+                this.interactiveObjects.push(gamingShelfTrigger);
+                tvUnit.add(ps5Group);
+                this.scene.add(tvUnit);
+
+                // --- BED with proper collision ---
+                const bedGroup = new THREE.Group();
+                bedGroup.position.set(-1.8, 0, 2.5);
+                bedGroup.rotation.y = Math.PI;
+
+                const bedFrame = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.4, 3.2), woodTeak);
+                bedFrame.position.y = 0.2;
+                bedGroup.add(bedFrame);
+                const mattress = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.35, 3.0), new THREE
+                    .MeshStandardMaterial({ color: 0x4f46e5, roughness: 0.8 }));
+                mattress.position.y = 0.55;
+                bedGroup.add(mattress);
+
+                // Solid collider on top of mattress so player can stand on it
+                const bedCollider = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.06, 2.8), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                bedCollider.position.y = 0.75;
+                bedGroup.add(bedCollider);
+                this.colliders.push(bedCollider);
+
+                // Additional side colliders to prevent going through bed frame
+                const sideMat = new THREE.MeshBasicMaterial({ visible: false });
+                const sideL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.8, 2.8), sideMat);
+                sideL.position.set(-1.3, 0.4, 0);
+                bedGroup.add(sideL);
+                this.colliders.push(sideL);
+                const sideR = sideL.clone();
+                sideR.position.x = 1.3;
+                bedGroup.add(sideR);
+                this.colliders.push(sideR);
+                const sideBack = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.8, 0.06), sideMat);
+                sideBack.position.set(0, 0.4, -1.4);
+                bedGroup.add(sideBack);
+                this.colliders.push(sideBack);
+
+                const pillowL = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.15, 0.6), plasticWhite);
+                pillowL.position.set(-0.55, 0.75, -1.1);
+                pillowL.rotation.x = -0.15;
+                bedGroup.add(pillowL);
+                const pillowR = pillowL.clone();
+                pillowR.position.x = 0.55;
+                bedGroup.add(pillowR);
+                const blanket = new THREE.Mesh(new THREE.BoxGeometry(2.44, 0.25, 2.0), new THREE
+                    .MeshStandardMaterial({ color: 0x0f766e, roughness: 0.9 }));
+                blanket.position.set(0, 0.62, 0.5);
+                bedGroup.add(blanket);
+
+                this.scene.add(bedGroup);
+
+                // --- NASI LEMAK ---
+                const nasiLemakGroup = new THREE.Group();
+                nasiLemakGroup.position.set(-1.8, 0.05, 3.0);
+                const nasiPlate = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.18, 0.04, 16), new THREE
+                    .MeshStandardMaterial({ color: 0xf5f5dc }));
+                nasiLemakGroup.add(nasiPlate);
+                const nasiRice = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.14, 0.06, 16), new THREE
+                    .MeshStandardMaterial({ color: 0xf5f0e0 }));
+                nasiRice.position.y = 0.04;
+                nasiLemakGroup.add(nasiRice);
+                const sambal = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), new THREE
+                    .MeshStandardMaterial({ color: 0xcc3300 }));
+                sambal.position.set(0.06, 0.08, 0.04);
+                nasiLemakGroup.add(sambal);
+                const egg = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), new THREE
+                    .MeshStandardMaterial({ color: 0xffeedd }));
+                egg.position.set(-0.05, 0.08, -0.04);
+                nasiLemakGroup.add(egg);
+                const ikanBilis = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.01, 0.08), new THREE
+                    .MeshStandardMaterial({ color: 0x8b7355 }));
+                ikanBilis.position.set(0, 0.08, 0.08);
+                nasiLemakGroup.add(ikanBilis);
+                nasiLemakGroup.visible = false;
+                this.scene.add(nasiLemakGroup);
+                this.easterEggTriggers.nasiLemak = nasiLemakGroup;
+
+                // Bed secret trigger
+                const bedSecretTrigger = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.2, 0.8), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                bedSecretTrigger.position.set(-1.8, 0.6, 3.8);
+                bedSecretTrigger.name = "BedSecret";
+                bedSecretTrigger.userData = { id: "secret", subtitle: "Hidden under bed..." };
+                this.scene.add(bedSecretTrigger);
+                this.interactiveObjects.push(bedSecretTrigger);
+
+                // --- ALMARI ---
+                const almariGroup = new THREE.Group();
+                almariGroup.position.set(4.1, 0, 1.5);
+                almariGroup.rotation.y = -Math.PI / 2;
+                const armCabinet = new THREE.Mesh(new THREE.BoxGeometry(2.0, 3.0, 0.8), woodTeak);
+                armCabinet.position.y = 1.5;
+                almariGroup.add(armCabinet);
+                this.colliders.push(armCabinet);
+                const internalBacking = new THREE.Mesh(new THREE.BoxGeometry(1.85, 2.8, 0.1), new THREE
+                    .MeshStandardMaterial({ color: 0x1a0f0a }));
+                internalBacking.position.set(0, 1.5, -0.28);
+                almariGroup.add(internalBacking);
+
+                const bajuMelayuGroup = new THREE.Group();
+                bajuMelayuGroup.position.set(-0.35, 2.2, -0.1);
+                const bajuSleeve = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.15, 0.2), new THREE
+                    .MeshStandardMaterial({ color: 0xb91c1c }));
+                bajuMelayuGroup.add(bajuSleeve);
+                const bajuBody = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.9, 0.22), new THREE
+                    .MeshStandardMaterial({ color: 0xb91c1c }));
+                bajuBody.position.y = -0.4;
+                bajuMelayuGroup.add(bajuBody);
+                const waistSampin = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.4, 0.25), new THREE
+                    .MeshStandardMaterial({ color: 0xd97706, roughness: 0.8 }));
+                waistSampin.position.y = -0.55;
+                bajuMelayuGroup.add(waistSampin);
+                almariGroup.add(bajuMelayuGroup);
+
+                const kainPelekatGroup = new THREE.Group();
+                kainPelekatGroup.position.set(0.35, 1.8, -0.1);
+                const plaidMat = new THREE.MeshStandardMaterial({ color: 0x115e59, roughness: 0.9 });
+                const pelekatBody = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.8, 0.2), plaidMat);
+                kainPelekatGroup.add(pelekatBody);
+                almariGroup.add(kainPelekatGroup);
+
+                const songkokGroup = new THREE.Group();
+                songkokGroup.position.set(0.0, 1.3, -0.1);
+                const songkokTop = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 12, 0, Math.PI * 2, 0, Math.PI /
+                    2), new THREE.MeshStandardMaterial({ color: 0x111111 }));
+                songkokTop.position.y = 0.08;
+                songkokGroup.add(songkokTop);
+                const songkokRim = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.025, 8, 16), new THREE
+                    .MeshStandardMaterial({ color: 0x111111 }));
+                songkokRim.position.y = 0.01;
+                songkokGroup.add(songkokRim);
+                almariGroup.add(songkokGroup);
+
+                const kemejaGroup = new THREE.Group();
+                kemejaGroup.position.set(-0.1, 0.7, -0.1);
+                const kemejaBody = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.7, 0.2), new THREE
+                    .MeshStandardMaterial({ color: 0x4a90d9 }));
+                kemejaGroup.add(kemejaBody);
+                almariGroup.add(kemejaGroup);
+
+                const lDoorGroup = new THREE.Group();
+                lDoorGroup.position.set(-0.95, 1.5, 0.4);
+                const lDoorMesh = new THREE.Mesh(new THREE.BoxGeometry(0.95, 2.9, 0.06), woodTeak);
+                lDoorMesh.position.x = 0.475;
+                lDoorGroup.add(lDoorMesh);
+                almariGroup.add(lDoorGroup);
+                this.animatedObjects.almariLeftDoor = lDoorGroup;
+
+                const rDoorGroup = new THREE.Group();
+                rDoorGroup.position.set(0.95, 1.5, 0.4);
+                const rDoorMesh = new THREE.Mesh(new THREE.BoxGeometry(0.95, 2.9, 0.06), woodTeak);
+                rDoorMesh.position.x = -0.475;
+                rDoorGroup.add(rDoorMesh);
+                almariGroup.add(rDoorGroup);
+                this.animatedObjects.almariRightDoor = rDoorGroup;
+
+                const almariTrigger = new THREE.Mesh(new THREE.BoxGeometry(2.0, 3.0, 1.0), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                almariTrigger.position.set(0, 1.5, 0.1);
+                almariTrigger.name = "Almari Baju";
+                almariTrigger.userData = { id: "almari", subtitle: "Typical Malay Male Wardrobe" };
+                almariGroup.add(almariTrigger);
+                this.interactiveObjects.push(almariTrigger);
+                this.scene.add(almariGroup);
+
+                // --- MIRROR ---
+                const mirrorGroup = new THREE.Group();
+                mirrorGroup.position.set(4.35, 1.8, -0.8);
+                mirrorGroup.rotation.y = -Math.PI / 2;
+                const mirrorFrame = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.8, 0.08), woodTeak);
+                mirrorGroup.add(mirrorFrame);
+                const reflectiveGlass = new THREE.Mesh(new THREE.BoxGeometry(0.88, 1.68, 0.04), new THREE
+                    .MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.05 }));
+                reflectiveGlass.position.z = 0.03;
+                mirrorGroup.add(reflectiveGlass);
+                const mirrorTrigger = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.8, 0.3), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                mirrorTrigger.name = "Mirror";
+                mirrorTrigger.userData = { id: "mirror-msg", subtitle: "Look at yourself..." };
+                mirrorGroup.add(mirrorTrigger);
+                this.interactiveObjects.push(mirrorTrigger);
+                this.easterEggTriggers.mirror = mirrorTrigger;
+                this.scene.add(mirrorGroup);
+
+                // --- CEILING FAN ---
+                const fanGroup = new THREE.Group();
+                fanGroup.position.set(0, 3.6, 0);
+                const fanRod = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.5), metalDark);
+                fanRod.position.y = 0.25;
+                fanGroup.add(fanRod);
+                const fanHub = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.15), metalDark);
+                fanHub.position.y = 0.0;
+                fanGroup.add(fanHub);
+                const ceilingFanBlades = new THREE.Group();
+                for (let i = 0; i < 4; i++) {
+                    const blade = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.01, 0.16), new THREE
+                        .MeshStandardMaterial({ color: 0x222222, roughness: 0.9 }));
+                    blade.rotation.y = (Math.PI / 2) * i;
+                    blade.position.x = Math.sin((Math.PI / 2) * i) * 0.8;
+                    blade.position.z = Math.cos((Math.PI / 2) * i) * 0.8;
+                    ceilingFanBlades.add(blade);
+                }
+                fanGroup.add(ceilingFanBlades);
+                this.animatedObjects.fan = ceilingFanBlades;
+                this.scene.add(fanGroup);
+
+                // Fan easter egg
+                const fanEggTrigger = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.2, 2.0), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                fanEggTrigger.position.set(0, 2.8, 0);
+                fanEggTrigger.name = "FanSecret";
+                fanEggTrigger.userData = { id: "fan-secret", subtitle: "Feel the breeze..." };
+                this.scene.add(fanEggTrigger);
+                this.interactiveObjects.push(fanEggTrigger);
+                this.easterEggTriggers.fan = fanEggTrigger;
+
+                // --- PHONE TABLE with phone laying flat ---
+                const phoneTableGroup = new THREE.Group();
+                phoneTableGroup.position.set(-3.8, 0, 3.2);
+                const tableTop = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.04, 0.6), woodTeak);
+                tableTop.position.y = 0.7;
+                phoneTableGroup.add(tableTop);
+                this.colliders.push(tableTop);
+                const tableLeg1 = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.65, 0.035), metalDark);
+                tableLeg1.position.set(-0.22, 0.32, -0.22);
+                phoneTableGroup.add(tableLeg1);
+                const tableLeg2 = tableLeg1.clone();
+                tableLeg2.position.set(0.22, 0.32, -0.22);
+                phoneTableGroup.add(tableLeg2);
+                const tableLeg3 = tableLeg1.clone();
+                tableLeg3.position.set(-0.22, 0.32, 0.22);
+                phoneTableGroup.add(tableLeg3);
+                const tableLeg4 = tableLeg1.clone();
+                tableLeg4.position.set(0.22, 0.32, 0.22);
+                phoneTableGroup.add(tableLeg4);
+
+                // Phone — laying flat, screen up
+                const phoneGroup = new THREE.Group();
+                phoneGroup.position.set(0, 0.72, 0);
+                phoneGroup.rotation.x = -Math.PI / 2;
+
+                const phoneBody = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.008, 0.28), new THREE
+                    .MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.3, metalness: 0.6 }));
+                phoneGroup.add(phoneBody);
+                const phoneScreen = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.004, 0.22), new THREE
+                    .MeshBasicMaterial({ map: this.phoneScreenTex }));
+                phoneScreen.position.set(0, 0.005, 0);
+                phoneGroup.add(phoneScreen);
+                const camBump = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.003, 0.02), new THREE
+                    .MeshBasicMaterial({ color: 0x111111 }));
+                camBump.position.set(0, 0.005, -0.11);
+                phoneGroup.add(camBump);
+
+                const phoneTrigger = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.02, 0.30), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                phoneTrigger.position.set(0, 0.01, 0);
+                phoneTrigger.name = "Phone";
+                phoneTrigger.userData = { id: "phone", subtitle: "Connect & Chat" };
+                phoneGroup.add(phoneTrigger);
+                this.interactiveObjects.push(phoneTrigger);
+
+                phoneTableGroup.add(phoneGroup);
+                this.scene.add(phoneTableGroup);
+
+                // --- DUST ---
+                const dustGeo = new THREE.BufferGeometry();
+                const dustCount = 150;
+                const dustPos = new Float32Array(dustCount * 3);
+                for (let i = 0; i < dustCount * 3; i += 3) {
+                    dustPos[i] = (Math.random() - 0.5) * 8;
+                    dustPos[i + 1] = Math.random() * 3.5;
+                    dustPos[i + 2] = (Math.random() - 0.5) * 8;
+                }
+                dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+                const dustParticles = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0xffdfa9,
+                    size: 0.04, transparent: true, opacity: 0.6 }));
+                this.scene.add(dustParticles);
+                this.animatedObjects.dust = dustParticles;
+
+                // --- RAIN ---
+                const rainGeo = new THREE.BufferGeometry();
+                const rainCount = 180;
+                const rainPos = new Float32Array(rainCount * 3);
+                for (let i = 0; i < rainCount * 3; i += 3) {
+                    rainPos[i] = -4.4 - Math.random() * 2;
+                    rainPos[i + 1] = Math.random() * 8;
+                    rainPos[i + 2] = (Math.random() - 0.5) * 10;
+                }
+                rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+                const rain = new THREE.Points(rainGeo, new THREE.PointsMaterial({ color: 0x7dd3fc, size: 0.03,
+                    transparent: true, opacity: 0.4 }));
+                this.scene.add(rain);
+                this.animatedObjects.rain = rain;
+
+                // --- SECRET EGG ---
+                const secretEgg = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 8), new THREE
+                    .MeshBasicMaterial({ color: 0x10b981 }));
+                secretEgg.position.set(4.3, 0.4, -4.3);
+                secretEgg.name = "Hidden Dev Node";
+                secretEgg.userData = { id: "secret", subtitle: "Developer hidden diary log found" };
+                this.scene.add(secretEgg);
+                this.interactiveObjects.push(secretEgg);
+
+                // --- GUITAR ---
+                const guitarGroup = new THREE.Group();
+                guitarGroup.position.set(-4.2, 0.3, -3.8);
+                const guitarBody = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 8), new THREE
+                    .MeshStandardMaterial({ color: 0x8B4513, roughness: 0.6 }));
+                guitarBody.scale.set(1, 1.3, 0.6);
+                guitarGroup.add(guitarBody);
+                const guitarNeck = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.4), new THREE
+                    .MeshStandardMaterial({ color: 0x5d3a1a }));
+                guitarNeck.position.set(0, 0.3, 0);
+                guitarGroup.add(guitarNeck);
+                const headstock = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.04, 0.06), new THREE
+                    .MeshStandardMaterial({ color: 0x3d2510 }));
+                headstock.position.set(0, 0.52, 0);
+                guitarGroup.add(headstock);
+                const hole = new THREE.Mesh(new THREE.CircleGeometry(0.06, 12), new THREE
+                    .MeshBasicMaterial({ color: 0x1a0f0a }));
+                hole.position.set(0, 0.0, 0.19);
+                guitarGroup.add(hole);
+                for (let i = -0.02; i <= 0.02; i += 0.01) {
+                    const string = new THREE.Mesh(new THREE.BoxGeometry(0.001, 0.3, 0.001), new THREE
+                        .MeshStandardMaterial({ color: 0xcccccc, metalness: 0.8 }));
+                    string.position.set(i, 0.15, 0.19);
+                    guitarGroup.add(string);
+                }
+                guitarGroup.visible = false;
+                this.scene.add(guitarGroup);
+                this.easterEggTriggers.guitar = guitarGroup;
+
+                const guitarTrigger = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                guitarTrigger.position.set(-4.2, 0.4, -3.8);
+                guitarTrigger.name = "Guitar";
+                guitarTrigger.userData = { id: "guitar", subtitle: "Found a guitar! 🎸" };
+                this.scene.add(guitarTrigger);
+                this.interactiveObjects.push(guitarTrigger);
+
+                // --- TV REMOTE (easter egg) ---
+                const remoteGroup = new THREE.Group();
+                remoteGroup.position.set(2.5, 0.6, -3.6);
+                remoteGroup.rotation.z = 0.3;
+                remoteGroup.rotation.x = 0.2;
+                const remoteBody = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.18, 0.025), new THREE
+                    .MeshStandardMaterial({ color: 0x222222, roughness: 0.6 }));
+                remoteGroup.add(remoteBody);
+                const remoteScreen = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.04, 0.005), new THREE
+                    .MeshBasicMaterial({ color: 0x00ff44 }));
+                remoteScreen.position.set(0, 0.05, 0.014);
+                remoteGroup.add(remoteScreen);
+                const btnMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
+                for (let i = 0; i < 3; i++) {
+                    const btn = new THREE.Mesh(new THREE.CircleGeometry(0.008, 6), btnMat);
+                    btn.position.set(0.01, -0.02 - i * 0.03, 0.014);
+                    remoteGroup.add(btn);
+                    const btn2 = new THREE.Mesh(new THREE.CircleGeometry(0.008, 6), btnMat);
+                    btn2.position.set(-0.01, -0.02 - i * 0.03, 0.014);
+                    remoteGroup.add(btn2);
+                }
+                remoteGroup.visible = false;
+                this.scene.add(remoteGroup);
+                this.easterEggTriggers.remote = remoteGroup;
+
+                const remoteTrigger = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.3), new THREE
+                    .MeshBasicMaterial({ visible: false }));
+                remoteTrigger.position.set(2.5, 0.6, -3.6);
+                remoteTrigger.name = "TV Remote";
+                remoteTrigger.userData = { id: "remote", subtitle: "Found the TV remote! 📺" };
+                this.scene.add(remoteTrigger);
+                this.interactiveObjects.push(remoteTrigger);
+
+                // --- CLOCK ---
+                const clockGroup = new THREE.Group();
+                clockGroup.position.set(0, 2.8, -4.3);
+                const clockFace = new THREE.Mesh(new THREE.CircleGeometry(0.2, 24), new THREE
+                    .MeshStandardMaterial({ color: 0xf5f5dc }));
+                clockGroup.add(clockFace);
+                const clockHand = new THREE.Mesh(new THREE.BoxGeometry(0.005, 0.12, 0.005), new THREE
+                    .MeshStandardMaterial({ color: 0x111111 }));
+                clockHand.position.y = 0.06;
+                clockGroup.add(clockHand);
+                this.scene.add(clockGroup);
+
+                // --- POSTER ---
+                const posterGroup = new THREE.Group();
+                posterGroup.position.set(-2.0, 2.0, -4.28);
+                const posterCanvas = document.createElement('canvas');
+                posterCanvas.width = 200;
+                posterCanvas.height = 250;
+                const pctx = posterCanvas.getContext('2d');
+                pctx.fillStyle = '#1e1b4f';
+                pctx.fillRect(0, 0, 200, 250);
+                pctx.fillStyle = '#a78bfa';
+                pctx.font = 'bold 22px Arial';
+                pctx.textAlign = 'center';
+                pctx.fillText('🎮', 100, 70);
+                pctx.fillStyle = '#e2e8f0';
+                pctx.font = '14px Arial';
+                pctx.fillText('GAME ON', 100, 120);
+                pctx.fillStyle = '#94a3b8';
+                pctx.font = '10px Arial';
+                pctx.fillText('BlankedWave', 100, 160);
+                const posterTex = new THREE.CanvasTexture(posterCanvas);
+                const poster = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 1.0), new THREE
+                    .MeshBasicMaterial({ map: posterTex }));
+                posterGroup.add(poster);
+                const posterBorder = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.05, 0.02), new THREE
+                    .MeshStandardMaterial({ color: 0x222222 }));
+                posterBorder.position.z = -0.01;
+                posterGroup.add(posterBorder);
+                this.scene.add(posterGroup);
+            }
+
+            onWindowResize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        }
+
+        // ============================================================
+        // PLAYER CONTROLLER
+        // ============================================================
+        class PlayerController {
+            constructor(engine) {
+                this.engine = engine;
+                this.camera = engine.camera;
+                this.moveDir = new THREE.Vector3();
+                this.speedMultiplier = 1.0;
+                this.footstepTimer = 0;
+                this.wasOnGround = true;
+                this.setupKeyboard();
+                if (CONFIG.isMobile) this.setupMobileControls();
+                else this.setupMouseLock();
+            }
+
+            setupKeyboard() {
+                window.addEventListener('keydown', (e) => {
+                    if (STATE.viewingPanel || !STATE.wakeUpComplete) return;
+                    switch (e.code) {
+                        case 'KeyW':
+                        case 'ArrowUp':
+                            STATE.player.movingForward = true;
+                            break;
+                        case 'KeyS':
+                        case 'ArrowDown':
+                            STATE.player.movingBackward = true;
+                            break;
+                        case 'KeyA':
+                        case 'ArrowLeft':
+                            STATE.player.movingLeft = true;
+                            break;
+                        case 'KeyD':
+                        case 'ArrowRight':
+                            STATE.player.movingRight = true;
+                            break;
+                        case 'Space':
+                            if (STATE.player.onGround) {
+                                STATE.player.vel.y = CONFIG.jumpForce;
+                                STATE.player.onGround = false;
+                                audio.playSFX('jump');
+                                const dToBed = new THREE.Vector2(STATE.player.pos.x, STATE.player.pos.z)
+                                    .distanceTo(new THREE.Vector2(-1.8, 2.5));
+                                if (dToBed < 1.4 && !STATE.achievements.jumpedOnBed) {
+                                    STATE.achievements.jumpedOnBed = true;
+                                    uiManager.triggerAchievement("You jumped on the soft bed mattress!");
+                                }
+                            }
+                            break;
+                        case 'ShiftLeft':
+                        case 'ShiftRight':
+                            STATE.player.isSprinting = true;
+                            break;
+                        case 'ControlLeft':
+                        case 'ControlRight':
+                            e.preventDefault();
+                            STATE.player.isCrouching = true;
+                            STATE.player.targetHeight = CONFIG.crouchHeight;
+                            document.getElementById('crouch-status').textContent = 'Crouching';
+                            break;
+                        case 'KeyE':
+                            if (STATE.activeInteraction && !STATE.viewingPanel) {
+                                if (STATE.activeInteraction.name === "Pintu Keluar") uiManager
+                                    .triggerIntrovertDialogue();
+                                else uiManager.openPanel(STATE.activeInteraction);
+                            }
+                            break;
+                    }
+                });
+                window.addEventListener('keyup', (e) => {
+                    switch (e.code) {
+                        case 'KeyW':
+                        case 'ArrowUp':
+                            STATE.player.movingForward = false;
+                            break;
+                        case 'KeyS':
+                        case 'ArrowDown':
+                            STATE.player.movingBackward = false;
+                            break;
+                        case 'KeyA':
+                        case 'ArrowLeft':
+                            STATE.player.movingLeft = false;
+                            break;
+                        case 'KeyD':
+                        case 'ArrowRight':
+                            STATE.player.movingRight = false;
+                            break;
+                        case 'ShiftLeft':
+                        case 'ShiftRight':
+                            STATE.player.isSprinting = false;
+                            break;
+                        case 'ControlLeft':
+                        case 'ControlRight':
+                            STATE.player.isCrouching = false;
+                            STATE.player.targetHeight = CONFIG.playerHeight;
+                            document.getElementById('crouch-status').textContent = 'Standing';
+                            break;
+                    }
+                });
+            }
+
+            setupMouseLock() {
+                const canvas = this.engine.renderer.domElement;
+                canvas.addEventListener('click', () => { if (!STATE.viewingPanel && STATE.wakeUpComplete) canvas
+                        .requestPointerLock(); });
+                document.addEventListener('pointerlockchange', () => { STATE.pointerLocked = (document
+                        .pointerLockElement === canvas); });
+                document.addEventListener('mousemove', (e) => {
+                    if (!STATE.pointerLocked || STATE.viewingPanel || !STATE.wakeUpComplete) return;
+                    const sensitivity = 0.0020;
+                    STATE.player.rot.x -= e.movementX * sensitivity;
+                    STATE.player.rot.y -= e.movementY * sensitivity;
+                    STATE.player.rot.y = Math.max(-Math.PI / 2.1, Math.min(Math.PI / 2.1, STATE.player.rot.y));
+                });
+            }
+
+            setupMobileControls() {
+                document.getElementById('mobile-controls').classList.remove('hidden');
+                window.addEventListener('touchstart', (e) => {
+                    if (STATE.viewingPanel || !STATE.wakeUpComplete) return;
+                    const joyBounds = document.getElementById('joystick-container').getBoundingClientRect();
+                    for (let i = 0; i < e.touches.length; i++) {
+                        const touch = e.touches[i];
+                        if (touch.clientX < joyBounds.right && touch.clientY > joyBounds.top) continue;
+                        if (STATE.touchLook.touchId === null) {
+                            STATE.touchLook.touchId = touch.identifier;
+                            STATE.touchLook.lastX = touch.clientX;
+                            STATE.touchLook.lastY = touch.clientY;
+                        }
+                    }
+                }, { passive: true });
+                window.addEventListener('touchmove', (e) => {
+                    if (STATE.viewingPanel || !STATE.wakeUpComplete) return;
+                    for (let i = 0; i < e.touches.length; i++) {
+                        const touch = e.touches[i];
+                        if (touch.identifier === STATE.touchLook.touchId) {
+                            const dx = touch.clientX - STATE.touchLook.lastX;
+                            const dy = touch.clientY - STATE.touchLook.lastY;
+                            const sensitivity = 0.0035;
+                            STATE.player.rot.x -= dx * sensitivity;
+                            STATE.player.rot.y -= dy * sensitivity;
+                            STATE.player.rot.y = Math.max(-Math.PI / 2.1, Math.min(Math.PI / 2.1, STATE.player
+                                .rot.y));
+                            STATE.touchLook.lastX = touch.clientX;
+                            STATE.touchLook.lastY = touch.clientY;
+                        }
+                    }
+                }, { passive: true });
+                window.addEventListener('touchend', (e) => {
+                    for (let i = 0; i < e.changedTouches.length; i++) {
+                        if (e.changedTouches[i].identifier === STATE.touchLook.touchId) STATE.touchLook
+                            .touchId = null;
+                    }
+                }, { passive: true });
+
+                document.getElementById('mobile-btn-interact').addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    if (STATE.activeInteraction && !STATE.viewingPanel) {
+                        if (STATE.activeInteraction.name === "Pintu Keluar") uiManager
+                            .triggerIntrovertDialogue();
+                        else uiManager.openPanel(STATE.activeInteraction);
+                    }
+                });
+                document.getElementById('mobile-btn-jump').addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    if (STATE.player.onGround) {
+                        STATE.player.vel.y = CONFIG.jumpForce;
+                        STATE.player.onGround = false;
+                        audio.playSFX('jump');
+                    }
+                });
+                const btnSprint = document.getElementById('mobile-btn-sprint');
+                btnSprint.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    STATE.player.isSprinting = !STATE.player.isSprinting;
+                    if (STATE.player.isSprinting) btnSprint.classList.add('bg-violet-600');
+                    else btnSprint.classList.remove('bg-violet-600');
+                });
+                const btnCrouch = document.getElementById('mobile-btn-crouch');
+                btnCrouch.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    STATE.player.isCrouching = true;
+                    STATE.player.targetHeight = CONFIG.crouchHeight;
+                    document.getElementById('crouch-status').textContent = 'Crouching';
+                }, { passive: false });
+                btnCrouch.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    STATE.player.isCrouching = false;
+                    STATE.player.targetHeight = CONFIG.playerHeight;
+                    document.getElementById('crouch-status').textContent = 'Standing';
+                }, { passive: false });
+
+                const container = document.getElementById('joystick-container');
+                const handle = document.getElementById('joystick-handle');
+                container.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    STATE.joystick.active = true;
+                    STATE.joystick.touchId = touch.identifier;
+                    const rect = container.getBoundingClientRect();
+                    STATE.joystick.maxRange = Math.min(rect.width, rect.height) * 0.38;
+                    STATE.joystick.start.set(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                    handle.style.left = '50%';
+                    handle.style.top = '50%';
+                    handle.style.transform = 'translate(-50%,-50%)';
+                }, { passive: false });
+                window.addEventListener('touchmove', (e) => {
+                    if (!STATE.joystick.active) return;
+                    for (let i = 0; i < e.touches.length; i++) {
+                        const touch = e.touches[i];
+                        if (touch.identifier === STATE.joystick.touchId) {
+                            const curX = touch.clientX,
+                                curY = touch.clientY;
+                            const dir = new THREE.Vector2(curX - STATE.joystick.start.x, curY - STATE
+                                .joystick.start.y);
+                            const dist = dir.length();
+                            const maxRange = STATE.joystick.maxRange;
+                            if (dist > maxRange) dir.normalize().multiplyScalar(maxRange);
+                            const rect = container.getBoundingClientRect();
+                            const cx = rect.width / 2,
+                                cy = rect.height / 2;
+                            handle.style.position = 'absolute';
+                            handle.style.left = (cx + dir.x) + 'px';
+                            handle.style.top = (cy + dir.y) + 'px';
+                            handle.style.transform = 'translate(-50%,-50%)';
+                            STATE.joystick.delta.copy(dir).multiplyScalar(1 / maxRange);
+                        }
+                    }
+                }, { passive: false });
+                const stopJoystick = () => {
+                    STATE.joystick.active = false;
+                    STATE.joystick.delta.set(0, 0);
+                    handle.style.left = '50%';
+                    handle.style.top = '50%';
+                    handle.style.transform = 'translate(-50%,-50%)';
+                };
+                window.addEventListener('touchend', stopJoystick, { passive: true });
+            }
+
+            update(delta) {
+                if (STATE.viewingPanel || !STATE.wakeUpComplete) return;
+
+                const currentHeight = STATE.player.pos.y - (CONFIG.playerHeight - STATE.player.targetHeight);
+                STATE.player.pos.y = currentHeight;
+
+                const qYaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), STATE.player.rot.x);
+                const qPitch = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), STATE.player.rot.y);
+                this.camera.quaternion.copy(qYaw).multiply(qPitch);
+
+                this.moveDir.set(0, 0, 0);
+                this.speedMultiplier = STATE.player.isSprinting ? CONFIG.sprintMultiplier : 1.0;
+                if (STATE.player.isCrouching) this.speedMultiplier *= 0.4;
+
+                if (STATE.player.movingForward) this.moveDir.z -= 1;
+                if (STATE.player.movingBackward) this.moveDir.z += 1;
+                if (STATE.player.movingLeft) this.moveDir.x -= 1;
+                if (STATE.player.movingRight) this.moveDir.x += 1;
+                if (CONFIG.isMobile && STATE.joystick.active) {
+                    this.moveDir.x = STATE.joystick.delta.x;
+                    this.moveDir.z = STATE.joystick.delta.y;
+                }
+                if (this.moveDir.lengthSq() > 0) this.moveDir.normalize();
+
+                const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(qYaw).normalize();
+                const right = new THREE.Vector3(1, 0, 0).applyQuaternion(qYaw).normalize();
+                const velocityPlane = new THREE.Vector3()
+                    .addScaledVector(forward, -this.moveDir.z)
+                    .addScaledVector(right, this.moveDir.x);
+                if (velocityPlane.lengthSq() > 0) velocityPlane.normalize().multiplyScalar(CONFIG.moveSpeed * this
+                    .speedMultiplier);
+                STATE.player.vel.x = velocityPlane.x;
+                STATE.player.vel.z = velocityPlane.z;
+                STATE.player.vel.y += CONFIG.gravity * delta;
+
+                const prevPos = STATE.player.pos.clone();
+                STATE.player.pos.x += STATE.player.vel.x * delta;
+                if (this.checkCollisions()) { STATE.player.pos.x = prevPos.x;
+                    STATE.player.vel.x = 0; }
+                STATE.player.pos.z += STATE.player.vel.z * delta;
+                if (this.checkCollisions()) { STATE.player.pos.z = prevPos.z;
+                    STATE.player.vel.z = 0; }
+                STATE.player.pos.y += STATE.player.vel.y * delta;
+                if (this.checkCollisions()) { STATE.player.pos.y = prevPos.y;
+                    STATE.player.vel.y = 0;
+                    STATE.player.onGround = true; }
+
+                const floorHeight = CONFIG.playerHeight - (CONFIG.playerHeight - STATE.player.targetHeight);
+                if (STATE.player.pos.y <= floorHeight) {
+                    if (!STATE.player.onGround && STATE.player.vel.y < -1) audio.playSFX('land');
+                    STATE.player.pos.y = floorHeight;
+                    STATE.player.vel.y = 0;
+                    STATE.player.onGround = true;
+                }
+
+                const bound = 4.3;
+                if (STATE.player.pos.x < -bound) { STATE.player.pos.x = -bound;
+                    STATE.player.vel.x = 0; }
+                if (STATE.player.pos.x > bound) { STATE.player.pos.x = bound;
+                    STATE.player.vel.x = 0; }
+                if (STATE.player.pos.z < -bound) { STATE.player.pos.z = -bound;
+                    STATE.player.vel.z = 0; }
+                if (STATE.player.pos.z > bound) { STATE.player.pos.z = bound;
+                    STATE.player.vel.z = 0; }
+
+                this.camera.position.copy(STATE.player.pos);
+
+                const isMoving = this.moveDir.lengthSq() > 0.1 || STATE.joystick.active;
+                if (STATE.player.onGround && isMoving) {
+                    this.footstepTimer += delta;
+                    const stepInterval = STATE.player.isCrouching ? 0.45 : 0.32;
+                    if (this.footstepTimer > stepInterval) {
+                        this.footstepTimer = 0;
+                        if (STATE.player.isCrouching) audio.playSFX('footstep_crouch');
+                        else audio.playSFX('footstep');
+                    }
+                } else { this.footstepTimer = 0; }
+
+                if (STATE.player.onGround && !this.wasOnGround && STATE.player.vel.y < 0) audio.playSFX('land');
+                this.wasOnGround = STATE.player.onGround;
+
+                // --- EASTER EGGS ---
+                if (this.engine.easterEggTriggers.mirror) {
+                    const mPos = new THREE.Vector3();
+                    this.engine.easterEggTriggers.mirror.getWorldPosition(mPos);
+                    const d = STATE.player.pos.distanceTo(mPos);
+                    if (d < 1.8 && !STATE.achievements.mirrorGazed) {
+                        STATE.easterEggs.mirrorGazeTimer += delta;
+                        if (STATE.easterEggs.mirrorGazeTimer > 3.0) {
+                            STATE.achievements.mirrorGazed = true;
+                            uiManager.triggerAchievement("You gazed into the mirror — confidence +10!");
+                            audio.playSFX('hit');
+                            setTimeout(() => audio.playSFX('hit'), 150);
+                            const mo = this.engine.easterEggTriggers.mirror;
+                            if (mo) setTimeout(() => uiManager.openPanel(mo), 300);
+                        }
+                    } else if (d >= 1.8) STATE.easterEggs.mirrorGazeTimer = 0;
+                }
+
+                if (this.engine.easterEggTriggers.fan) {
+                    const fPos = new THREE.Vector3();
+                    this.engine.easterEggTriggers.fan.getWorldPosition(fPos);
+                    const d = STATE.player.pos.distanceTo(fPos);
+                    if (d < 1.5 && !STATE.achievements.fanWhisper) {
+                        STATE.easterEggs.fanInteractTimer += delta;
+                        if (STATE.easterEggs.fanInteractTimer > 2.0) {
+                            STATE.achievements.fanWhisper = true;
+                            uiManager.triggerAchievement("You heard the fan whisper: 'BlankedWave was here'");
+                            audio.playSFX('hit');
+                            setTimeout(() => audio.playSFX('hit'), 150);
+                            const fo = this.engine.easterEggTriggers.fan;
+                            if (fo) setTimeout(() => uiManager.openPanel(fo), 300);
+                        }
+                    } else if (d >= 1.5) STATE.easterEggs.fanInteractTimer = 0;
+                }
+
+                const nasiPos = new THREE.Vector3(-1.8, 0.05, 3.0);
+                const dNasi = STATE.player.pos.distanceTo(nasiPos);
+                if (dNasi < 1.2 && this.engine.easterEggTriggers.nasiLemak) {
+                    this.engine.easterEggTriggers.nasiLemak.visible = true;
+                    if (!STATE.achievements.foundNasiLemak) {
+                        STATE.achievements.foundNasiLemak = true;
+                        uiManager.triggerAchievement("You found Nasi Lemak under the bed! 🍛");
+                        audio.playSFX('hit');
+                        setTimeout(() => audio.playSFX('hit'), 150);
+                        const nt = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE
+                            .MeshBasicMaterial({ visible: false }));
+                        nt.name = "Nasi Lemak";
+                        nt.userData = { id: "nasilemak", subtitle: "Hidden under bed — special treat!" };
+                        setTimeout(() => uiManager.openPanel(nt), 300);
+                    }
+                } else if (this.engine.easterEggTriggers.nasiLemak && dNasi >= 1.5) {
+                    this.engine.easterEggTriggers.nasiLemak.visible = false;
+                }
+
+                if (this.engine.easterEggTriggers.guitar) {
+                    const gPos = new THREE.Vector3(-4.2, 0.4, -3.8);
+                    const dG = STATE.player.pos.distanceTo(gPos);
+                    if (dG < 1.2 && !STATE.achievements.foundGuitar) {
+                        this.engine.easterEggTriggers.guitar.visible = true;
+                        STATE.achievements.foundGuitar = true;
+                        uiManager.triggerAchievement("You found a hidden guitar! 🎸");
+                        audio.playSFX('hit');
+                        setTimeout(() => audio.playSFX('hit'), 150);
+                        const gt = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE
+                            .MeshBasicMaterial({ visible: false }));
+                        gt.name = "Guitar";
+                        gt.userData = { id: "guitar", subtitle: "Found a guitar! 🎸" };
+                        setTimeout(() => uiManager.openPanel(gt), 300);
+                    }
+                }
+
+                if (this.engine.easterEggTriggers.remote) {
+                    const rPos = new THREE.Vector3(2.5, 0.6, -3.6);
+                    const dR = STATE.player.pos.distanceTo(rPos);
+                    if (dR < 1.2 && !STATE.achievements.foundRemote) {
+                        this.engine.easterEggTriggers.remote.visible = true;
+                        STATE.achievements.foundRemote = true;
+                        uiManager.triggerAchievement("You found the TV remote! 📺");
+                        audio.playSFX('hit');
+                        setTimeout(() => audio.playSFX('hit'), 150);
+                        const rt = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE
+                            .MeshBasicMaterial({ visible: false }));
+                        rt.name = "TV Remote";
+                        rt.userData = { id: "remote", subtitle: "Found the TV remote! 📺" };
+                        setTimeout(() => uiManager.openPanel(rt), 300);
+                    }
+                }
+
+                if (Math.random() < 0.002) audio.playSFX('ambient');
+            }
+
+            checkCollisions() {
+                let colliding = false;
+                const heightOffset = STATE.player.isCrouching ? CONFIG.crouchHeight : CONFIG.playerHeight;
+                const radius = 0.22;
+                this.engine.colliders.forEach(obj => {
+                    const box = new THREE.Box3().setFromObject(obj);
+                    box.expandByScalar(radius);
+                    const head = new THREE.Vector3(STATE.player.pos.x, STATE.player.pos.y, STATE.player.pos.z);
+                    const feet = new THREE.Vector3(STATE.player.pos.x, STATE.player.pos.y - heightOffset + 0.1,
+                        STATE.player.pos.z);
+                    const mid = new THREE.Vector3(STATE.player.pos.x, STATE.player.pos.y - heightOffset / 2,
+                        STATE.player.pos.z);
+                    if (box.containsPoint(head) || box.containsPoint(feet) || box.containsPoint(mid)) colliding =
+                        true;
+                });
+                return colliding;
+            }
+        }
+
+        // ============================================================
+        // INTERACTION SYSTEM
+        // ============================================================
+        class InteractionSystem {
+            constructor(engine) {
+                this.engine = engine;
+                this.promptEl = document.getElementById('interaction-prompt');
+                this.promptTitle = document.getElementById('prompt-title');
+                this.mobileBtnInteract = document.getElementById('mobile-btn-interact');
+            }
+            update() {
+                if (STATE.viewingPanel || !STATE.wakeUpComplete) { this.hidePrompt(); return; }
+                this.engine.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.engine.camera);
+                const intersects = this.engine.raycaster.intersectObjects(this.engine.interactiveObjects);
+                if (intersects.length > 0 && intersects[0].distance < CONFIG.interactRange) {
+                    const hit = intersects[0].object;
+                    if (STATE.activeInteraction !== hit) {
+                        STATE.activeInteraction = hit;
+                        this.showPrompt(hit.name, hit.userData.subtitle);
+                        document.getElementById('crosshair').classList.add('active');
+                    }
+                } else {
+                    if (STATE.activeInteraction) {
+                        STATE.activeInteraction = null;
+                        this.hidePrompt();
+                        document.getElementById('crosshair').classList.remove('active');
+                    }
+                }
+            }
+            showPrompt(title, subtitle) {
+                this.promptTitle.innerText = title;
+                this.promptEl.style.opacity = '1';
+                this.promptEl.style.transform = 'translate(-50%,-50%) scale(1)';
+                if (CONFIG.isMobile) { this.mobileBtnInteract.style.opacity = '1';
+                    this.mobileBtnInteract.classList.remove('opacity-40', 'scale-95'); }
+            }
+            hidePrompt() {
+                this.promptEl.style.opacity = '0';
+                this.promptEl.style.transform = 'translate(-50%,-50%) scale(0.9)';
+                if (CONFIG.isMobile) { this.mobileBtnInteract.style.opacity = '0.4';
+                    this.mobileBtnInteract.classList.add('opacity-40', 'scale-95'); }
+            }
+        }
+
+        // ============================================================
+        // CONTENT INTEGRATION
+        // ============================================================
+        class ContentIntegration {
+            renderProjects() {
+                const container = document.getElementById('github-projects-container');
+                if (!container) return;
+                let html = '';
+                CONFIG.projects.forEach((p) => {
+                    const colorMap = { violet: 'border-violet-500/30 hover:border-violet-500',
+                        emerald: 'border-emerald-500/30 hover:border-emerald-500',
+                        rose: 'border-rose-500/30 hover:border-rose-500',
+                        amber: 'border-amber-500/30 hover:border-amber-500' };
+                    const bc = colorMap[p.color] || 'border-violet-500/30 hover:border-violet-500';
+                    html += `
+                        <a href="${p.url}" target="_blank" class="project-card block p-4 border ${bc} rounded-xl bg-slate-900/40 hover:bg-slate-900/70 transition">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-10 h-10 rounded-lg bg-${p.color}-500/20 border border-${p.color}-500/30 flex items-center justify-center text-${p.color}-400">
+                                    <i class="fa-solid ${p.icon} text-lg"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-sm font-bold text-white truncate">${p.name}</h4>
+                                    <p class="text-xs text-gray-400 truncate">${p.desc}</p>
+                                </div>
+                                <i class="fa-solid fa-arrow-right text-gray-500 text-xs"></i>
+                            </div>
+                            <div class="flex items-center gap-3 text-[10px] text-gray-500">
+                                <span><i class="fa-regular fa-star mr-1"></i> 0</span>
+                                <span><i class="fa-regular fa-code-fork mr-1"></i> 0</span>
+                            </div>
+                        </a>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+
+            renderGallery() {
+                const photos = [
+                    { grad: 'from-teal-900 via-indigo-900 to-slate-900', icon: 'fa-camera',
+                    caption: 'Gaming Setup 🎮', likes: '142' },
+                    { grad: 'from-rose-900 via-purple-900 to-slate-900', icon: 'fa-music',
+                        caption: 'Late night with Milo ☕🌙', likes: '238' },
+                    { grad: 'from-blue-900 via-emerald-900 to-slate-900', icon: 'fa-code',
+                        caption: 'Dev session 💻✨', likes: '189' },
+                    { grad: 'from-orange-900 via-pink-900 to-slate-900', icon: 'fa-shirt',
+                        caption: 'Raya fit check 🌙⭐', likes: '312' },
+                    { grad: 'from-violet-900 via-blue-900 to-slate-900', icon: 'fa-gamepad',
+                        caption: 'Valorant grind 🎯', likes: '97' },
+                    { grad: 'from-emerald-900 via-teal-900 to-slate-900', icon: 'fa-image',
+                        caption: 'Somewhere in Malaysia 🇲🇾', likes: '224' },
+                    { grad: 'from-fuchsia-900 via-rose-900 to-slate-900', icon: 'fa-star',
+                        caption: 'Achievement unlocked 🏆', likes: '415' },
+                    { grad: 'from-cyan-900 via-slate-900 to-indigo-900', icon: 'fa-laptop',
+                        caption: 'Portfolio update 👀', likes: '176' },
+                    { grad: 'from-amber-900 via-orange-900 to-red-900', icon: 'fa-sun', caption: 'Weekend vibes 🌅',
+                        likes: '203' },
+                ];
+                let html = '';
+                photos.forEach((p, i) => {
+                    html += `<div class="ig-photo-tile bg-gradient-to-br ${p.grad}" onclick="igViewer.openPhoto(${i})" data-index="${i}">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <i class="fa-solid ${p.icon} text-white/25 text-2xl"></i>
+                            </div>
+                            <div class="ig-tile-overlay">
+                                <div class="text-center px-2">
+                                    <i class="fa-solid fa-heart text-white text-sm mr-1"></i>
+                                    <span class="text-white text-xs font-bold">${p.likes}</span>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                const container = document.getElementById('gallery-container');
+                if (container) container.innerHTML = html;
+                window.igViewer = {
+                    photos,
+                    openPhoto(i) {
+                        const p = photos[i];
+                        const lb = document.getElementById('ig-lightbox');
+                        const img = document.getElementById('ig-lightbox-img');
+                        const cap = document.getElementById('ig-lightbox-caption');
+                        const likes = document.getElementById('ig-lightbox-likes');
+                        if (!lb) return;
+                        img.className =
+                            `w-full aspect-square rounded-2xl mb-4 bg-gradient-to-br ${p.grad} flex items-center justify-center`;
+                        img.innerHTML = `<i class="fa-solid ${p.icon} text-white/30 text-5xl"></i>`;
+                        cap.textContent = p.caption;
+                        likes.textContent = p.likes;
+                        lb.classList.add('open');
+                    }
+                };
+                const lbClose = document.getElementById('ig-lightbox-close');
+                if (lbClose) lbClose.onclick = () => document.getElementById('ig-lightbox').classList.remove('open');
+            }
+        }
+
+        // ============================================================
+        // YOUTUBE PLAYER
+        // ============================================================
+        function playYouTubeVideo(videoId) {
+            const iframe = document.getElementById('yt-iframe');
+            if (iframe) {
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&controls=1`;
+            }
+        }
+
+        // ============================================================
+        // UI MANAGER
+        // ============================================================
+        class UIManager {
+            constructor(engine) {
+                this.engine = engine;
+                this.overlay = document.getElementById('ui-panel-overlay');
+                this.panel = document.getElementById('ui-panel');
+                this.panelTitle = document.getElementById('panel-title');
+                this.panelSubtitle = document.getElementById('panel-subtitle');
+                this.panelIcon = document.getElementById('panel-icon');
+                this.panelBody = document.getElementById('panel-body');
+                this._dialogueTimer = null;
+                document.getElementById('close-panel-btn').addEventListener('click', () => this.closePanel());
+                document.getElementById('panel-action-btn').addEventListener('click', () => this.closePanel());
+                document.getElementById('dialogue-close-btn').addEventListener('click', (e) => { e.stopPropagation();
+                    this.hideIntrovertDialogue(); });
+                document.getElementById('dialogue-box').addEventListener('click', () => { this
+                    .hideIntrovertDialogue(); });
+            }
+
+            triggerIntrovertDialogue() {
+                const textEl = document.getElementById('dialogue-text');
+                const boxEl = document.getElementById('dialogue-box');
+                const timerBar = document.getElementById('dialogue-timer-bar');
+                const randText = dialogueMonologues[Math.floor(Math.random() * dialogueMonologues.length)];
+                textEl.innerText = randText;
+                boxEl.classList.remove('opacity-0', 'scale-90', 'pointer-events-none');
+                audio.playSFX('hit');
+                if (document.pointerLockElement) document.exitPointerLock();
+                timerBar.style.transition = 'none';
+                timerBar.style.transform = 'scaleX(1)';
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        timerBar.style.transition = 'transform 5s linear';
+                        timerBar.style.transform = 'scaleX(0)';
+                    });
+                });
+                clearTimeout(this._dialogueTimer);
+                this._dialogueTimer = setTimeout(() => this.hideIntrovertDialogue(), 5000);
+            }
+
+            hideIntrovertDialogue() {
+                clearTimeout(this._dialogueTimer);
+                document.getElementById('dialogue-box').classList.add('opacity-0', 'scale-90', 'pointer-events-none');
+            }
+
+            openPanel(interactiveObj) {
+                const id = interactiveObj.userData.id;
+                const title = interactiveObj.name;
+                const sub = interactiveObj.userData.subtitle;
+                STATE.viewingPanel = true;
+                STATE.player.preInteractPos.copy(this.engine.camera.position);
+                STATE.player.preInteractRot.copy(STATE.player.rot);
+                if (document.pointerLockElement) document.exitPointerLock();
+                audio.playSFX('hit');
+
+                if (id === "almari") {
+                    gsap.to(this.engine.animatedObjects.almariLeftDoor.rotation, { y: -Math.PI / 1.3, duration: 0.8,
+                        ease: "power2.out" });
+                    gsap.to(this.engine.animatedObjects.almariRightDoor.rotation, { y: Math.PI / 1.3, duration: 0.8,
+                        ease: "power2.out" });
+                }
+
+                const tplMap = {
+                    'pc': 'tpl-pc',
+                    'tv': 'tpl-tv',
+                    'almari': 'tpl-almari',
+                    'whiteboard': 'tpl-whiteboard',
+                    'phone': 'tpl-phone',
+                    'gaming': 'tpl-gaming',
+                    'secret': 'tpl-secret',
+                    'nasilemak': 'tpl-nasilemak',
+                    'mirror-msg': 'tpl-mirror-msg',
+                    'fan-secret': 'tpl-fan-secret',
+                    'photowall': 'tpl-photowall',
+                    'guitar': 'tpl-guitar',
+                    'remote': 'tpl-remote'
+                };
+                const tplId = tplMap[id] || 'tpl-pc';
+                const tpl = document.getElementById(tplId);
+                this.panelBody.innerHTML = tpl ? tpl.innerHTML : '<p class="text-xs text-gray-500">Node offline.</p>';
+                this.panelTitle.innerText = title;
+                this.panelSubtitle.innerText = sub;
+
+                let iconClass = 'fa-solid fa-cube';
+                if (id === 'pc') iconClass = 'fa-solid fa-laptop';
+                if (id === 'tv') iconClass = 'fa-solid fa-tv';
+                if (id === 'almari') iconClass = 'fa-solid fa-shirt';
+                if (id === 'whiteboard') iconClass = 'fa-solid fa-chalkboard';
+                if (id === 'phone') iconClass = 'fa-solid fa-mobile-screen-button';
+                if (id === 'gaming') iconClass = 'fa-solid fa-gamepad';
+                if (id === 'photowall') iconClass = 'fa-brands fa-instagram';
+                if (id === 'secret') iconClass = 'fa-solid fa-key';
+                if (id === 'nasilemak') iconClass = 'fa-solid fa-utensils';
+                if (id === 'mirror-msg') iconClass = 'fa-regular fa-face-smile';
+                if (id === 'fan-secret') iconClass = 'fa-solid fa-wind';
+                if (id === 'guitar') iconClass = 'fa-solid fa-guitar';
+                if (id === 'remote') iconClass = 'fa-solid fa-tv';
+                this.panelIcon.className = iconClass + ' text-violet-400 text-base';
+
+                if (id === 'pc') contentManager.renderProjects();
+                if (id === 'photowall') contentManager.renderGallery();
+                if (id === 'phone') {
+                    setTimeout(() => {
+                        const copyBtn = document.getElementById('btn-copy-discord');
+                        if (copyBtn) copyBtn.addEventListener('click', () => {
+                            navigator.clipboard.writeText('blankedwave').then(() => {
+                                copyBtn.textContent = 'Copied!';
+                                copyBtn.classList.replace('bg-indigo-600', 'bg-green-600');
+                                setTimeout(() => { copyBtn.textContent = 'Copy';
+                                    copyBtn.classList.replace('bg-green-600', 'bg-indigo-600'); },
+                                2000);
+                            }).catch(() => {
+                                const ta = document.createElement('textarea');
+                                ta.value = 'blankedwave';
+                                document.body.appendChild(ta);
+                                ta.select();
+                                document.execCommand('copy');
+                                document.body.removeChild(ta);
+                                copyBtn.textContent = 'Copied!';
+                                setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+                            });
+                        });
+                    }, 120);
+                }
+
+                const targetPos = new THREE.Vector3();
+                interactiveObj.getWorldPosition(targetPos);
+                const cameraEndPos = targetPos.clone().add(new THREE.Vector3(0, 0.4, 1.15).applyQuaternion(interactiveObj
+                    .quaternion));
+                gsap.killTweensOf(this.engine.camera.position);
+                gsap.to(this.engine.camera.position, { x: cameraEndPos.x, y: cameraEndPos.y, z: cameraEndPos.z,
+                    duration: 0.8, ease: "power2.out" });
+
+                this.overlay.classList.remove('pointer-events-none');
+                gsap.to(this.overlay, { opacity: 1, duration: 0.3 });
+                gsap.to(this.panel, { opacity: 1, scale: 1, duration: 0.4, delay: 0.1 });
+            }
+
+            closePanel() {
+                if (this.engine.animatedObjects.almariLeftDoor) {
+                    gsap.to(this.engine.animatedObjects.almariLeftDoor.rotation, { y: 0, duration: 0.6,
+                        ease: "power2.inOut" });
+                    gsap.to(this.engine.animatedObjects.almariRightDoor.rotation, { y: 0, duration: 0.6,
+                        ease: "power2.inOut" });
+                }
+                gsap.to(this.panel, {
+                    opacity: 0,
+                    scale: 0.95,
+                    duration: 0.3,
+                    onComplete: () => {
+                        gsap.to(this.engine.camera.position, {
+                            x: STATE.player.preInteractPos.x,
+                            y: STATE.player.preInteractPos.y,
+                            z: STATE.player.preInteractPos.z,
+                            duration: 0.6,
+                            ease: "power2.inOut",
+                            onComplete: () => {
+                                this.overlay.classList.add('pointer-events-none');
+                                gsap.to(this.overlay, { opacity: 0, duration: 0.2 });
+                                STATE.player.pos.copy(STATE.player.preInteractPos);
+                                STATE.player.rot.copy(STATE.player.preInteractRot);
+                                STATE.player.vel.set(0, 0, 0);
+                                STATE.viewingPanel = false;
+                            }
+                        });
+                    }
+                });
+            }
+
+            triggerAchievement(text) {
+                const banner = document.getElementById('achievement-banner');
+                document.getElementById('achievement-text').innerText = text;
+                banner.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
+                audio.playSFX('hit');
+                setTimeout(() => audio.playSFX('hit'), 80);
+                setTimeout(() => audio.playSFX('hit'), 160);
+                setTimeout(() => banner.classList.add('opacity-0', 'translate-y-2', 'pointer-events-none'), 4000);
+            }
+        }
+
+        // ============================================================
+        // INITIALIZATION
+        // ============================================================
+        let uiManager;
+        const contentManager = new ContentIntegration();
+
+        window.addEventListener('load', () => {
+            const engine = new GameEngine();
+            const controller = new PlayerController(engine);
+            const interactions = new InteractionSystem(engine);
+            uiManager = new UIManager(engine);
+            audio.init();
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 20) + 15;
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    document.getElementById('loading-bar').style.width = '100%';
+                    document.getElementById('loading-text').innerText = "Malaysia Cozy Bujang Room Ready.";
+                    document.getElementById('start-btn').classList.remove('hidden');
+                } else {
+                    document.getElementById('loading-bar').style.width = `${progress}%`;
+                }
+            }, 100);
+
+            document.getElementById('start-btn').addEventListener('click', () => {
+                CONFIG.audioEnabled = true;
+                audio.init();
+                audio.startMusic();
+                gsap.to(document.getElementById('loading-screen'), {
+                    opacity: 0,
+                    pointerEvents: 'none',
+                    duration: 0.5,
+                    onComplete: () => {
+                        document.getElementById('loading-screen').remove();
+                        // Wake-up animation already started in engine constructor
+                    }
+                });
+            });
+
+            document.getElementById('toggle-audio').addEventListener('click', () => {
+                const enabled = audio.toggleMusic();
+                document.getElementById('toggle-audio').innerHTML = enabled ?
+                    '<i class="fa-solid fa-music text-sm text-violet-400"></i>' :
+                    '<i class="fa-solid fa-music text-sm text-gray-500"></i>';
+            });
+
+            document.getElementById('volume-slider').addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value) / 100;
+                audio.setVolume(val);
+            });
+
+            document.getElementById('toggle-time').addEventListener('click', () => {
+                CONFIG.dayMode = !CONFIG.dayMode;
+                if (CONFIG.dayMode) {
+                    document.getElementById('toggle-time').innerHTML =
+                        '<i class="fa-solid fa-sun text-sm text-amber-400"></i>';
+                    engine.scene.fog.color.setHex(0x93c5fd);
+                    engine.ambientLight.color.setHex(0xe0f2fe);
+                    engine.ambientLight.intensity = 1.2;
+                    engine.renderer.setClearColor(0x93c5fd);
+                } else {
+                    document.getElementById('toggle-time').innerHTML =
+                        '<i class="fa-solid fa-moon text-sm text-indigo-400"></i>';
+                    engine.scene.fog.color.setHex(0x0c0a0f);
+                    engine.ambientLight.color.setHex(0x2d2244);
+                    engine.ambientLight.intensity = 0.7;
+                    engine.renderer.setClearColor(0x0c0a0f);
+                }
+            });
+
+            document.getElementById('reset-position').addEventListener('click', () => {
+                STATE.player.pos.set(0, CONFIG.playerHeight, 2.5);
+                STATE.player.vel.set(0, 0, 0);
+                STATE.player.isCrouching = false;
+                STATE.player.targetHeight = CONFIG.playerHeight;
+                engine.camera.position.copy(STATE.player.pos);
+                document.getElementById('crouch-status').textContent = 'Standing';
+            });
+
+            let frames = 0,
+                lastFpsUpdate = 0;
+            const fpsText = document.getElementById('fps-display');
+
+            function tick() {
+                requestAnimationFrame(tick);
+                const delta = Math.min(engine.clock.getDelta(), 0.1);
+                frames++;
+                const now = performance.now();
+                if (now - lastFpsUpdate >= 1000) { fpsText.innerText = `${frames} FPS`;
+                    frames = 0;
+                    lastFpsUpdate = now; }
+
+                const elapsed = engine.clock.getElapsedTime();
+                engine.matrixScreen.update(elapsed);
+                engine.gamingScreen.update(elapsed);
+                engine.dvdScreensaver.update();
+
+                controller.update(delta);
+                interactions.update();
+
+                if (engine.animatedObjects.fan) engine.animatedObjects.fan.rotation.y += 4.5 * delta;
+                if (engine.animatedObjects.standFanBlade) {
+                    engine.animatedObjects.standFanBlade.rotation.z += 12 * delta;
+                }
+
+                if (engine.animatedObjects.computerGlow) {
+                    const r = Math.sin(elapsed * 2.0) * 0.5 + 0.5;
+                    const g = Math.cos(elapsed * 1.5) * 0.5 + 0.5;
+                    const b = Math.sin(elapsed * 3.0) * 0.5 + 0.5;
+                    engine.animatedObjects.computerGlow.material.color.setRGB(r, g, b);
+                    engine.deskStrip.color.setRGB(r, g, b);
+                }
+
+                if (engine.animatedObjects.dust) {
+                    const pos = engine.animatedObjects.dust.geometry.attributes.position.array;
+                    for (let i = 1; i < pos.length; i += 3) { pos[i] -= 0.1 * delta; if (pos[i] < 0) pos[i] = 3.5; }
+                    engine.animatedObjects.dust.geometry.attributes.position.needsUpdate = true;
+                }
+                if (engine.animatedObjects.rain) {
+                    const rPos = engine.animatedObjects.rain.geometry.attributes.position.array;
+                    for (let i = 1; i < rPos.length; i += 3) { rPos[i] -= 12 * delta; if (rPos[i] < 0) rPos[i] = 8; }
+                    engine.animatedObjects.rain.geometry.attributes.position.needsUpdate = true;
+                }
+
+                engine.renderer.render(engine.scene, engine.camera);
+            }
+            tick();
+
+            window.playYouTubeVideo = playYouTubeVideo;
+        });
+
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (r > w / 2) r = w / 2;
+                if (r > h / 2) r = h / 2;
+                this.moveTo(x + r, y);
+                this.arcTo(x + w, y, x + w, y + h, r);
+                this.arcTo(x + w, y + h, x, y + h, r);
+                this.arcTo(x, y + h, x, y, r);
+                this.arcTo(x, y, x + w, y, r);
+                return this;
+            };
+        }
+    </script>
+</body>
+</html>
