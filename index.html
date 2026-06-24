@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -194,19 +193,6 @@
             height: 100%;
             border: 0;
         }
-        .project-thumb {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: rgba(255, 255, 255, 0.3);
-            overflow: hidden;
-            position: relative;
-        }
         .project-card {
             transition: transform 0.2s, box-shadow 0.2s;
         }
@@ -289,13 +275,6 @@
             cursor: pointer;
             border: none;
         }
-        /* DVD screensaver canvas */
-        #tv-dvd-canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-            background: #020617;
-        }
         .tv-screen-wrapper {
             width: 100%;
             height: 100%;
@@ -308,6 +287,20 @@
             width: 100% !important;
             height: 100% !important;
             display: block;
+        }
+
+        /* Window frame hole using clip-path or pseudo */
+        .window-frame {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+        .window-frame .hole {
+            position: absolute;
+            inset: 0;
+            background: transparent;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -705,77 +698,37 @@
             </div>
         </div>
 
-        <!-- Photo Wall -->
+        <!-- Photo Wall — My Photos (no Instagram) -->
         <div id="tpl-photowall">
             <div class="relative">
                 <div id="ig-lightbox">
                     <button id="ig-lightbox-close"><i class="fa-solid fa-xmark"></i></button>
                     <div class="w-full max-w-sm">
-                        <div id="ig-lightbox-img" class="w-full aspect-square rounded-2xl mb-4"></div>
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">Q</div>
-                            <span class="text-sm font-bold text-white">qil.jpeg</span>
+                        <div id="ig-lightbox-img" class="w-full aspect-square rounded-2xl mb-4 bg-slate-800 flex items-center justify-center text-5xl text-gray-600">
+                            <i class="fa-regular fa-image"></i>
                         </div>
-                        <p id="ig-lightbox-caption" class="text-xs text-gray-300 leading-relaxed mb-3"></p>
-                        <div class="flex items-center gap-4 text-gray-400 text-xs mb-4">
+                        <p id="ig-lightbox-caption" class="text-xs text-gray-300 leading-relaxed mb-3 text-center"></p>
+                        <div class="flex items-center justify-center gap-4 text-gray-400 text-xs mb-4">
                             <span><i class="fa-solid fa-heart text-rose-500 mr-1"></i> <span id="ig-lightbox-likes">--</span></span>
                             <span><i class="fa-regular fa-comment mr-1"></i> --</span>
                         </div>
-                        <a href="https://www.instagram.com/qil.jpeg" target="_blank" class="block w-full py-2 text-center bg-gradient-to-r from-pink-600 to-purple-600 text-white text-xs font-bold rounded-xl">
-                            <i class="fa-brands fa-instagram mr-1"></i> Lihat di Instagram
+                        <a id="ig-photo-link" href="#" target="_blank" class="block w-full py-2 text-center bg-gradient-to-r from-violet-600 to-purple-600 text-white text-xs font-bold rounded-xl">
+                            <i class="fa-regular fa-image mr-1"></i> Lihat Foto
                         </a>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-between mb-5">
                     <div class="flex items-center gap-3">
-                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 p-0.5">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 p-0.5">
                             <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center">
-                                <span class="text-xl font-bold text-white">Q</span>
+                                <span class="text-xl font-bold text-white">BW</span>
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-base font-bold text-white">qil.jpeg</h3>
-                            <p class="text-xs text-gray-400">Muhammad Aqil</p>
+                            <h3 class="text-base font-bold text-white">My Gallery</h3>
+                            <p class="text-xs text-gray-400">Personal photos</p>
                         </div>
-                    </div>
-                    <a href="https://www.instagram.com/qil.jpeg" target="_blank" class="px-4 py-1.5 bg-gradient-to-r from-pink-600 to-purple-600 text-white text-xs font-bold rounded-full hover:opacity-90 transition flex items-center gap-1.5">
-                        <i class="fa-brands fa-instagram"></i> Buka Profil
-                    </a>
-                </div>
-
-                <div class="flex gap-3 mb-5 overflow-x-auto pb-2 custom-scroll">
-                    <div class="flex flex-col items-center gap-1 flex-shrink-0">
-                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 p-0.5 cursor-pointer">
-                            <div class="w-full h-full rounded-full bg-gradient-to-br from-teal-800 to-indigo-900 flex items-center justify-center">
-                                <i class="fa-solid fa-camera text-white/70 text-lg"></i>
-                            </div>
-                        </div>
-                        <span class="text-[9px] text-gray-400">New Story</span>
-                    </div>
-                    <div class="flex flex-col items-center gap-1 flex-shrink-0">
-                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-rose-500 p-0.5 cursor-pointer">
-                            <div class="w-full h-full rounded-full bg-gradient-to-br from-rose-900 to-purple-900 flex items-center justify-center">
-                                <i class="fa-solid fa-gamepad text-white/70 text-lg"></i>
-                            </div>
-                        </div>
-                        <span class="text-[9px] text-gray-400">Gaming</span>
-                    </div>
-                    <div class="flex flex-col items-center gap-1 flex-shrink-0">
-                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 p-0.5 cursor-pointer">
-                            <div class="w-full h-full rounded-full bg-gradient-to-br from-emerald-900 to-teal-900 flex items-center justify-center">
-                                <i class="fa-solid fa-music text-white/70 text-lg"></i>
-                            </div>
-                        </div>
-                        <span class="text-[9px] text-gray-400">Music</span>
-                    </div>
-                    <div class="flex flex-col items-center gap-1 flex-shrink-0">
-                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 p-0.5 cursor-pointer">
-                            <div class="w-full h-full rounded-full bg-gradient-to-br from-blue-900 to-violet-900 flex items-center justify-center">
-                                <i class="fa-solid fa-laptop-code text-white/70 text-lg"></i>
-                            </div>
-                        </div>
-                        <span class="text-[9px] text-gray-400">Dev</span>
                     </div>
                 </div>
 
@@ -915,7 +868,7 @@
             </div>
         </div>
 
-        <!-- Easter Egg: Hidden TV Remote -->
+        <!-- Remote -->
         <div id="tpl-remote">
             <div class="max-w-md mx-auto text-center space-y-6">
                 <div class="relative w-20 h-20 mx-auto">
@@ -979,7 +932,19 @@
                 url: 'https://github.com/BlankedWave/room-scanner',
                 icon: 'fa-cube',
                 color: 'amber'
-            }]
+            }],
+            // My personal photos (replace URLs with your own)
+            myPhotos: [
+                { url: 'https://picsum.photos/seed/1/400/400', caption: 'Sunset at the beach 🌅', likes: 42 },
+                { url: 'https://picsum.photos/seed/2/400/400', caption: 'Coffee & code ☕💻', likes: 28 },
+                { url: 'https://picsum.photos/seed/3/400/400', caption: 'Gaming night 🎮', likes: 56 },
+                { url: 'https://picsum.photos/seed/4/400/400', caption: 'Hiking adventure ⛰️', likes: 34 },
+                { url: 'https://picsum.photos/seed/5/400/400', caption: 'City lights 🌃', likes: 47 },
+                { url: 'https://picsum.photos/seed/6/400/400', caption: 'Chill vibes 😎', likes: 39 },
+                { url: 'https://picsum.photos/seed/7/400/400', caption: 'New setup 🔥', likes: 63 },
+                { url: 'https://picsum.photos/seed/8/400/400', caption: 'Rainy day ☔', likes: 22 },
+                { url: 'https://picsum.photos/seed/9/400/400', caption: 'Weekend getaway 🏖️', likes: 51 }
+            ]
         };
 
         const STATE = {
@@ -1445,171 +1410,80 @@
             return new THREE.CanvasTexture(c);
         }
 
-        // =// ============================================================
-// DVD SCREENSAVER for TV - DVD Style Blankedwave Logo
-// ============================================================
-function createDVDScreensaver() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 640;
-    canvas.height = 360;
+        // ============================================================
+        // DVD SCREENSAVER for TV (moved outward from frame)
+        // ============================================================
+        function createDVDScreensaver() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 360;
+            const ctx = canvas.getContext('2d');
+            let x = 120,
+                y = 80,
+                dx = 2.0,
+                dy = 1.8;
+            let hue = 0;
+            let text = 'blankedwave';
+            let fontSize = 32;
 
-    const ctx = canvas.getContext('2d');
+            function update() {
+                const w = canvas.width,
+                    h = canvas.height;
+                ctx.fillStyle = '#020617';
+                ctx.fillRect(0, 0, w, h);
 
-    let x = 80;
-    let y = 60;
-    let dx = 1.6;
-    let dy = 1.4;
+                ctx.font = `bold ${fontSize}px 'Fira Code', monospace`;
+                const metrics = ctx.measureText(text);
+                const tw = metrics.width;
+                const th = fontSize * 1.3;
 
-    let hue = 0;
-    const text = 'blankedwave';
-    const fontSize = 36;
+                x += dx;
+                y += dy;
+                if (x < 0 || x + tw > w) { dx = -dx;
+                    hue = (hue + 25) % 360; }
+                if (y < 0 || y + th > h) { dy = -dy;
+                    hue = (hue + 25) % 360; }
 
-    function update() {
-        const w = canvas.width;
-        const h = canvas.height;
+                // Glow
+                ctx.shadowColor = `hsl(${hue}, 85%, 55%)`;
+                ctx.shadowBlur = 45;
 
-        // Background
-        ctx.fillStyle = '#020617';
-        ctx.fillRect(0, 0, w, h);
+                const grad = ctx.createLinearGradient(x, y, x + tw, y + th);
+                grad.addColorStop(0, `hsl(${hue}, 90%, 55%)`);
+                grad.addColorStop(0.5, `hsl(${(hue+40)%360}, 90%, 60%)`);
+                grad.addColorStop(1, `hsl(${(hue+80)%360}, 90%, 55%)`);
+                ctx.fillStyle = grad;
+                ctx.font = `bold ${fontSize}px 'Fira Code', monospace`;
+                ctx.textBaseline = 'top';
+                ctx.fillText(text, x, y);
 
-        // DVD-style font
-        ctx.font = `italic bold ${fontSize}px Impact, Arial Black, sans-serif`;
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(255,255,255,0.07)';
+                ctx.fillRect(x + 10, y + 8, tw * 0.3, 4);
 
-        const metrics = ctx.measureText(text);
-        const tw = metrics.width;
-        const th = fontSize * 1.15;
+                for (let i = 0; i < 14; i++) {
+                    const px = 15 + i * 45 + Math.sin(i * 0.7 + Date.now() * 0.0005) * 12;
+                    const py = h - 12 + Math.sin(i * 0.5 + Date.now() * 0.0007) * 6;
+                    ctx.fillStyle = `hsla(${hue+i*15}, 80%, 60%, 0.25)`;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 2 + Math.sin(i + Date.now() * 0.001) * 1.2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
 
-        // Move logo
-        x += dx;
-        y += dy;
+                return { canvas, ctx };
+            }
 
-        // Bounce + change color
-        if (x <= 0 || x + tw >= w) {
-            dx *= -1;
-            hue = (hue + 45) % 360;
+            return {
+                canvas,
+                ctx,
+                texture: new THREE.CanvasTexture(canvas),
+                update() {
+                    update();
+                    this.texture.needsUpdate = true;
+                },
+                getCanvas() { return canvas; }
+            };
         }
-
-        if (y <= 0 || y + th >= h) {
-            dy *= -1;
-            hue = (hue + 45) % 360;
-        }
-
-        // Glow
-        ctx.shadowColor = `hsl(${hue}, 100%, 60%)`;
-        ctx.shadowBlur = 25;
-
-        // Gradient
-        const grad = ctx.createLinearGradient(
-            x,
-            y,
-            x + tw,
-            y + th
-        );
-
-        grad.addColorStop(
-            0,
-            `hsl(${hue}, 100%, 60%)`
-        );
-
-        grad.addColorStop(
-            0.5,
-            `hsl(${(hue + 40) % 360}, 100%, 70%)`
-        );
-
-        grad.addColorStop(
-            1,
-            `hsl(${(hue + 80) % 360}, 100%, 60%)`
-        );
-
-        // Draw DVD-style logo
-        ctx.save();
-
-        ctx.translate(x, y);
-
-        // Slight skew like DVD logo
-        ctx.transform(1, 0, -0.22, 1, 0, 0);
-
-        ctx.font = `italic bold ${fontSize}px Impact, Arial Black, sans-serif`;
-        ctx.textBaseline = 'top';
-
-        // White outline
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = 'rgba(255,255,255,0.95)';
-        ctx.strokeText(text, 0, 0);
-
-        // Main fill
-        ctx.fillStyle = grad;
-        ctx.fillText(text, 0, 0);
-
-        // Inner shine
-        ctx.fillStyle = 'rgba(255,255,255,0.18)';
-        ctx.fillRect(
-            10,
-            6,
-            tw * 0.45,
-            4
-        );
-
-        ctx.restore();
-
-        // Decorative particles
-        ctx.shadowBlur = 0;
-
-        for (let i = 0; i < 12; i++) {
-            const px =
-                20 +
-                i * 50 +
-                Math.sin(
-                    i * 0.7 +
-                    Date.now() * 0.0005
-                ) * 10;
-
-            const py =
-                h - 15 +
-                Math.sin(
-                    i * 0.5 +
-                    Date.now() * 0.0007
-                ) * 5;
-
-            ctx.fillStyle = `hsla(${
-                hue + i * 15
-            }, 90%, 65%, 0.35)`;
-
-            ctx.beginPath();
-
-            ctx.arc(
-                px,
-                py,
-                2 +
-                    Math.sin(
-                        i +
-                        Date.now() * 0.001
-                    ),
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fill();
-        }
-
-        return { canvas, ctx };
-    }
-
-    return {
-        canvas,
-        ctx,
-        texture: new THREE.CanvasTexture(canvas),
-
-        update() {
-            update();
-            this.texture.needsUpdate = true;
-        },
-
-        getCanvas() {
-            return canvas;
-        }
-    };
-}
 
         // ============================================================
         // GAME ENGINE
@@ -1620,7 +1494,6 @@ function createDVDScreensaver() {
                 this.scene = new THREE.Scene();
                 this.scene.fog = new THREE.FogExp2(0x0c0a0f, 0.035);
                 this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-                // Start camera at bed position for wake-up effect
                 this.camera.position.set(-1.8, 0.8, 1.0);
                 this.renderer = new THREE.WebGLRenderer({ antialias: !CONFIG.isMobile, powerPreference: "high-performance" });
                 this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -1664,26 +1537,12 @@ function createDVDScreensaver() {
                 window.addEventListener('resize', () => this.onWindowResize());
                 this.loadBlissTexture();
                 setTimeout(() => audio.playAmbientRain(), 2000);
-                // Start the wake-up animation after a moment
                 setTimeout(() => this.wakeUpAnimation(), 500);
             }
 
             wakeUpAnimation() {
-                // Animate camera from bed to standing position
-                const startPos = new THREE.Vector3(-1.8, 0.8, 1.0);
                 const endPos = new THREE.Vector3(0, CONFIG.playerHeight, 2.5);
-                const startRot = new THREE.Vector2(0, -0.3);
-                const endRot = new THREE.Vector2(0, 0);
-
-                // First, look up from bed
-                gsap.to(STATE.player.rot, {
-                    x: 0,
-                    y: -0.2,
-                    duration: 0.5,
-                    ease: "power2.out"
-                });
-
-                // Then rise up
+                gsap.to(STATE.player.rot, { x: 0, y: -0.2, duration: 0.5, ease: "power2.out" });
                 gsap.to(this.camera.position, {
                     x: endPos.x,
                     y: endPos.y,
@@ -1691,15 +1550,12 @@ function createDVDScreensaver() {
                     duration: 1.8,
                     ease: "power3.inOut",
                     delay: 0.3,
-                    onUpdate: () => {
-                        STATE.player.pos.copy(this.camera.position);
-                    },
+                    onUpdate: () => { STATE.player.pos.copy(this.camera.position); },
                     onComplete: () => {
                         STATE.player.pos.set(endPos.x, endPos.y, endPos.z);
                         STATE.player.isAwake = true;
                         STATE.wakeUpComplete = true;
                         uiManager.triggerAchievement("Bangun dari tidur! ☀️ Selamat pagi!");
-                        // Start ambient sounds
                         setTimeout(() => audio.playSFX('ambient'), 500);
                     }
                 });
@@ -1808,14 +1664,60 @@ function createDVDScreensaver() {
                 floor.receiveShadow = true;
                 this.scene.add(floor);
 
-                // Walls — all same color
+                // Walls — all same color (including behind TV)
                 const wallMatSame = new THREE.MeshStandardMaterial({ color: 0x1e1b2b, roughness: 0.85 });
                 const backWall = new THREE.Mesh(new THREE.BoxGeometry(roomSize.w, roomSize.h, 0.2), wallMatSame);
                 backWall.position.set(0, roomSize.h / 2, -roomSize.d / 2);
                 this.scene.add(backWall);
-                const frontWall = new THREE.Mesh(new THREE.BoxGeometry(roomSize.w, roomSize.h, 0.2), wallMatSame);
-                frontWall.position.set(0, roomSize.h / 2, roomSize.d / 2);
-                this.scene.add(frontWall);
+              
+  // ============================================================
+// DINDING DEPAN DENGAN LUBANG (SAIZ PADAN DENGAN FRAME)
+// ============================================================
+const wallShape = new THREE.Shape();
+const hw = roomSize.w / 2;  // 4.5
+const hh = roomSize.h / 2;  // 2.0
+
+// Segi empat penuh
+wallShape.moveTo(-hw, -hh);
+wallShape.lineTo(hw, -hh);
+wallShape.lineTo(hw, hh);
+wallShape.lineTo(-hw, hh);
+wallShape.closePath();
+
+// --- Lubang mengikut saiz luar frame ---
+// Frame: lebar 2.8 (dari -1.36-0.04 ke 1.36+0.04), tinggi 1.64 (dari -0.78-0.04 ke 0.78+0.04)
+// Pusat frame: (-1.8, 1.6) dalam dunia
+const holeX = 1.80;
+const holeY = 1.6 - hh;   // = -0.4 (koordinat tempatan dinding)
+const holeW = 2.8;
+const holeH = 1.64;
+
+const holePath = new THREE.Path();
+holePath.moveTo(holeX - holeW/2, holeY - holeH/2);
+holePath.lineTo(holeX + holeW/2, holeY - holeH/2);
+holePath.lineTo(holeX + holeW/2, holeY + holeH/2);
+holePath.lineTo(holeX - holeW/2, holeY + holeH/2);
+holePath.closePath();
+wallShape.holes.push(holePath);
+
+// --- Extrude dinding (ketebalan 0.2) ---
+const extrudeSettings = {
+    depth: 0.2,
+    bevelEnabled: false
+};
+const wallGeom = new THREE.ExtrudeGeometry(wallShape, extrudeSettings);
+const wallMatHole = new THREE.MeshStandardMaterial({
+    color: 0x1e1b2b,
+    roughness: 0.85,
+    side: THREE.DoubleSide
+});
+const frontWallWithHole = new THREE.Mesh(wallGeom, wallMatHole);
+
+// Putar 180° supaya menghadap ke dalam, letak di z = 4.5
+frontWallWithHole.rotation.y = Math.PI;
+frontWallWithHole.position.set(0, roomSize.h / 2, roomSize.d / 2);
+this.scene.add(frontWallWithHole);
+              
                 const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.2, roomSize.h, roomSize.d), wallMatSame);
                 leftWall.position.set(-roomSize.w / 2, roomSize.h / 2, 0);
                 this.scene.add(leftWall);
@@ -1826,84 +1728,354 @@ function createDVDScreensaver() {
                 ceiling.position.y = roomSize.h + 0.1;
                 this.scene.add(ceiling);
 
-                // --- DOOR ---
-                const doorGroup = new THREE.Group();
-                doorGroup.position.set(0, 1.0, 4.35);
-                const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.1, 0.1), woodTeak);
-                doorGroup.add(doorFrame);
-                const doorPanel = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.95, 0.08), new THREE
-                    .MeshStandardMaterial({ color: 0x3d200e }));
-                doorPanel.position.set(0, 0, 0.01);
-                doorGroup.add(doorPanel);
-                const handle = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), new THREE
-                    .MeshStandardMaterial({ color: 0xd97706, metalness: 0.9 }));
-                handle.position.set(0.35, -0.1, 0.07);
-                doorGroup.add(handle);
-                const doorTrigger = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.1, 0.4), new THREE
-                    .MeshBasicMaterial({ visible: false }));
-                doorTrigger.name = "Pintu Keluar";
-                doorTrigger.userData = { id: "door", subtitle: "Balik ke dunia realiti" };
-                doorGroup.add(doorTrigger);
-                this.interactiveObjects.push(doorTrigger);
-                const doorCollider = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.1, 0.3), new THREE
-                    .MeshBasicMaterial({ visible: false }));
-                doorCollider.position.set(0, 1.0, 0);
-                doorGroup.add(doorCollider);
-                this.colliders.push(doorCollider);
-                this.scene.add(doorGroup);
+                
+// --- DOOR GROUP ---
+const doorGroup = new THREE.Group();
+doorGroup.position.set(0.8, 1.0, 4.35);
 
-                // --- WINDOW — see-through with landscape ---
-                const windowGroup = new THREE.Group();
-                windowGroup.position.set(-4.4, 2.0, -1.5);
-                windowGroup.rotation.y = Math.PI / 2;
+// =========================
+// FRAME
+// =========================
+const doorFrame = new THREE.Mesh(
+    new THREE.BoxGeometry(1.2, 2.1, 0.12),
+    woodTeak
+);
+doorGroup.add(doorFrame);
 
-                // Frame only
-                const frameOuter = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.6, 0.12), woodTeak);
-                windowGroup.add(frameOuter);
+// =========================
+// PANEL
+// =========================
+const doorPanelMat = new THREE.MeshStandardMaterial({
+    color: 0x5a3d2b,
+    roughness: 0.6
+});
 
-                // Landscape plane far behind
-                const landscapeGeo = new THREE.PlaneGeometry(10.0, 6.0);
-                const landscapeMat = new THREE.MeshBasicMaterial({ color: 0x4a90d9, side: THREE.DoubleSide });
-                const landscape = new THREE.Mesh(landscapeGeo, landscapeMat);
-                landscape.name = 'window-landscape';
-                landscape.position.set(0, 0, -4.5);
-                windowGroup.add(landscape);
+const doorPanel = new THREE.Mesh(
+    new THREE.BoxGeometry(1.0, 1.95, 0.06),
+    doorPanelMat
+);
 
-                // Window dividers
-                const divH = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.06, 0.06), woodTeak);
-                divH.position.set(0, 0, 0.04);
-                windowGroup.add(divH);
-                const divV = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.6, 0.06), woodTeak);
-                divV.position.set(0, 0, 0.04);
-                windowGroup.add(divV);
+doorPanel.position.set(0, 0, 0.01);
+doorGroup.add(doorPanel);
 
-                // Almost invisible glass
-                const glassMat = new THREE.MeshStandardMaterial({
-                    color: 0xadd8e6,
-                    transparent: true,
-                    opacity: 0.03,
-                    roughness: 0.05,
-                    metalness: 0.05,
-                    side: THREE.DoubleSide
-                });
-                const glass = new THREE.Mesh(new THREE.PlaneGeometry(2.22, 1.48), glassMat);
-                glass.position.set(0, 0, 0.01);
-                windowGroup.add(glass);
+// =========================
+// PANEL DETAILS
+// =========================
+const panelDetailMat = new THREE.MeshStandardMaterial({
+    color: 0x4a2e1b,
+    roughness: 0.7
+});
 
-                this.scene.add(windowGroup);
+function addPanel(x, y) {
+    const p = new THREE.Mesh(
+        new THREE.BoxGeometry(0.35, 0.7, 0.04),
+        panelDetailMat
+    );
+    p.position.set(x, y, 0.04);
+    doorGroup.add(p);
+}
 
-                // --- CALENDAR ---
-                const calendarGroup = new THREE.Group();
-                calendarGroup.position.set(-4.38, 1.8, 2.6);
-                calendarGroup.rotation.y = Math.PI / 2;
-                const calHeader = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.3), new THREE
-                    .MeshBasicMaterial({ color: 0xd97706 }));
-                calendarGroup.add(calHeader);
-                const calBody = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.5), new THREE
-                    .MeshBasicMaterial({ color: 0xfafafa }));
-                calBody.position.y = -0.4;
-                calendarGroup.add(calBody);
-                this.scene.add(calendarGroup);
+addPanel(-0.25, 0.4);
+addPanel(0.25, 0.4);
+addPanel(-0.25, -0.4);
+addPanel(0.25, -0.4);
+
+// =========================
+// DOOR KNOB (FIXED ALIGNMENT)
+// =========================
+const knobMat = new THREE.MeshStandardMaterial({
+    color: 0xd4a843,
+    metalness: 0.85,
+    roughness: 0.15
+});
+
+const knobGroup = new THREE.Group();
+
+// base plate (flush with door)
+const knobBase = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.045, 0.045, 0.02, 16),
+    knobMat
+);
+knobBase.rotation.x = Math.PI / 2;
+knobBase.position.set(0.42, -0.1, 0.035);
+knobGroup.add(knobBase);
+
+// handle (sticking out)
+const knobHandle = new THREE.Mesh(
+    new THREE.SphereGeometry(0.035, 12, 12),
+    knobMat
+);
+knobHandle.position.set(0.48, -0.1, 0.05);
+knobGroup.add(knobHandle);
+
+// stem (clean connector)
+const knobStem = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.012, 0.012, 0.05, 10),
+    knobMat
+);
+knobStem.rotation.x = Math.PI / 2;
+knobStem.position.set(0.44, -0.1, 0.04);
+knobGroup.add(knobStem);
+
+doorGroup.add(knobGroup);
+
+// =========================
+// TRIGGER (UNCHANGED BUT CLEAN POSITION)
+// =========================
+const doorTrigger = new THREE.Mesh(
+    new THREE.BoxGeometry(1.2, 2.1, 0.4),
+    new THREE.MeshBasicMaterial({ visible: false })
+);
+
+doorTrigger.name = "Pintu Keluar";
+doorTrigger.userData = {
+    id: "door",
+    subtitle: "Balik ke dunia realiti"
+};
+
+doorGroup.add(doorTrigger);
+this.interactiveObjects.push(doorTrigger);
+
+// =========================
+// COLLIDER (CENTERED PROPERLY)
+// =========================
+const doorCollider = new THREE.Mesh(
+    new THREE.BoxGeometry(1.2, 2.1, 0.3),
+    new THREE.MeshBasicMaterial({ visible: false })
+);
+
+doorCollider.position.set(0, 0, 0);
+doorGroup.add(doorCollider);
+this.colliders.push(doorCollider);
+
+// =========================
+// ADD TO SCENE
+// =========================
+this.scene.add(doorGroup);
+
+               // ============================================================
+// WINDOW — di dinding depan, tepat di hadapan katil
+// ============================================================
+const windowGroup = new THREE.Group();
+windowGroup.position.set(-1.8, 1.6, 4.4);   // Sama x dengan katil (-1.8), di dinding depan (z ≈ 4.4)
+windowGroup.rotation.y = Math.PI;            // Menghadap ke dalam bilik (ke arah -z)
+
+// Sill (bottom horizontal)
+const sill = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.08, 0.3), woodTeak);
+sill.position.set(0, -0.78, 0.05);
+windowGroup.add(sill);
+
+// Head (top horizontal)
+const head = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.08, 0.3), woodTeak);
+head.position.set(0, 0.78, 0.05);
+windowGroup.add(head);
+
+// Left jamb
+const jambL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.56, 0.3), woodTeak);
+jambL.position.set(-1.36, 0, 0.05);
+windowGroup.add(jambL);
+
+// Right jamb
+const jambR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.56, 0.3), woodTeak);
+jambR.position.set(1.36, 0, 0.05);
+windowGroup.add(jambR);
+
+// Inner frame trim (decorative)
+const trimMat = new THREE.MeshStandardMaterial({ color: 0x3d2b1f, roughness: 0.6 });
+const trimT = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.04, 0.04), trimMat);
+trimT.position.set(0, 0.72, 0.08);
+windowGroup.add(trimT);
+const trimB = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.04, 0.04), trimMat);
+trimB.position.set(0, -0.72, 0.08);
+windowGroup.add(trimB);
+const trimL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 1.4, 0.04), trimMat);
+trimL.position.set(-1.23, 0, 0.08);
+windowGroup.add(trimL);
+const trimR = new THREE.Mesh(new THREE.BoxGeometry(0.04, 1.4, 0.04), trimMat);
+trimR.position.set(1.23, 0, 0.08);
+windowGroup.add(trimR);
+
+// Landscape plane (Windows XP Bliss) — diletakkan di luar tingkap (arah +z tempatan)
+const landscapeGeo = new THREE.PlaneGeometry(12.0, 7.0);
+const landscapeMat = new THREE.MeshBasicMaterial({ color: 0x4a90d9, side: THREE.DoubleSide });
+const landscape = new THREE.Mesh(landscapeGeo, landscapeMat);
+landscape.name = 'window-landscape';
+landscape.position.set(0, 0, -2.5);   // kerana rotation.y = PI, +z tempatan menunjuk ke luar bilik
+windowGroup.add(landscape);
+
+// Cross dividers (mullions)
+const mullionMat = new THREE.MeshStandardMaterial({ color: 0x2d1f14, roughness: 0.7 });
+const mullionH = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.04, 0.04), mullionMat);
+mullionH.position.set(0, 0, 0.04);
+windowGroup.add(mullionH);
+const mullionV = new THREE.Mesh(new THREE.BoxGeometry(0.04, 1.5, 0.04), mullionMat);
+mullionV.position.set(0, 0, 0.04);
+windowGroup.add(mullionV);
+
+// Glass (very subtle)
+const glassMat = new THREE.MeshStandardMaterial({
+    color: 0xadd8e6,
+    transparent: true,
+    opacity: 0.035,
+    roughness: 0.03,
+    metalness: 0.08,
+    side: THREE.DoubleSide
+});
+const glass = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 1.52), glassMat);
+glass.position.set(0, 0, 0.01);
+windowGroup.add(glass);
+
+this.scene.add(windowGroup);
+
+// ============================================================
+// KALENDAR DINDING YANG LEBIH REALISTIK
+// ============================================================
+const calendarGroup = new THREE.Group();
+calendarGroup.position.set(-4.38, 1.8, 2.6);
+calendarGroup.rotation.y = Math.PI / 2;
+
+// --- BINGKAI KAYU ---
+const frameMat = new THREE.MeshStandardMaterial({ 
+    color: 0x8B7355,  // warna kayu
+    roughness: 0.7,
+    metalness: 0.05
+});
+
+// Bingkai luar
+const frame = new THREE.Mesh(
+    new THREE.BoxGeometry(0.7, 0.9, 0.04),
+    frameMat
+);
+frame.position.set(0, 0, 0);
+calendarGroup.add(frame);
+
+// Bingkai dalam (untuk kesan tebal)
+const frameInner = new THREE.Mesh(
+    new THREE.BoxGeometry(0.65, 0.85, 0.05),
+    new THREE.MeshStandardMaterial({ color: 0x6B4226, roughness: 0.8 })
+);
+frameInner.position.set(0, 0, -0.01);
+calendarGroup.add(frameInner);
+
+// --- KERTAS KALENDAR (halaman utama) ---
+const paperMat = new THREE.MeshStandardMaterial({
+    color: 0xF5F0E8,
+    roughness: 0.9,
+    metalness: 0
+});
+
+const paper = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.6, 0.8),
+    paperMat
+);
+paper.position.set(0, 0.01, 0.025);
+calendarGroup.add(paper);
+
+// --- GARISAN TARIKH (menggunakan canvas) ---
+const canvas = document.createElement('canvas');
+canvas.width = 512;
+canvas.height = 684;
+const ctx = canvas.getContext('2d');
+
+// Latar belakang kertas
+ctx.fillStyle = '#F5F0E8';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+// Bulan dan tahun (header)
+ctx.fillStyle = '#2C1810';
+ctx.font = 'bold 48px Arial';
+ctx.textAlign = 'center';
+ctx.fillText('JUNE', canvas.width/2, 90);
+ctx.font = '28px Arial';
+ctx.fillText('2026', canvas.width/2, 140);
+
+// Garisan pemisah
+ctx.beginPath();
+ctx.moveTo(40, 160);
+ctx.lineTo(canvas.width-40, 160);
+ctx.strokeStyle = '#8B7355';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Hari dalam minggu
+const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+ctx.font = 'bold 28px Arial';
+ctx.fillStyle = '#4A3728';
+for (let i = 0; i < 7; i++) {
+    ctx.textAlign = 'center';
+    ctx.fillText(days[i], 40 + i * 65, 210);
+}
+
+// Tarikh (contoh: 1-30 Jun 2026)
+const startDay = 1; // 1 Jun 2026 adalah hari Ahad (0 = Ahad)
+const totalDays = 30;
+let xPos = 0, yPos = 0;
+ctx.font = '32px Arial';
+ctx.fillStyle = '#1A1A1A';
+
+for (let d = 1; d <= totalDays; d++) {
+    const dayOfWeek = (startDay + d - 1) % 7;
+    xPos = 40 + dayOfWeek * 65;
+    yPos = 260 + Math.floor((d - 1) / 7) * 60;
+    
+    // Lingkaran untuk tarikh
+    ctx.beginPath();
+    ctx.arc(xPos, yPos, 22, 0, Math.PI * 2);
+    ctx.fillStyle = (d === 18) ? '#E8D5B5' : 'transparent'; // highlight hari ini
+    ctx.fill();
+    ctx.strokeStyle = (d === 18) ? '#8B4513' : '#CCCCCC';
+    ctx.lineWidth = (d === 18) ? 2 : 1;
+    ctx.stroke();
+    
+    ctx.fillStyle = (d === 18) ? '#8B4513' : '#1A1A1A';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(d.toString(), xPos, yPos);
+}
+
+// Footer dengan gambar kecil (opsyenal)
+ctx.fillStyle = '#8B7355';
+ctx.font = '18px Arial';
+ctx.textAlign = 'center';
+ctx.fillText('✦', canvas.width/2, canvas.height-50);
+ctx.font = '16px Arial';
+ctx.fillText('BLANKEDWAVE', canvas.width/2, canvas.height-25);
+
+// --- GUNAKAN TEXTURE PADA KERTAS ---
+const texture = new THREE.CanvasTexture(canvas);
+texture.needsUpdate = true;
+paper.material.map = texture;
+paper.material.needsUpdate = true;
+
+// --- TAMBAH BAYANGAN (shadow) di belakang kalendar ---
+const shadowMat = new THREE.MeshBasicMaterial({
+    color: 0x000000,
+    transparent: true,
+    opacity: 0.15
+});
+const shadow = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.75, 0.95),
+    shadowMat
+);
+shadow.position.set(0.02, -0.02, -0.02);
+calendarGroup.add(shadow);
+
+// --- GANTUNG (paku / hook) ---
+const hookMat = new THREE.MeshStandardMaterial({
+    color: 0xC0A060,
+    metalness: 0.8,
+    roughness: 0.2
+});
+const hook = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.01, 0.015, 0.04, 8),
+    hookMat
+);
+hook.rotation.x = Math.PI / 2;
+hook.position.set(0, 0.48, 0.02);
+calendarGroup.add(hook);
+
+// --- TAMBAH KE SCENE ---
+this.scene.add(calendarGroup);
 
                 // --- SEJADAH ---
                 const sejadahTex = createSejadahTexture();
@@ -1915,7 +2087,7 @@ function createDVDScreensaver() {
 
                 // --- TOWEL RACK ---
                 const rackGroup = new THREE.Group();
-                rackGroup.position.set(3.4, 0, 3.4);
+                rackGroup.position.set(3.4, 0, 4);
                 const legGeo = new THREE.BoxGeometry(0.08, 1.6, 0.08);
                 const legL = new THREE.Mesh(legGeo, woodTeak);
                 legL.position.set(-0.6, 0.8, 0);
@@ -1942,57 +2114,80 @@ function createDVDScreensaver() {
                 rackGroup.add(hangingSejadah);
                 this.scene.add(rackGroup);
 
-                // --- STAND FAN (fixed blades) ---
+                // --- STAND FAN — proper 3-blade design ---
                 const standFan = new THREE.Group();
                 standFan.position.set(-3.5, 0, -2.5);
-                const fanBase = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.04), plasticWhite);
+                const fanBase = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.35, 0.04, 20), plasticWhite);
                 fanBase.position.y = 0.02;
                 standFan.add(fanBase);
                 this.colliders.push(fanBase);
-                const fanPole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.4), metalDark);
+                const fanPole = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, 1.4, 12), metalDark);
                 fanPole.position.y = 0.7;
                 standFan.add(fanPole);
-                const fanMotor = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.1), metalDark);
+                const fanMotor = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.2, 0.08, 16), metalDark);
                 fanMotor.position.set(0, 1.4, 0);
                 fanMotor.rotation.x = Math.PI / 2;
                 standFan.add(fanMotor);
-                // Proper fan blades with guard
-                const fanBladesGroup = new THREE.Group();
-                fanBladesGroup.position.set(0, 1.4, 0.05);
+
+                // 3-blade fan with proper shape
+                const bladeGroup = new THREE.Group();
+                bladeGroup.position.set(0, 1.4, 0.05);
+
                 for (let i = 0; i < 3; i++) {
                     const angle = (i / 3) * Math.PI * 2;
-                    const blade = new THREE.Mesh(
-                        new THREE.BoxGeometry(0.04, 0.35, 0.01),
-                        new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.3, metalness: 0.1 })
-                    );
-                    blade.position.set(Math.sin(angle) * 0.18, Math.cos(angle) * 0.18, 0);
+                    // Blade shape: wider at tip, narrower at base
+                    const bladeShape = new THREE.Shape();
+                    bladeShape.moveTo(-0.005, 0.06);
+                    bladeShape.quadraticCurveTo(0.02, 0.20, 0.005, 0.32);
+                    bladeShape.quadraticCurveTo(0, 0.34, -0.005, 0.32);
+                    bladeShape.quadraticCurveTo(-0.02, 0.20, -0.005, 0.06);
+
+                    const bladeGeom = new THREE.ShapeGeometry(bladeShape);
+                    const bladeMat = new THREE.MeshStandardMaterial({
+                        color: 0xdddddd,
+                        roughness: 0.3,
+                        metalness: 0.1,
+                        side: THREE.DoubleSide
+                    });
+                    const blade = new THREE.Mesh(bladeGeom, bladeMat);
+                    blade.position.set(0, 0, 0);
                     blade.rotation.z = angle;
-                    blade.scale.x = 0.5 + Math.sin(angle) * 0.3;
-                    fanBladesGroup.add(blade);
+                    blade.rotation.x = 0.15; // slight tilt for air push
+                    bladeGroup.add(blade);
+
+                    // Add a small counter-weight
+                    const cw = new THREE.Mesh(new THREE.SphereGeometry(0.015, 6, 6), new THREE
+                        .MeshStandardMaterial({ color: 0x888888, metalness: 0.3 }));
+                    cw.position.set(0, -0.02, 0);
+                    bladeGroup.add(cw);
                 }
+
                 // Center cap
-                const cap = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), new THREE
-                    .MeshStandardMaterial({ color: 0x888888, metalness: 0.5 }));
+                const cap = new THREE.Mesh(new THREE.SphereGeometry(0.04, 10, 10), new THREE
+                    .MeshStandardMaterial({ color: 0x999999, metalness: 0.5 }));
                 cap.position.set(0, 0, 0);
-                fanBladesGroup.add(cap);
+                bladeGroup.add(cap);
+
                 // Fan guard ring
-                const ringGeo = new THREE.TorusGeometry(0.22, 0.005, 8, 24);
-                const ringMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.3 });
+                const ringGeo = new THREE.TorusGeometry(0.24, 0.006, 8, 28);
+                const ringMat = new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.3 });
                 const ring = new THREE.Mesh(ringGeo, ringMat);
                 ring.position.set(0, 0, 0);
                 ring.rotation.x = Math.PI / 2;
-                fanBladesGroup.add(ring);
+                bladeGroup.add(ring);
+
                 // Cross guard
-                const guardMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.2 });
+                const guardMat = new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.2 });
                 for (let i = 0; i < 4; i++) {
                     const a = (i / 4) * Math.PI * 2;
-                    const bar = new THREE.Mesh(new THREE.BoxGeometry(0.005, 0.005, 0.4), guardMat);
-                    bar.position.set(Math.sin(a) * 0.14, Math.cos(a) * 0.14, 0);
+                    const bar = new THREE.Mesh(new THREE.BoxGeometry(0.005, 0.005, 0.44), guardMat);
+                    bar.position.set(Math.sin(a) * 0.16, Math.cos(a) * 0.16, 0);
                     bar.rotation.z = a;
-                    fanBladesGroup.add(bar);
+                    bladeGroup.add(bar);
                 }
-                standFan.add(fanBladesGroup);
-                this.animatedObjects.standFanBlade = fanBladesGroup;
+
+                standFan.add(bladeGroup);
+                this.animatedObjects.standFanBlade = bladeGroup;
                 this.scene.add(standFan);
 
                 // --- DESK ---
@@ -2013,102 +2208,159 @@ function createDVDScreensaver() {
                 this.colliders.push(pedestalR);
                 this.scene.add(desk);
 
-                // --- GAMING CHAIR (facing desk) ---
-                const chairGroup = new THREE.Group();
-                chairGroup.position.set(0, 0, -1.8);
-                chairGroup.rotation.y = 0;
+                // --- GAMING CHAIR (SAFE + FIXED VERSION) ---
 
-                // Base
-                const baseMat = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.5, roughness: 0.3 });
-                const basePlate = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.04, 24), baseMat);
-                basePlate.position.y = 0.02;
-                chairGroup.add(basePlate);
+const chairGroup = new THREE.Group();
+chairGroup.position.set(0, 0, -1.8);
+chairGroup.rotation.y = Math.PI;
 
-                // Wheels
-                const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
-                for (let i = 0; i < 5; i++) {
-                    const a = (i / 5) * Math.PI * 2 + Math.PI / 2;
-                    const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.04, 0.025, 6, 8), wheelMat);
-                    wheel.position.set(Math.sin(a) * 0.3, 0.02, Math.cos(a) * 0.3);
-                    wheel.rotation.x = Math.PI / 2;
-                    chairGroup.add(wheel);
-                    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.3), baseMat);
-                    arm.position.set(Math.sin(a) * 0.18, 0.04, Math.cos(a) * 0.18);
-                    arm.rotation.y = -a;
-                    chairGroup.add(arm);
-                }
+// kalau guna dalam class, tukar scene → this.scene
+const targetScene = this.scene || scene;
 
-                // Center post
-                const postMat = new THREE.MeshStandardMaterial({ color: 0x444444, metalness: 0.7, roughness: 0.2 });
-                const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 0.4, 12), postMat);
-                post.position.set(0, 0.22, 0);
-                chairGroup.add(post);
+// ===== MATERIALS =====
+const metalMat = new THREE.MeshStandardMaterial({
+    color: 0x2a2a2a,
+    metalness: 0.7,
+    roughness: 0.25
+});
 
-                // Gas cylinder
-                const gas = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.035, 0.12, 10), new THREE
-                    .MeshStandardMaterial({ color: 0x555555, metalness: 0.8, roughness: 0.2 }));
-                gas.position.set(0, 0.38, 0);
-                chairGroup.add(gas);
+const plasticMat = new THREE.MeshStandardMaterial({
+    color: 0x111827,
+    roughness: 0.6
+});
 
-                // Seat
-                const seatMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.5 });
-                const seatCushionMat = new THREE.MeshStandardMaterial({ color: 0x2d1b69, roughness: 0.6 });
-                const seatBase = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.06, 0.7), seatMat);
-                seatBase.position.set(0, 0.5, 0);
-                chairGroup.add(seatBase);
-                const seatCushion = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.1, 0.65), seatCushionMat);
-                seatCushion.position.set(0, 0.56, 0.02);
-                chairGroup.add(seatCushion);
+const accentMat = new THREE.MeshStandardMaterial({
+    color: 0x4f46e5,
+    roughness: 0.35,
+    metalness: 0.1
+});
 
-                // Backrest with bucket shape
-                const backMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.5 });
-                const backCushionMat = new THREE.MeshStandardMaterial({ color: 0x2d1b69, roughness: 0.6 });
-                const backrest = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 0.06), backMat);
-                backrest.position.set(0, 0.9, -0.38);
-                chairGroup.add(backrest);
-                const backCushion = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.04), backCushionMat);
-                backCushion.position.set(0, 0.9, -0.36);
-                chairGroup.add(backCushion);
+// ===== BASE =====
+const hub = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.18, 0.2, 0.06, 24),
+    metalMat
+);
+hub.position.y = 0.03;
+chairGroup.add(hub);
 
-                // Side bolsters
-                const bolsterMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.5 });
-                const bolsterL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.5, 0.2), bolsterMat);
-                bolsterL.position.set(-0.38, 0.85, -0.3);
-                chairGroup.add(bolsterL);
-                const bolsterR = bolsterL.clone();
-                bolsterR.position.x = 0.38;
-                chairGroup.add(bolsterR);
-                const bolsterCushionMat = new THREE.MeshStandardMaterial({ color: 0x2d1b69, roughness: 0.6 });
-                const bcL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.4, 0.15), bolsterCushionMat);
-                bcL.position.set(-0.37, 0.85, -0.3);
-                chairGroup.add(bcL);
-                const bcR = bcL.clone();
-                bcR.position.x = 0.37;
-                chairGroup.add(bcR);
+const legCount = 5;
+for (let i = 0; i < legCount; i++) {
+    const angle = (i / legCount) * Math.PI * 2;
 
-                // Armrests
-                const armMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.5, roughness: 0.3 });
-                const armCushionMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.6 });
-                const armL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.3), armCushionMat);
-                armL.position.set(-0.45, 0.65, 0.05);
-                chairGroup.add(armL);
-                const armR = armL.clone();
-                armR.position.x = 0.45;
-                chairGroup.add(armR);
-                const armSupL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.15, 0.04), armMat);
-                armSupL.position.set(-0.45, 0.52, 0.05);
-                chairGroup.add(armSupL);
-                const armSupR = armSupL.clone();
-                armSupR.position.x = 0.45;
-                chairGroup.add(armSupR);
+    const leg = new THREE.Mesh(
+        new THREE.BoxGeometry(0.05, 0.05, 0.55),
+        metalMat
+    );
 
-                // Bucket seat styling — racing stripes
-                const stripeMat = new THREE.MeshStandardMaterial({ color: 0x4f46e5, roughness: 0.3, metalness: 0.1 });
-                const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.08, 0.6), stripeMat);
-                stripe.position.set(0, 0.9, -0.35);
-                chairGroup.add(stripe);
+    leg.position.set(
+        Math.cos(angle) * 0.25,
+        0.03,
+        Math.sin(angle) * 0.25
+    );
 
-                this.scene.add(chairGroup);
+    leg.rotation.y = -angle + Math.PI / 2;
+    chairGroup.add(leg);
+
+    const wheel = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.06, 0.06, 0.04, 16),
+        plasticMat
+    );
+
+    wheel.rotation.z = Math.PI / 2;
+    wheel.position.set(
+        Math.cos(angle) * 0.45,
+        0.02,
+        Math.sin(angle) * 0.45
+    );
+
+    chairGroup.add(wheel);
+}
+
+// ===== GAS CYLINDER =====
+const gas = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.035, 0.045, 0.18, 16),
+    metalMat
+);
+gas.position.y = 0.18;
+chairGroup.add(gas);
+
+// ===== SEAT =====
+const seat = new THREE.Mesh(
+    new THREE.BoxGeometry(0.62, 0.08, 0.58),
+    plasticMat
+);
+seat.position.set(0, 0.52, 0);
+chairGroup.add(seat);
+
+const cushion = new THREE.Mesh(
+    new THREE.BoxGeometry(0.56, 0.1, 0.52),
+    new THREE.MeshStandardMaterial({
+        color: 0x2d1b69,
+        roughness: 0.65
+    })
+);
+cushion.position.set(0, 0.58, 0.02);
+chairGroup.add(cushion);
+
+// ===== BACKREST =====
+const back = new THREE.Mesh(
+    new THREE.BoxGeometry(0.6, 0.85, 0.08),
+    plasticMat
+);
+back.position.set(0, 0.98, -0.35);
+chairGroup.add(back);
+
+const backPad = new THREE.Mesh(
+    new THREE.BoxGeometry(0.54, 0.78, 0.05),
+    new THREE.MeshStandardMaterial({
+        color: 0x2d1b69,
+        roughness: 0.7
+    })
+);
+backPad.position.set(0, 0.98, -0.33);
+chairGroup.add(backPad);
+
+// ===== LUMBAR (FIXED - no more weird stripe bug) =====
+const lumbar = new THREE.Mesh(
+    new THREE.BoxGeometry(0.3, 0.14, 0.08),
+    accentMat
+);
+lumbar.position.set(0, 0.82, -0.28);
+chairGroup.add(lumbar);
+
+// ===== HEAD PILLOW =====
+const headPillow = new THREE.Mesh(
+    new THREE.BoxGeometry(0.28, 0.12, 0.08),
+    accentMat
+);
+headPillow.position.set(0, 1.22, -0.28);
+chairGroup.add(headPillow);
+
+// ===== ARMRESTS (NO CLONE BUG) =====
+function createArm(x) {
+    const arm = new THREE.Mesh(
+        new THREE.BoxGeometry(0.08, 0.05, 0.32),
+        plasticMat
+    );
+    arm.position.set(x, 0.68, 0.02);
+
+    const support = new THREE.Mesh(
+        new THREE.BoxGeometry(0.04, 0.18, 0.04),
+        metalMat
+    );
+    support.position.set(x, 0.56, 0.02);
+
+    chairGroup.add(arm);
+    chairGroup.add(support);
+}
+
+createArm(-0.43);
+createArm(0.43);
+
+// ===== FINAL SAFE ADD =====
+targetScene.add(chairGroup);
+
+console.log("Chair loaded successfully");
 
                 // --- MONITORS ---
                 const monitorGroup = new THREE.Group();
@@ -2205,7 +2457,7 @@ function createDVDScreensaver() {
                 mouse.position.set(0.6, 0.81, -3.2);
                 this.scene.add(mouse);
 
-                // --- PHOTO FRAME ---
+                // --- PHOTO FRAME — my photos (no Instagram) ---
                 const photoFrameStand = new THREE.Group();
                 photoFrameStand.position.set(-2.2, 0.8, -3.2);
                 photoFrameStand.rotation.y = 0.4;
@@ -2215,28 +2467,22 @@ function createDVDScreensaver() {
                 const frameRim = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.48, 0.03), woodTeak);
                 frameRim.position.set(0, 0.26, 0);
                 photoFrameStand.add(frameRim);
-                const profileImg = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.44, 0.012), new THREE
-                    .MeshBasicMaterial({ color: 0x8b5cf6 }));
+                // Default photo placeholder
+                const photoMat = new THREE.MeshBasicMaterial({ color: 0x4a3f6b });
+                const profileImg = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.44, 0.012), photoMat);
                 profileImg.position.set(0, 0.26, 0.015);
                 photoFrameStand.add(profileImg);
-                const imgLoader = new THREE.TextureLoader();
-                imgLoader.load('https://blankedwave.name.my/assets/profileStudioCropped.png', (tex) => {
-                    profileImg.material = new THREE.MeshBasicMaterial({ map: tex });
-                    profileImg.material.needsUpdate = true;
-                }, undefined, () => {
-                    profileImg.material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6 });
-                });
 
                 const photoFrameTrigger = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.6, 0.4), new THREE
                     .MeshBasicMaterial({ visible: false }));
                 photoFrameTrigger.position.set(0, 0.25, 0);
-                photoFrameTrigger.name = "Instagram Frame";
-                photoFrameTrigger.userData = { id: "photowall", subtitle: "Album @qil.jpeg" };
+                photoFrameTrigger.name = "Photo Gallery";
+                photoFrameTrigger.userData = { id: "photowall", subtitle: "My personal photos" };
                 photoFrameStand.add(photoFrameTrigger);
                 this.interactiveObjects.push(photoFrameTrigger);
                 this.scene.add(photoFrameStand);
 
-                // --- TV with DVD screensaver ---
+                // --- TV with DVD screensaver (moved outward from frame) ---
                 const tvUnit = new THREE.Group();
                 tvUnit.position.set(-4.0, 0, 0);
                 tvUnit.rotation.y = Math.PI / 2;
@@ -2250,9 +2496,9 @@ function createDVDScreensaver() {
                 const tvDisplayFrame = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.25, 0.04), metalDark);
                 tvDisplayFrame.position.set(0, 1.15, 0);
                 tvUnit.add(tvDisplayFrame);
-                // TV screen with DVD screensaver
+                // TV screen — DVD screensaver with more padding from frame
                 const tvScreenMat = new THREE.MeshBasicMaterial({ map: this.dvdScreensaver.texture });
-                const tvDisplayGlass = new THREE.Mesh(new THREE.BoxGeometry(2.14, 1.19, 0.02), tvScreenMat);
+                const tvDisplayGlass = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.1, 0.02), tvScreenMat);
                 tvDisplayGlass.position.set(0, 1.15, 0.02);
                 tvUnit.add(tvDisplayGlass);
                 const tvTriggerBox = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.5, 0.6), new THREE
@@ -2306,14 +2552,14 @@ function createDVDScreensaver() {
                 mattress.position.y = 0.55;
                 bedGroup.add(mattress);
 
-                // Solid collider on top of mattress so player can stand on it
+                // Solid collider on top of mattress
                 const bedCollider = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.06, 2.8), new THREE
                     .MeshBasicMaterial({ visible: false }));
                 bedCollider.position.y = 0.75;
                 bedGroup.add(bedCollider);
                 this.colliders.push(bedCollider);
 
-                // Additional side colliders to prevent going through bed frame
+                // Side colliders
                 const sideMat = new THREE.MeshBasicMaterial({ visible: false });
                 const sideL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.8, 2.8), sideMat);
                 sideL.position.set(-1.3, 0.4, 0);
@@ -2507,53 +2753,111 @@ function createDVDScreensaver() {
                 this.interactiveObjects.push(fanEggTrigger);
                 this.easterEggTriggers.fan = fanEggTrigger;
 
-                // --- PHONE TABLE with phone laying flat ---
-                const phoneTableGroup = new THREE.Group();
-                phoneTableGroup.position.set(-3.8, 0, 3.2);
-                const tableTop = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.04, 0.6), woodTeak);
-                tableTop.position.y = 0.7;
-                phoneTableGroup.add(tableTop);
-                this.colliders.push(tableTop);
-                const tableLeg1 = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.65, 0.035), metalDark);
-                tableLeg1.position.set(-0.22, 0.32, -0.22);
-                phoneTableGroup.add(tableLeg1);
-                const tableLeg2 = tableLeg1.clone();
-                tableLeg2.position.set(0.22, 0.32, -0.22);
-                phoneTableGroup.add(tableLeg2);
-                const tableLeg3 = tableLeg1.clone();
-                tableLeg3.position.set(-0.22, 0.32, 0.22);
-                phoneTableGroup.add(tableLeg3);
-                const tableLeg4 = tableLeg1.clone();
-                tableLeg4.position.set(0.22, 0.32, 0.22);
-                phoneTableGroup.add(tableLeg4);
+               
+// --- PHONE TABLE ---
+const phoneTableGroup = new THREE.Group();
+phoneTableGroup.position.set(-3.8, 0, 3.2);
 
-                // Phone — laying flat, screen up
-                const phoneGroup = new THREE.Group();
-                phoneGroup.position.set(0, 0.72, 0);
-                phoneGroup.rotation.x = -Math.PI / 2;
+// ===== TABLE TOP =====
+const tableTop = new THREE.Mesh(
+    new THREE.BoxGeometry(0.6, 0.04, 0.6),
+    woodTeak
+);
 
-                const phoneBody = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.008, 0.28), new THREE
-                    .MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.3, metalness: 0.6 }));
-                phoneGroup.add(phoneBody);
-                const phoneScreen = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.004, 0.22), new THREE
-                    .MeshBasicMaterial({ map: this.phoneScreenTex }));
-                phoneScreen.position.set(0, 0.005, 0);
-                phoneGroup.add(phoneScreen);
-                const camBump = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.003, 0.02), new THREE
-                    .MeshBasicMaterial({ color: 0x111111 }));
-                camBump.position.set(0, 0.005, -0.11);
-                phoneGroup.add(camBump);
+// IMPORTANT: center of tableTop is at y = 0.7
+tableTop.position.y = 0.7;
+phoneTableGroup.add(tableTop);
 
-                const phoneTrigger = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.02, 0.30), new THREE
-                    .MeshBasicMaterial({ visible: false }));
-                phoneTrigger.position.set(0, 0.01, 0);
-                phoneTrigger.name = "Phone";
-                phoneTrigger.userData = { id: "phone", subtitle: "Connect & Chat" };
-                phoneGroup.add(phoneTrigger);
-                this.interactiveObjects.push(phoneTrigger);
+this.colliders.push(tableTop);
 
-                phoneTableGroup.add(phoneGroup);
-                this.scene.add(phoneTableGroup);
+// ===== TABLE LEGS =====
+const tableLeg1 = new THREE.Mesh(
+    new THREE.BoxGeometry(0.035, 0.65, 0.035),
+    metalDark
+);
+
+tableLeg1.position.set(-0.22, 0.32, -0.22);
+phoneTableGroup.add(tableLeg1);
+
+const tableLeg2 = tableLeg1.clone();
+tableLeg2.position.set(0.22, 0.32, -0.22);
+phoneTableGroup.add(tableLeg2);
+
+const tableLeg3 = tableLeg1.clone();
+tableLeg3.position.set(-0.22, 0.32, 0.22);
+phoneTableGroup.add(tableLeg3);
+
+const tableLeg4 = tableLeg1.clone();
+tableLeg4.position.set(0.22, 0.32, 0.22);
+phoneTableGroup.add(tableLeg4);
+
+// =====================================================
+// FIXED PHONE (correct surface alignment)
+// =====================================================
+
+// Table surface calculation:
+// tableTop center = 0.7
+// half height = 0.04 / 2 = 0.02
+const tableSurfaceY = 0.7 + 0.02;
+
+// phone thickness = 0.008 → half = 0.004
+const phoneGroup = new THREE.Group();
+phoneGroup.position.set(0, tableSurfaceY + 0.004, 0);
+
+// ===== PHONE BODY =====
+const phoneBody = new THREE.Mesh(
+    new THREE.BoxGeometry(0.14, 0.008, 0.28),
+    new THREE.MeshStandardMaterial({
+        color: 0x1a1a2e,
+        roughness: 0.3,
+        metalness: 0.6
+    })
+);
+phoneGroup.add(phoneBody);
+
+// ===== SCREEN =====
+const phoneScreen = new THREE.Mesh(
+    new THREE.BoxGeometry(0.12, 0.004, 0.22),
+    new THREE.MeshBasicMaterial({ map: this.phoneScreenTex })
+);
+phoneScreen.position.set(0, 0.006, 0);
+phoneGroup.add(phoneScreen);
+
+// ===== CAMERA BUMP =====
+const camBump = new THREE.Mesh(
+    new THREE.BoxGeometry(0.02, 0.003, 0.02),
+    new THREE.MeshBasicMaterial({ color: 0x111111 })
+);
+camBump.position.set(0, 0.006, -0.11);
+phoneGroup.add(camBump);
+
+// ===== HOME BUTTON =====
+const homeBtn = new THREE.Mesh(
+    new THREE.CircleGeometry(0.008, 8),
+    new THREE.MeshBasicMaterial({ color: 0x444444 })
+);
+homeBtn.rotation.x = -Math.PI / 2;
+homeBtn.position.set(0, 0.005, 0.12);
+phoneGroup.add(homeBtn);
+
+// ===== INTERACTION TRIGGER =====
+const phoneTrigger = new THREE.Mesh(
+    new THREE.BoxGeometry(0.16, 0.02, 0.30),
+    new THREE.MeshBasicMaterial({ visible: false })
+);
+
+phoneTrigger.name = "Phone";
+phoneTrigger.userData = {
+    id: "phone",
+    subtitle: "Connect & Chat"
+};
+
+phoneGroup.add(phoneTrigger);
+this.interactiveObjects.push(phoneTrigger);
+
+// ===== ADD TO TABLE =====
+phoneTableGroup.add(phoneGroup);
+this.scene.add(phoneTableGroup);
 
                 // --- DUST ---
                 const dustGeo = new THREE.BufferGeometry();
@@ -2631,7 +2935,7 @@ function createDVDScreensaver() {
                 this.scene.add(guitarTrigger);
                 this.interactiveObjects.push(guitarTrigger);
 
-                // --- TV REMOTE (easter egg) ---
+                // --- TV REMOTE ---
                 const remoteGroup = new THREE.Group();
                 remoteGroup.position.set(2.5, 0.6, -3.6);
                 remoteGroup.rotation.z = 0.3;
@@ -2664,17 +2968,80 @@ function createDVDScreensaver() {
                 this.scene.add(remoteTrigger);
                 this.interactiveObjects.push(remoteTrigger);
 
-                // --- CLOCK ---
-                const clockGroup = new THREE.Group();
-                clockGroup.position.set(0, 2.8, -4.3);
-                const clockFace = new THREE.Mesh(new THREE.CircleGeometry(0.2, 24), new THREE
-                    .MeshStandardMaterial({ color: 0xf5f5dc }));
-                clockGroup.add(clockFace);
-                const clockHand = new THREE.Mesh(new THREE.BoxGeometry(0.005, 0.12, 0.005), new THREE
-                    .MeshStandardMaterial({ color: 0x111111 }));
-                clockHand.position.y = 0.06;
-                clockGroup.add(clockHand);
-                this.scene.add(clockGroup);
+               // --- CLOCK (IMPROVED) ---
+const clockGroup = new THREE.Group();
+clockGroup.position.set(0, 2.8, -4.3);
+
+// Outer frame (bezel)
+const bezel = new THREE.Mesh(
+  new THREE.RingGeometry(0.19, 0.23, 32),
+  new THREE.MeshStandardMaterial({ color: 0x111827 })
+);
+clockGroup.add(bezel);
+
+// Clock face
+const clockFace = new THREE.Mesh(
+  new THREE.CircleGeometry(0.19, 32),
+  new THREE.MeshStandardMaterial({ color: 0xf8fafc })
+);
+clockFace.position.z = 0.001;
+clockGroup.add(clockFace);
+
+// Center dot
+const centerDot = new THREE.Mesh(
+  new THREE.CircleGeometry(0.01, 16),
+  new THREE.MeshStandardMaterial({ color: 0x111111 })
+);
+centerDot.position.z = 0.02;
+clockGroup.add(centerDot);
+
+// Hour markers (12 lines)
+for (let i = 0; i < 12; i++) {
+  const angle = (i / 12) * Math.PI * 2;
+
+  const marker = new THREE.Mesh(
+    new THREE.BoxGeometry(0.01, 0.03, 0.005),
+    new THREE.MeshStandardMaterial({ color: 0x111111 })
+  );
+
+  marker.position.set(
+    Math.cos(angle) * 0.16,
+    Math.sin(angle) * 0.16,
+    0.01
+  );
+
+  marker.rotation.z = angle;
+  clockGroup.add(marker);
+}
+
+// Hour hand
+const hourHand = new THREE.Mesh(
+  new THREE.BoxGeometry(0.01, 0.08, 0.005),
+  new THREE.MeshStandardMaterial({ color: 0x111111 })
+);
+hourHand.position.y = 0.04;
+clockGroup.add(hourHand);
+
+// Minute hand
+const minuteHand = new THREE.Mesh(
+  new THREE.BoxGeometry(0.008, 0.11, 0.005),
+  new THREE.MeshStandardMaterial({ color: 0x1f2937 })
+);
+minuteHand.position.y = 0.055;
+clockGroup.add(minuteHand);
+
+// Second hand (optional accent)
+const secondHand = new THREE.Mesh(
+  new THREE.BoxGeometry(0.004, 0.13, 0.005),
+  new THREE.MeshStandardMaterial({ color: 0xef4444 })
+);
+secondHand.position.y = 0.065;
+clockGroup.add(secondHand);
+
+// Slight tilt so it looks mounted on wall
+clockGroup.rotation.x = 0.05;
+
+this.scene.add(clockGroup);
 
                 // --- POSTER ---
                 const posterGroup = new THREE.Group();
@@ -2699,6 +3066,7 @@ function createDVDScreensaver() {
                 const poster = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 1.0), new THREE
                     .MeshBasicMaterial({ map: posterTex }));
                 posterGroup.add(poster);
+              poster.position.z = 0.02;   // ← TAMBAH baris ini (buat poster menonjol)
                 const posterBorder = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.05, 0.02), new THREE
                     .MeshStandardMaterial({ color: 0x222222 }));
                 posterBorder.position.z = -0.01;
@@ -3224,31 +3592,17 @@ function createDVDScreensaver() {
             }
 
             renderGallery() {
-                const photos = [
-                    { grad: 'from-teal-900 via-indigo-900 to-slate-900', icon: 'fa-camera',
-                    caption: 'Gaming Setup 🎮', likes: '142' },
-                    { grad: 'from-rose-900 via-purple-900 to-slate-900', icon: 'fa-music',
-                        caption: 'Late night with Milo ☕🌙', likes: '238' },
-                    { grad: 'from-blue-900 via-emerald-900 to-slate-900', icon: 'fa-code',
-                        caption: 'Dev session 💻✨', likes: '189' },
-                    { grad: 'from-orange-900 via-pink-900 to-slate-900', icon: 'fa-shirt',
-                        caption: 'Raya fit check 🌙⭐', likes: '312' },
-                    { grad: 'from-violet-900 via-blue-900 to-slate-900', icon: 'fa-gamepad',
-                        caption: 'Valorant grind 🎯', likes: '97' },
-                    { grad: 'from-emerald-900 via-teal-900 to-slate-900', icon: 'fa-image',
-                        caption: 'Somewhere in Malaysia 🇲🇾', likes: '224' },
-                    { grad: 'from-fuchsia-900 via-rose-900 to-slate-900', icon: 'fa-star',
-                        caption: 'Achievement unlocked 🏆', likes: '415' },
-                    { grad: 'from-cyan-900 via-slate-900 to-indigo-900', icon: 'fa-laptop',
-                        caption: 'Portfolio update 👀', likes: '176' },
-                    { grad: 'from-amber-900 via-orange-900 to-red-900', icon: 'fa-sun', caption: 'Weekend vibes 🌅',
-                        likes: '203' },
-                ];
+                const photos = CONFIG.myPhotos;
                 let html = '';
                 photos.forEach((p, i) => {
-                    html += `<div class="ig-photo-tile bg-gradient-to-br ${p.grad}" onclick="igViewer.openPhoto(${i})" data-index="${i}">
+                    const colors = ['from-violet-900/80 to-indigo-900/80', 'from-rose-900/80 to-pink-900/80',
+                        'from-emerald-900/80 to-teal-900/80', 'from-amber-900/80 to-orange-900/80',
+                        'from-cyan-900/80 to-blue-900/80', 'from-fuchsia-900/80 to-purple-900/80'
+                    ];
+                    const c = colors[i % colors.length];
+                    html += `<div class="ig-photo-tile bg-gradient-to-br ${c}" onclick="photoViewer.openPhoto(${i})" data-index="${i}">
                             <div class="w-full h-full flex items-center justify-center">
-                                <i class="fa-solid ${p.icon} text-white/25 text-2xl"></i>
+                                <i class="fa-regular fa-image text-white/30 text-3xl"></i>
                             </div>
                             <div class="ig-tile-overlay">
                                 <div class="text-center px-2">
@@ -3260,7 +3614,8 @@ function createDVDScreensaver() {
                 });
                 const container = document.getElementById('gallery-container');
                 if (container) container.innerHTML = html;
-                window.igViewer = {
+
+                window.photoViewer = {
                     photos,
                     openPhoto(i) {
                         const p = photos[i];
@@ -3268,15 +3623,33 @@ function createDVDScreensaver() {
                         const img = document.getElementById('ig-lightbox-img');
                         const cap = document.getElementById('ig-lightbox-caption');
                         const likes = document.getElementById('ig-lightbox-likes');
+                        const link = document.getElementById('ig-photo-link');
                         if (!lb) return;
-                        img.className =
-                            `w-full aspect-square rounded-2xl mb-4 bg-gradient-to-br ${p.grad} flex items-center justify-center`;
-                        img.innerHTML = `<i class="fa-solid ${p.icon} text-white/30 text-5xl"></i>`;
+                        // Load image
+                        const imgEl = document.createElement('img');
+                        imgEl.src = p.url;
+                        imgEl.className = 'w-full h-full object-cover rounded-2xl';
+                        imgEl.onload = () => {
+                            img.innerHTML = '';
+                            img.appendChild(imgEl);
+                        };
+                        imgEl.onerror = () => {
+                            img.innerHTML = '<i class="fa-regular fa-image text-gray-600 text-5xl"></i>';
+                        };
+                        // If image doesn't load, show placeholder
+                        setTimeout(() => {
+                            if (img.children.length === 0) {
+                                img.innerHTML = '<i class="fa-regular fa-image text-gray-600 text-5xl"></i>';
+                            }
+                        }, 2000);
                         cap.textContent = p.caption;
                         likes.textContent = p.likes;
+                        link.href = p.url;
+                        link.textContent = '📷 Lihat Foto';
                         lb.classList.add('open');
                     }
                 };
+
                 const lbClose = document.getElementById('ig-lightbox-close');
                 if (lbClose) lbClose.onclick = () => document.getElementById('ig-lightbox').classList.remove('open');
             }
@@ -3384,7 +3757,7 @@ function createDVDScreensaver() {
                 if (id === 'whiteboard') iconClass = 'fa-solid fa-chalkboard';
                 if (id === 'phone') iconClass = 'fa-solid fa-mobile-screen-button';
                 if (id === 'gaming') iconClass = 'fa-solid fa-gamepad';
-                if (id === 'photowall') iconClass = 'fa-brands fa-instagram';
+                if (id === 'photowall') iconClass = 'fa-regular fa-image';
                 if (id === 'secret') iconClass = 'fa-solid fa-key';
                 if (id === 'nasilemak') iconClass = 'fa-solid fa-utensils';
                 if (id === 'mirror-msg') iconClass = 'fa-regular fa-face-smile';
@@ -3510,7 +3883,6 @@ function createDVDScreensaver() {
                     duration: 0.5,
                     onComplete: () => {
                         document.getElementById('loading-screen').remove();
-                        // Wake-up animation already started in engine constructor
                     }
                 });
             });
@@ -3578,7 +3950,7 @@ function createDVDScreensaver() {
 
                 if (engine.animatedObjects.fan) engine.animatedObjects.fan.rotation.y += 4.5 * delta;
                 if (engine.animatedObjects.standFanBlade) {
-                    engine.animatedObjects.standFanBlade.rotation.z += 12 * delta;
+                    engine.animatedObjects.standFanBlade.rotation.z += 14 * delta;
                 }
 
                 if (engine.animatedObjects.computerGlow) {
