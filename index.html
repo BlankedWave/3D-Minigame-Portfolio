@@ -76,6 +76,7 @@
         
         /* Mobile Joystick */
 #joystick-base {
+    position: fixed;  /* <-- TUKAR KEPADA FIXED */
     width: 150px;
     height: 150px;
     border-radius: 50%;
@@ -83,7 +84,8 @@
     border: 2px solid rgba(255, 255, 255, 0.2);
     touch-action: none;
     transition: none;
-    display: none; /* akan dipaparkan oleh JS */
+    display: none;
+    z-index: 999;  /* Pastikan di atas elemen lain */
 }
       
        #joystick-handle {
