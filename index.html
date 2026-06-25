@@ -436,34 +436,69 @@
 </head>
 <body class="text-gray-100">
 
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="fixed inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center p-6 text-center">
-        <div class="relative w-24 h-24 mb-6">
-            <div class="absolute inset-0 border-4 border-violet-500/20 rounded-full"></div>
-            <div class="absolute inset-0 border-4 border-t-violet-500 rounded-full animate-spin"></div>
-            <i class="fa-solid fa-gamepad text-3xl text-violet-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
-        </div>
-        <div class="glitch-wrapper">
-    <h1
-        id="glitchTitle"
-        class="glitch-title text-3xl font-extrabold tracking-tight"
-        data-text="Bilik Aqil"
-    >
-        Bilik Aqil
-    </h1>
-</div>
-        <p class="text-gray-400 text-sm max-w-xs mb-8">Selamat Datang!</p>
-        <div class="w-64 bg-slate-800 rounded-full h-1.5 mb-8 overflow-hidden">
-            <div id="loading-bar" class="bg-violet-500 h-full w-0 transition-all duration-300"></div>
-        </div>
-        <button id="start-btn" class="hidden px-8 py-3 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl shadow-lg shadow-violet-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
-            BANGUN DARI TIDUR 😴
-        </button>
-        <span id="loading-text" class="text-xs text-gray-500 code-font">Sedang mengemas barang-barang bersepah dalam bilik...</span>
+<!-- Loading Screen -->
+<div id="loading-screen"
+    class="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 text-center bg-slate-950 overflow-hidden">
+
+    <!-- Background Glow -->
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-violet-600/10 blur-3xl"></div>
+        <div class="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-fuchsia-600/10 blur-3xl"></div>
     </div>
 
-    <div id="canvas-container" class="absolute inset-0 w-full h-full z-0"></div>
-    <div id="crosshair" class="hidden md:block"></div>
+    <!-- Spinner -->
+    <div class="relative w-24 h-24 mb-6">
+        <div class="absolute inset-0 rounded-full border border-violet-500/20"></div>
+
+        <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-violet-500 border-r-fuchsia-500 animate-spin">
+        </div>
+
+        <div class="absolute inset-2 rounded-full border border-white/10 animate-pulse"></div>
+
+        <i class="fa-solid fa-gamepad text-3xl text-violet-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></i>
+    </div>
+
+    <!-- Title -->
+    <div class="glitch-wrapper">
+        <h1
+            id="glitchTitle"
+            class="glitch-title text-3xl font-extrabold tracking-tight"
+            data-text="Bilik Aqil">
+            Bilik Aqil
+        </h1>
+    </div>
+
+    <!-- Subtitle -->
+    <p class="text-gray-400 text-sm max-w-xs mb-8">
+        Selamat Datang!
+    </p>
+
+    <!-- Loading Bar -->
+    <div class="w-64 h-2 bg-slate-800 rounded-full overflow-hidden mb-8 border border-slate-700/50">
+        <div
+            id="loading-bar"
+            class="h-full w-0 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 transition-all duration-300">
+        </div>
+    </div>
+
+    <!-- Start Button -->
+    <button
+        id="start-btn"
+        class="hidden px-8 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-violet-600 to-fuchsia-600 shadow-lg shadow-violet-500/30 transition-all hover:-translate-y-0.5">
+        BANGUN DARI TIDUR 😴
+    </button>
+
+    <!-- Status Text -->
+    <span
+        id="loading-text"
+        class="text-xs text-gray-500 code-font">
+        Sedang mengemas barang-barang bersepah dalam bilik...
+    </span>
+
+</div>
+
+<div id="canvas-container" class="absolute inset-0 w-full h-full z-0"></div>
+<div id="crosshair" class="hidden md:block"></div>
 
     <!-- Desktop Help -->
     <div id="desktop-instructions" class="hidden md:flex fixed bottom-6 left-6 bg-slate-900/85 backdrop-blur-md border border-slate-700/50 p-3 rounded-xl flex-row items-center gap-4 text-xs code-font z-30 pointer-events-none shadow-xl">
@@ -4146,18 +4181,22 @@ case 'ControlRight':
 
 setupMobileControls() {
     document.getElementById('mobile-controls').classList.remove('hidden');
-    
-    // --- Touch look (swipe) ---
+
+    // =============================================================
+    //  TOUCH LOOK – sentuhan di kawasan joystick akan diabaikan
+    // =============================================================
+    const joyArea = document.getElementById('joystick-area');
+
     window.addEventListener('touchstart', (e) => {
         if (STATE.viewingPanel || !STATE.wakeUpComplete) return;
-        // Abaikan jika sentuh pada joystick area
-        const joyArea = document.getElementById('joystick-area');
+
         const rect = joyArea.getBoundingClientRect();
         for (let i = 0; i < e.touches.length; i++) {
             const touch = e.touches[i];
+            // Jika sentuhan ini berada dalam kawasan joystick, abaikan untuk look
             if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
                 touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-                continue; // biar joystick handle
+                continue;
             }
             if (STATE.touchLook.touchId === null) {
                 STATE.touchLook.touchId = touch.identifier;
@@ -4174,7 +4213,7 @@ setupMobileControls() {
             if (touch.identifier === STATE.touchLook.touchId) {
                 const dx = touch.clientX - STATE.touchLook.lastX;
                 const dy = touch.clientY - STATE.touchLook.lastY;
-                const sensitivity = 0.006; //sensitivity look
+                const sensitivity = 0.006;
                 STATE.player.rot.x -= dx * sensitivity;
                 STATE.player.rot.y -= dy * sensitivity;
                 STATE.player.rot.y = Math.max(-Math.PI / 2.1, Math.min(Math.PI / 2.1, STATE.player.rot.y));
@@ -4192,7 +4231,9 @@ setupMobileControls() {
         }
     }, { passive: true });
 
-    // --- Butang Interact ---
+    // =============================================================
+    //  BUTANG- BUTANG MOBILE
+    // =============================================================
     document.getElementById('mobile-btn-interact').addEventListener('touchstart', (e) => {
         e.preventDefault();
         if (STATE.activeInteraction && !STATE.viewingPanel) {
@@ -4201,7 +4242,6 @@ setupMobileControls() {
         }
     });
 
-    // --- Butang Jump ---
     document.getElementById('mobile-btn-jump').addEventListener('touchstart', (e) => {
         e.preventDefault();
         if (STATE.player.onGround) {
@@ -4211,7 +4251,6 @@ setupMobileControls() {
         }
     });
 
-    // --- Butang Sprint (toggle) ---
     const btnSprint = document.getElementById('mobile-btn-sprint');
     btnSprint.addEventListener('touchstart', (e) => {
         e.preventDefault();
@@ -4220,7 +4259,6 @@ setupMobileControls() {
         else btnSprint.classList.remove('bg-violet-600');
     });
 
-    // --- Butang Crouch (toggle) ---
     const btnCrouch = document.getElementById('mobile-btn-crouch');
     btnCrouch.addEventListener('touchstart', (e) => {
         e.preventDefault();
@@ -4234,49 +4272,48 @@ setupMobileControls() {
         }
     }, { passive: false });
 
-    // =====================================================
-    // JOYSTICK – base bergerak mengikut sentuhan pertama
-    // =====================================================
-    const joyArea = document.getElementById('joystick-area');
+    // =============================================================
+    //  JOYSTICK – hanya aktif jika sentuhan bermula di kawasan ini
+    // =============================================================
     const joyBase = document.getElementById('joystick-base');
     const joyHandle = document.getElementById('joystick-handle');
 
     joyArea.addEventListener('touchstart', (e) => {
         e.preventDefault();
+        e.stopPropagation();   // ⬅️ PENTING: halang sentuhan ini sampai ke window touchstart
+
         const touch = e.touches[0];
+        if (!touch) return;
+
         const rect = joyArea.getBoundingClientRect();
+        const baseSize = 150;
+        const offset = baseSize / 2;
 
-        // Tentukan saiz base (150px) dan posisi di tengah sentuhan
-        const baseSize = 150; // mesti sepadan dengan CSS
-        const offsetX = baseSize / 2;
-        const offsetY = baseSize / 2;
+        let left = touch.clientX - offset;
+        let top = touch.clientY - offset;
 
-        // Kira koordinat base supaya berpusat pada sentuhan
-        let baseLeft = touch.clientX - offsetX;
-        let baseTop = touch.clientY - offsetY;
+        // Hadkan agar tidak terkeluar skrin
+        left = Math.max(0, Math.min(window.innerWidth - baseSize, left));
+        top = Math.max(0, Math.min(window.innerHeight - baseSize, top));
 
-        // Hadkan supaya base tidak terkeluar dari skrin (pilihan)
-        baseLeft = Math.max(0, Math.min(window.innerWidth - baseSize, baseLeft));
-        baseTop = Math.max(0, Math.min(window.innerHeight - baseSize, baseTop));
-
-        // Letakkan base pada posisi tersebut
-        joyBase.style.left = baseLeft + 'px';
-        joyBase.style.top = baseTop + 'px';
+        joyBase.style.left = left + 'px';
+        joyBase.style.top = top + 'px';
         joyBase.style.display = 'block';
 
-        // Tetapkan handle di tengah base
         joyHandle.style.left = '50%';
         joyHandle.style.top = '50%';
         joyHandle.style.transform = 'translate(-50%, -50%)';
 
-        // Simpan rujukan sentuhan
         STATE.joystick.active = true;
         STATE.joystick.touchId = touch.identifier;
         STATE.joystick.start.set(
-            touch.clientX - baseLeft - offsetX, // offset dalam base
-            touch.clientY - baseTop - offsetY
+            touch.clientX - left - offset,
+            touch.clientY - top - offset
         );
-        STATE.joystick.maxRange = baseSize * 0.4; // 40% daripada saiz base
+        STATE.joystick.maxRange = baseSize * 0.4;
+
+        // (Optional) debug
+        // console.log('[Joystick] Activated at', touch.clientX, touch.clientY);
     }, { passive: false });
 
     window.addEventListener('touchmove', (e) => {
@@ -4284,14 +4321,13 @@ setupMobileControls() {
         for (let i = 0; i < e.touches.length; i++) {
             const touch = e.touches[i];
             if (touch.identifier === STATE.joystick.touchId) {
-                // Dapatkan koordinat base
                 const baseRect = joyBase.getBoundingClientRect();
                 const baseCX = baseRect.left + baseRect.width / 2;
                 const baseCY = baseRect.top + baseRect.height / 2;
 
                 const dx = touch.clientX - baseCX;
                 const dy = touch.clientY - baseCY;
-                const dist = Math.sqrt(dx*dx + dy*dy);
+                const dist = Math.sqrt(dx * dx + dy * dy);
                 const maxR = STATE.joystick.maxRange;
 
                 let clampedX = dx;
@@ -4301,12 +4337,10 @@ setupMobileControls() {
                     clampedY = (dy / dist) * maxR;
                 }
 
-                // Gerakkan handle
-                joyHandle.style.left = (baseRect.width/2 + clampedX) + 'px';
-                joyHandle.style.top = (baseRect.height/2 + clampedY) + 'px';
+                joyHandle.style.left = (baseRect.width / 2 + clampedX) + 'px';
+                joyHandle.style.top = (baseRect.height / 2 + clampedY) + 'px';
                 joyHandle.style.transform = 'translate(-50%, -50%)';
 
-                // Simpan delta untuk pergerakan
                 STATE.joystick.delta.set(
                     clampedX / maxR,
                     clampedY / maxR
@@ -4319,7 +4353,6 @@ setupMobileControls() {
         STATE.joystick.active = false;
         STATE.joystick.delta.set(0, 0);
         joyBase.style.display = 'none';
-        // Kembalikan handle ke tengah (supaya tidak tertinggal)
         joyHandle.style.left = '50%';
         joyHandle.style.top = '50%';
         joyHandle.style.transform = 'translate(-50%, -50%)';
@@ -4585,6 +4618,12 @@ if (this.engine.sejadah && !STATE.achievements.solat) {
                 this.promptEl.style.transform = 'translate(-50%,-50%) scale(1)';
                 if (CONFIG.isMobile) { this.mobileBtnInteract.style.opacity = '1';
                     this.mobileBtnInteract.classList.remove('opacity-40', 'scale-95'); }
+                  const promptKey = document.getElementById('prompt-key');
+    if (CONFIG.isMobile) {
+        promptKey.innerHTML = 'Tekan <span class="px-1.5 py-0.5 bg-violet-600 text-white rounded font-mono text-[10px]">Tap</span> untuk buka';
+    } else {
+        promptKey.innerHTML = 'Tekan <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-white font-mono">E</kbd> untuk buka';
+    }
             }
             hidePrompt() {
                 this.promptEl.style.opacity = '0';
@@ -4905,7 +4944,7 @@ if (this.engine.sejadah && !STATE.achievements.solat) {
                 if (progress >= 100) {
                     clearInterval(interval);
                     document.getElementById('loading-bar').style.width = '100%';
-                    document.getElementById('loading-text').innerText = "Okay semua dah kemas!";
+                    document.getElementById('loading-text').innerText = "\n Okay semua dah kemas!";
                     document.getElementById('start-btn').classList.remove('hidden');
                 } else {
                     document.getElementById('loading-bar').style.width = `${progress}%`;
