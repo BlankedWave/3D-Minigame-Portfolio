@@ -413,47 +413,75 @@
         <span class="text-xs text-gray-400" id="prompt-key">Tekan <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-white font-mono">E</kbd> untuk buka</span>
     </div>
 
-    <!-- Top Left Controls -->
-    <div class="fixed top-6 left-6 z-30 flex flex-col gap-2">
-        <div class="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md border border-slate-700/50 p-2 rounded-xl shadow-lg">
-            <button id="toggle-audio" class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition" title="Toggle Music">
-                <i class="fa-solid fa-music text-sm text-violet-400"></i>
-            </button>
-            <div class="flex items-center gap-1">
-                <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="50">
-            </div>
-            <button id="toggle-time" class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
-                <i class="fa-solid fa-moon text-sm text-amber-400"></i>
-            </button>
-            <button id="reset-position" class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
-                <i class="fa-solid fa-rotate text-sm text-gray-400"></i>
-            </button>
-            <div class="music-visualizer" id="music-visualizer">
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            </div>
+<!-- Top Left Controls -->
+<div class="fixed top-3 left-3 z-30 flex flex-col gap-1 md:gap-2 md:top-6 md:left-6">
+    <div class="flex flex-wrap items-center gap-1 md:gap-2 bg-slate-900/80 backdrop-blur-md border border-slate-700/50 p-1 md:p-2 rounded-xl shadow-lg">
+
+        <!-- Toggle Audio -->
+        <button id="toggle-audio" class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
+            <i class="fa-solid fa-music text-xs md:text-sm text-violet-400"></i>
+        </button>
+
+        <!-- Volume Slider – Sembunyi di mobile -->
+        <div class="hidden md:flex items-center gap-1">
+            <input type="range" id="volume-slider" class="volume-slider w-8 md:w-16" min="0" max="100" value="50">
         </div>
-        <div id="achievement-banner" class="opacity-0 translate-y-2 pointer-events-none transition-all duration-500 flex items-center gap-3 bg-gradient-to-r from-emerald-950/90 to-slate-900/95 border border-emerald-500/40 p-3 rounded-xl shadow-xl max-w-sm">
-            <div class="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400">
-                <i class="fa-solid fa-trophy text-sm"></i>
-            </div>
-            <div>
-                <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Achievement Unlocked!</p>
-                <p id="achievement-text" class="text-xs text-white font-medium">Jumped on bed!</p>
-            </div>
+
+        <!-- Toggle Time (Malam/Siang) -->
+        <button id="toggle-time" class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
+            <i class="fa-solid fa-moon text-xs md:text-sm text-amber-400"></i>
+        </button>
+
+        <!-- Reset Position -->
+        <button id="reset-position" class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
+            <i class="fa-solid fa-rotate text-xs md:text-sm text-gray-400"></i>
+        </button>
+
+        <!-- Music Visualizer – Sembunyi di mobile -->
+        <div class="hidden md:flex music-visualizer" id="music-visualizer">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
         </div>
     </div>
 
-    <!-- Top Right Stats -->
-    <div class="fixed md:top-6 top-20 right-6 z-30 flex items-center gap-2 md:gap-3 text-xs md:text-sm">
-        <div class="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 px-4 py-2 rounded-xl flex items-center gap-3 text-xs code-font shadow-lg">
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-ping"></span> Live</span>
-            <span class="text-gray-500">|</span>
-            <span class="text-gray-300" id="fps-display">60 FPS</span>
-            <span class="text-gray-500">|</span>
-            <span class="text-gray-400" id="crouch-status">Standing</span>
+    <!-- Achievement Banner -->
+    <div id="achievement-banner" class="opacity-0 translate-y-2 pointer-events-none transition-all duration-500 flex items-center gap-3 bg-gradient-to-r from-emerald-950/90 to-slate-900/95 border border-emerald-500/40 p-2 md:p-3 rounded-xl shadow-xl max-w-sm text-xs md:text-sm">
+        <div class="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400">
+            <i class="fa-solid fa-trophy text-sm"></i>
+        </div>
+        <div>
+            <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Achievement Unlocked!</p>
+            <p id="achievement-text" class="text-xs text-white font-medium">Jumped on bed!</p>
         </div>
     </div>
+</div>
+
+ <!-- Top Right Stats -->
+<div class="fixed top-3 right-3 md:top-6 md:right-6 z-30 flex items-center gap-1 md:gap-3 text-[10px] md:text-sm">
+    <div class="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 px-2 py-1 md:px-4 md:py-2 rounded-xl flex items-center gap-1 md:gap-3 text-[10px] md:text-xs code-font shadow-lg">
+
+        <!-- Live indicator – hidden on mobile -->
+        <span class="hidden sm:flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
+            <span>Live</span>
+        </span>
+        <span class="text-gray-500 hidden sm:inline">|</span>
+
+        <!-- FPS -->
+        <span class="text-gray-300" id="fps-display">60 FPS</span>
+
+        <!-- Separator – hidden on mobile -->
+        <span class="text-gray-500 hidden sm:inline">|</span>
+
+        <!-- Crouch Status -->
+        <span class="text-gray-400" id="crouch-status">Standing</span>
+    </div>
+</div>
 
  <!-- Mobile Controls -->
 <div id="mobile-controls" class="hidden fixed inset-0 pointer-events-none z-20 flex flex-col justify-end p-4 select-none">
@@ -1371,58 +1399,312 @@
             return new THREE.CanvasTexture(c);
         }
 
-        function createMatrixCanvas() {
-            const c = document.createElement('canvas');
-            c.width = 256;
-            c.height = 256;
-            const ctx = c.getContext('2d');
-            return {
-                canvas: c,
-                ctx,
-                texture: new THREE.CanvasTexture(c),
-                update(time) {
-                    ctx.fillStyle = '#000';
-                    ctx.fillRect(0, 0, 256, 256);
-                    ctx.fillStyle = '#00ff00';
-                    ctx.font = '11px Courier New';
-                    for (let i = 0; i < 20; i++) {
-                        const y = (time * 100 + i * 25) % 270;
-                        ctx.fillText("01011001 01101101 01111000", 15, y);
-                        ctx.fillText("SYSTEM LOADED [OK]", 20, (y + 12) % 270);
-                    }
-                    this.texture.needsUpdate = true;
-                }
-            };
+function createMatrixCanvas() {
+    const c = document.createElement('canvas');
+    c.width = 256;
+    c.height = 256;
+    const ctx = c.getContext('2d');
+
+    const texture = new THREE.CanvasTexture(c);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+
+    const state = {
+        time: 0,
+        lineIndex: 0,
+        charIndex: 0,
+        cursorBlink: 0
+    };
+
+    const code = [
+        "// bro i swear this worked yesterday",
+        "function fixBug() {",
+        "    let bug = undefined;",
+        "    while(bug) {",
+        "        console.log('why is this still broken???');",
+        "    }",
+        "}",
+        "",
+        "// TODO: fix later (never)",
+        "const magicFix = true; // don't touch",
+        "",
+        "if (codeWorks) {",
+        "    celebrate();",
+        "} else {",
+        "    cryInStackOverflow();",
+        "}",
+        "",
+        "// developer logic:",
+        "// if it works -> DONT TOUCH IT",
+        "// if it breaks -> blame cache",
+        "// if still broken -> reinstall node_modules",
+        "",
+        "try {",
+        "    buildProject();",
+        "} catch (err) {",
+        "    console.log('it works on my machine');",
+        "}",
+        "",
+        "// WHY IS THIS 5000 LINES???",
+        "// because 'quick fix' in 2019"
+    ];
+
+    function update() {
+        state.time++;
+        state.cursorBlink++;
+
+        // background
+        ctx.fillStyle = "#0f172a";
+        ctx.fillRect(0, 0, 256, 256);
+
+        ctx.fillStyle = "#111827";
+        ctx.fillRect(0, 0, 256, 256);
+
+        // sidebar
+        ctx.fillStyle = "#1f2937";
+        ctx.fillRect(0, 0, 28, 256);
+
+        // line numbers
+        ctx.fillStyle = "#64748b";
+        ctx.font = "7px monospace";
+
+        for (let i = 0; i < code.length; i++) {
+            ctx.fillText(i + 1, 8, 16 + i * 10);
         }
 
-        function createGamingCanvas() {
-            const c = document.createElement('canvas');
-            c.width = 256;
-            c.height = 256;
-            const ctx = c.getContext('2d');
-            return {
-                canvas: c,
-                ctx,
-                texture: new THREE.CanvasTexture(c),
-                update(time) {
-                    ctx.fillStyle = '#0f172a';
-                    ctx.fillRect(0, 0, 256, 256);
-                    ctx.fillStyle = '#cbd5e1';
-                    ctx.fillRect(0, 200, 256, 56);
-                    ctx.fillRect(60, 130, 80, 20);
-                    ctx.fillRect(160, 80, 60, 20);
-                    ctx.fillStyle = '#f43f5e';
-                    const x = 100 + Math.sin(time * 3) * 50,
-                        y = 160 + Math.cos(time * 6) * 30;
-                    ctx.fillRect(x, y, 16, 16);
-                    ctx.fillStyle = '#e2e8f0';
-                    ctx.font = 'bold 12px sans-serif';
-                    ctx.fillText("SCORE: 99420", 10, 25);
-                    ctx.fillText("LIVES: 3", 190, 25);
-                    this.texture.needsUpdate = true;
-                }
-            };
+        // typing text
+        ctx.fillStyle = "#e2e8f0";
+        ctx.font = "8px monospace";
+
+        let y = 16;
+
+        for (let i = 0; i < state.lineIndex; i++) {
+            ctx.fillText(code[i], 35, y);
+            y += 10;
         }
+
+        const currentLine = code[state.lineIndex] || "";
+        const typed = currentLine.substring(0, state.charIndex);
+
+        ctx.fillText(typed, 35, y);
+
+        if (state.time % 2 === 0) {
+            state.charIndex++;
+        }
+
+        if (state.charIndex > currentLine.length) {
+            state.lineIndex++;
+            state.charIndex = 0;
+        }
+
+        if (state.lineIndex >= code.length) {
+            state.lineIndex = 0;
+            state.charIndex = 0;
+        }
+
+        // cursor
+        if (Math.floor(state.cursorBlink / 15) % 2 === 0) {
+            ctx.fillStyle = "#38bdf8";
+            ctx.fillText("▮", 35 + typed.length * 5, y);
+        }
+
+        // top bar
+        ctx.fillStyle = "#1f2937";
+        ctx.fillRect(0, 0, 256, 14);
+
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = "7px monospace";
+        ctx.fillText("VS CODE — main.js (99+ errors)", 6, 10);
+
+        // status
+        ctx.fillStyle = "#f43f5e";
+        ctx.fillText("● panic mode", 160, 10);
+
+        texture.needsUpdate = true;
+    }
+
+    return {
+        canvas: c,
+        ctx,
+        texture,
+        update
+    };
+}
+
+function createGamingCanvas() {
+    const c = document.createElement('canvas');
+    c.width = 256;
+    c.height = 256;
+    const ctx = c.getContext('2d');
+
+    // ================= STATE =================
+    const state = {
+        notes: [],
+        time: 0,
+        score: 0,
+
+        cursor: { x: 128, y: 128 },
+        target: null
+    };
+
+    let spawnTimer = 0;
+
+    function spawnNote() {
+        state.notes.push({
+            x: 60 + Math.random() * 140,
+            y: 60 + Math.random() * 140,
+            r: 18,
+            life: 80,
+            hit: false
+        });
+    }
+
+    function update() {
+        state.time++;
+        spawnTimer++;
+
+        // ================= BACKGROUND =================
+        ctx.fillStyle = '#0a0a12';
+        ctx.fillRect(0, 0, 256, 256);
+
+        // grid
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        for (let i = 0; i < 256; i += 32) {
+            ctx.beginPath();
+            ctx.moveTo(i, 0);
+            ctx.lineTo(i, 256);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(0, i);
+            ctx.lineTo(256, i);
+            ctx.stroke();
+        }
+
+        // ================= SPAWN =================
+        if (spawnTimer > 30) {
+            spawnNote();
+            spawnTimer = 0;
+        }
+
+        // ================= SELECT TARGET NOTE =================
+        // pick nearest active note
+        let nearest = null;
+        let minDist = 99999;
+
+        for (let n of state.notes) {
+            const dx = n.x - state.cursor.x;
+            const dy = n.y - state.cursor.y;
+            const dist = dx * dx + dy * dy;
+
+            if (!n.hit && dist < minDist) {
+                minDist = dist;
+                nearest = n;
+            }
+        }
+
+        state.target = nearest;
+
+        // ================= CURSOR MOVEMENT (SMOOTH AIM) =================
+        if (state.target) {
+            const dx = state.target.x - state.cursor.x;
+            const dy = state.target.y - state.cursor.y;
+
+            state.cursor.x += dx * 0.12;
+            state.cursor.y += dy * 0.12;
+        }
+
+        // ================= NOTES =================
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        for (let i = state.notes.length - 1; i >= 0; i--) {
+            const n = state.notes[i];
+
+            n.life--;
+
+            const pulse = Math.sin(state.time * 0.1) * 4;
+
+            // outer ring
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.r + pulse, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // inner
+            ctx.fillStyle = 'rgba(56,189,248,0.15)';
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.r - 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // center
+            ctx.fillStyle = '#e2e8f0';
+            ctx.font = 'bold 10px monospace';
+            ctx.fillText("HIT", n.x, n.y);
+
+            // auto hit when cursor reaches
+            const dx = n.x - state.cursor.x;
+            const dy = n.y - state.cursor.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < 8 && !n.hit) {
+                n.hit = true;
+                state.score += 100;
+            }
+
+            // remove
+            if (n.life <= 0 || n.hit) {
+                state.notes.splice(i, 1);
+            }
+        }
+
+        // ================= CURSOR RENDER =================
+
+        // trail glow
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        ctx.beginPath();
+        ctx.arc(state.cursor.x, state.cursor.y, 16, 0, Math.PI * 2);
+        ctx.fill();
+
+        // ring
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(state.cursor.x, state.cursor.y, 9, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // core
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(state.cursor.x, state.cursor.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // ================= UI =================
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px monospace';
+        ctx.fillText("OSU", 70, 20);
+
+        ctx.font = '12px monospace';
+        ctx.fillText("SCORE: " + state.score, 70, 40);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText("PLAYER: BLANKEDWAVE", 70, 58);
+
+        texture.needsUpdate = true;
+    }
+
+    const texture = new THREE.CanvasTexture(c);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+
+    return {
+        canvas: c,
+        ctx,
+        texture,
+        update
+    };
+}
 
         function createPhoneScreenTexture() {
             const c = document.createElement('canvas');
@@ -2112,7 +2394,7 @@ for (let d = 1; d <= totalDays; d++) {
 ctx.fillStyle = '#8B7355';
 ctx.font = '18px Arial';
 ctx.textAlign = 'center';
-ctx.fillText('✦', canvas.width/2, canvas.height-50);
+ctx.fillText('❤️', canvas.width/2, canvas.height-50);
 ctx.font = '16px Arial';
 ctx.fillText('BLANKEDWAVE', canvas.width/2, canvas.height-25);
 
@@ -2268,13 +2550,12 @@ this.scene.add(calendarGroup);
                 this.colliders.push(pedestalR);
                 this.scene.add(desk);
 
-                // --- GAMING CHAIR (SAFE + FIXED VERSION) ---
+// --- GAMING CHAIR (SPINE + RECLINE UPGRADE) ---
 
 const chairGroup = new THREE.Group();
 chairGroup.position.set(0, 0, -1.8);
 chairGroup.rotation.y = Math.PI;
 
-// kalau guna dalam class, tukar scene → this.scene
 const targetScene = this.scene || scene;
 
 // ===== MATERIALS =====
@@ -2304,6 +2585,7 @@ hub.position.y = 0.03;
 chairGroup.add(hub);
 
 const legCount = 5;
+
 for (let i = 0; i < legCount; i++) {
     const angle = (i / legCount) * Math.PI * 2;
 
@@ -2321,18 +2603,21 @@ for (let i = 0; i < legCount; i++) {
     leg.rotation.y = -angle + Math.PI / 2;
     chairGroup.add(leg);
 
-const wheel = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.06, 0.06, 0.04, 16),
-    plasticMat
-);
-wheel.rotation.z = Math.PI / 2;   // baringkan roda (paksi Y → X)
-wheel.rotation.y = angle;         // <-- TAMBAH baris ini: pusing mengikut sudut kaki
-wheel.position.set(
-    Math.cos(angle) * 0.45,
-    0.02,
-    Math.sin(angle) * 0.45
-);
-chairGroup.add(wheel);
+    const wheel = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.06, 0.06, 0.04, 16),
+        plasticMat
+    );
+
+    wheel.rotation.z = Math.PI / 2;
+    wheel.rotation.y = angle;
+
+    wheel.position.set(
+        Math.cos(angle) * 0.45,
+        0.02,
+        Math.sin(angle) * 0.45
+    );
+
+    chairGroup.add(wheel);
 }
 
 // ===== GAS CYLINDER =====
@@ -2361,13 +2646,16 @@ const cushion = new THREE.Mesh(
 cushion.position.set(0, 0.58, 0.02);
 chairGroup.add(cushion);
 
-// ===== BACKREST =====
+// ===== BACKREST (RECLINED) =====
+const backGroup = new THREE.Group();
+backGroup.position.set(0, 0.98, -0.35);
+backGroup.rotation.x = -0.22; // 🔥 RECLINE (~12–13 degrees)
+
 const back = new THREE.Mesh(
     new THREE.BoxGeometry(0.6, 0.85, 0.08),
     plasticMat
 );
-back.position.set(0, 0.98, -0.35);
-chairGroup.add(back);
+back.position.set(0, 0, 0);
 
 const backPad = new THREE.Mesh(
     new THREE.BoxGeometry(0.54, 0.78, 0.05),
@@ -2376,26 +2664,40 @@ const backPad = new THREE.Mesh(
         roughness: 0.7
     })
 );
-backPad.position.set(0, 0.98, -0.33);
-chairGroup.add(backPad);
+backPad.position.set(0, 0, 0.02);
 
-// ===== LUMBAR (FIXED - no more weird stripe bug) =====
+backGroup.add(back);
+backGroup.add(backPad);
+chairGroup.add(backGroup);
+
+// ===== BACK SUPPORT GROUP (lumbar + head ikut recline) =====
+const supportGroup = new THREE.Group();
+supportGroup.position.set(0, 0, 0); // attach to backGroup
+
+// ===== LUMBAR =====
 const lumbar = new THREE.Mesh(
     new THREE.BoxGeometry(0.3, 0.14, 0.08),
     accentMat
 );
-lumbar.position.set(0, 0.82, -0.28);
-chairGroup.add(lumbar);
+
+// position RELATIVE to backrest
+lumbar.position.set(0, -0.25, 0.05); // 🔥 adjust ikut back surface
+supportGroup.add(lumbar);
 
 // ===== HEAD PILLOW =====
 const headPillow = new THREE.Mesh(
     new THREE.BoxGeometry(0.28, 0.12, 0.08),
     accentMat
 );
-headPillow.position.set(0, 1.22, -0.28);
-chairGroup.add(headPillow);
 
-// ===== ARMRESTS (NO CLONE BUG) =====
+// higher position on backrest
+headPillow.position.set(0, 0.28, 0.05); // 🔥 relative to backrest
+supportGroup.add(headPillow);
+
+// attach to backrest group (IMPORTANT)
+backGroup.add(supportGroup);
+
+// ===== ARMRESTS =====
 function createArm(x) {
     const arm = new THREE.Mesh(
         new THREE.BoxGeometry(0.08, 0.05, 0.32),
@@ -2413,56 +2715,167 @@ function createArm(x) {
     chairGroup.add(support);
 }
 
-createArm(-0.35); //armrest kanan
-createArm(0.35); //armrest kiri
+createArm(-0.35);
+createArm(0.35);
 
-// ===== FINAL SAFE ADD =====
+// ===== FINAL =====
 targetScene.add(chairGroup);
 
-console.log("Chair loaded successfully");
+              
+              
 
-                // --- MONITORS ---
-                const monitorGroup = new THREE.Group();
-                monitorGroup.position.set(0, 0.8, -3.8);
-                const standY = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.4), metalDark);
-                standY.position.set(0, 0.2, 0);
-                monitorGroup.add(standY);
-                const basePlank = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.02, 0.4), metalDark);
-                basePlank.position.set(0, 0.01, 0);
-                monitorGroup.add(basePlank);
+ // --- MONITORS (fixed + aligned support arms) ---
 
-                const fLeft = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.8, 0.05), metalDark);
-                fLeft.position.set(-0.75, 0.6, 0.1);
-                fLeft.rotation.y = 0.25;
-                monitorGroup.add(fLeft);
-                const screenL = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.75, 0.01), new THREE
-                    .MeshBasicMaterial({ map: this.matrixScreen.texture }));
-                screenL.position.set(-0.75, 0.6, 0.13);
-                screenL.rotation.y = 0.25;
-                monitorGroup.add(screenL);
+const monitorGroup = new THREE.Group();
+monitorGroup.position.set(0, 0.8, -3.8);
 
-                const fRight = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.8, 0.05), metalDark);
-                fRight.position.set(0.75, 0.6, 0.1);
-                fRight.rotation.y = -0.25;
-                monitorGroup.add(fRight);
-                const screenR = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.75, 0.01), new THREE
-                    .MeshBasicMaterial({ map: this.gamingScreen.texture }));
-                screenR.position.set(0.75, 0.6, 0.13);
-                screenR.rotation.y = -0.25;
-                monitorGroup.add(screenR);
+// ================= CONFIG =================
+const monitorAngle = 0.25;
 
-                const monitorTrigger = new THREE.Mesh(new THREE.BoxGeometry(2.5, 1.2, 0.8), new THREE
-                    .MeshBasicMaterial({ visible: false }));
-                monitorTrigger.position.set(0, 0.5, 0);
-                monitorTrigger.name = "PC Monitor";
-                monitorTrigger.userData = { id: "pc", subtitle: "GitHub Projects & Dev Workstation" };
-                monitorGroup.add(monitorTrigger);
-                this.interactiveObjects.push(monitorTrigger);
-                this.scene.add(monitorGroup);
+// ================= BASE =================
+const baseMat = new THREE.MeshStandardMaterial({
+    color: 0x1a1a1a,
+    metalness: 0.7,
+    roughness: 0.3
+});
+
+const basePlate = new THREE.Mesh(
+    new THREE.BoxGeometry(0.7, 0.04, 0.5),
+    baseMat
+);
+
+basePlate.position.set(0, 0.02, -0.15);
+monitorGroup.add(basePlate);
+
+// ================= NECK =================
+const neckMat = new THREE.MeshStandardMaterial({
+    color: 0x222222,
+    metalness: 0.6,
+    roughness: 0.3
+});
+
+const neck = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.035, 0.04, 0.5, 12),
+    neckMat
+);
+
+neck.position.set(0, 0.28, -0.18);
+monitorGroup.add(neck);
+
+// ================= SUPPORT ARMS =================
+const armMat = new THREE.MeshStandardMaterial({
+    color: 0x222222,
+    metalness: 0.7,
+    roughness: 0.3
+});
+
+// LEFT ARM
+const leftSupport = new THREE.Mesh(
+    new THREE.BoxGeometry(0.75, 0.04, 0.04),
+    armMat
+);
+
+leftSupport.position.set(-0.38, 0.43, -0.09);
+leftSupport.rotation.set(
+    0,
+    monitorAngle,
+    THREE.MathUtils.degToRad(10)
+);
+
+monitorGroup.add(leftSupport);
+
+// RIGHT ARM
+const rightSupport = new THREE.Mesh(
+    new THREE.BoxGeometry(0.75, 0.04, 0.04),
+    armMat
+);
+
+rightSupport.position.set(0.38, 0.43, -0.09);
+rightSupport.rotation.set(
+    0,
+    -monitorAngle,
+    THREE.MathUtils.degToRad(-10)
+);
+
+monitorGroup.add(rightSupport);
+
+// ================= MONITOR LEFT =================
+const fLeft = new THREE.Mesh(
+    new THREE.BoxGeometry(1.4, 0.8, 0.05),
+    new THREE.MeshStandardMaterial({
+        color: 0x111111,
+        roughness: 0.5
+    })
+);
+
+fLeft.position.set(-0.75, 0.6, 0.05);
+fLeft.rotation.y = monitorAngle;
+monitorGroup.add(fLeft);
+
+const screenL = new THREE.Mesh(
+    new THREE.BoxGeometry(1.35, 0.75, 0.01),
+    new THREE.MeshBasicMaterial({
+        map: this.matrixScreen.texture
+    })
+);
+
+screenL.position.set(-0.75, 0.6, 0.08);
+screenL.rotation.y = monitorAngle;
+monitorGroup.add(screenL);
+
+// ================= MONITOR RIGHT =================
+const fRight = new THREE.Mesh(
+    new THREE.BoxGeometry(1.4, 0.8, 0.05),
+    new THREE.MeshStandardMaterial({
+        color: 0x111111,
+        roughness: 0.5
+    })
+);
+
+fRight.position.set(0.75, 0.6, 0.05);
+fRight.rotation.y = -monitorAngle;
+monitorGroup.add(fRight);
+
+const screenR = new THREE.Mesh(
+    new THREE.BoxGeometry(1.35, 0.75, 0.01),
+    new THREE.MeshBasicMaterial({
+        map: this.gamingScreen.texture
+    })
+);
+
+screenR.position.set(0.75, 0.6, 0.08);
+screenR.rotation.y = -monitorAngle;
+monitorGroup.add(screenR);
+
+// ================= INTERACTION =================
+const monitorTrigger = new THREE.Mesh(
+    new THREE.BoxGeometry(2.5, 1.2, 0.8),
+    new THREE.MeshBasicMaterial({ visible: false })
+);
+
+monitorTrigger.position.set(0, 0.5, 0.1);
+monitorTrigger.name = "PC Monitor";
+monitorTrigger.userData = {
+    id: "pc",
+    subtitle: "GitHub Projects & Dev Workstation"
+};
+
+monitorGroup.add(monitorTrigger);
+
+this.interactiveObjects.push(monitorTrigger);
+this.scene.add(monitorGroup);
 
                 // --- MILO TIN ---
                 const miloTin = new THREE.Group();
-                miloTin.position.set(-1.2, 0.8, -3.4);
+                miloTin.position.set(-1.2, 0.9, -3.4);
+              
+              // === PUTARAN KE ARAH KATIL ===
+const dx = -1.8 - (-1.2);   // -0.6
+const dz = 2.5 - (-3.4);    // 5.9
+miloTin.rotation.y = Math.atan2(-dz, -dx) +
+    THREE.MathUtils.degToRad(-80);
+// ==================================
+              
                 const tinCylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.24, 16), new THREE
                     .MeshStandardMaterial({ color: 0x15803d, roughness: 0.3, metalness: 0.8 }));
                 miloTin.add(tinCylinder);
@@ -2507,39 +2920,196 @@ console.log("Chair loaded successfully");
                 this.animatedObjects.computerGlow = pcInterior;
                 this.scene.add(pcTower);
 
-                const kbd = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.02, 0.3), new THREE
-                    .MeshStandardMaterial({ color: 0x111111, roughness: 0.8 }));
-                kbd.position.set(0, 0.81, -3.2);
-                this.scene.add(kbd);
-                const mouse = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.02, 0.16), new THREE
-                    .MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 }));
-                mouse.position.set(0.6, 0.81, -3.2);
-                this.scene.add(mouse);
+// ================= KEYBOARD (KEYCAP VERSION) =================
+const kbd = new THREE.Group();
 
-                // --- PHOTO FRAME — my photos (no Instagram) ---
-                const photoFrameStand = new THREE.Group();
-                photoFrameStand.position.set(-2.2, 0.8, -3.2);
-                photoFrameStand.rotation.y = 0.4;
-                const frameBase = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.04, 0.24), woodTeak);
-                frameBase.position.y = 0.02;
-                photoFrameStand.add(frameBase);
-                const frameRim = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.48, 0.03), woodTeak);
-                frameRim.position.set(0, 0.26, 0);
-                photoFrameStand.add(frameRim);
-                // Default photo placeholder
-                const photoMat = new THREE.MeshBasicMaterial({ color: 0x4a3f6b });
-                const profileImg = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.44, 0.012), photoMat);
-                profileImg.position.set(0, 0.26, 0.015);
-                photoFrameStand.add(profileImg);
+// ---------- BASE ----------
+const base = new THREE.Mesh(
+    new THREE.BoxGeometry(0.85, 0.03, 0.32),
+    new THREE.MeshStandardMaterial({
+        color: 0x0b0b0f,
+        roughness: 0.7,
+        metalness: 0.2
+    })
+);
+kbd.add(base);
 
-                const photoFrameTrigger = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.6, 0.4), new THREE
-                    .MeshBasicMaterial({ visible: false }));
-                photoFrameTrigger.position.set(0, 0.25, 0);
-                photoFrameTrigger.name = "Photo Gallery";
-                photoFrameTrigger.userData = { id: "photowall", subtitle: "My personal photos" };
-                photoFrameStand.add(photoFrameTrigger);
-                this.interactiveObjects.push(photoFrameTrigger);
-                this.scene.add(photoFrameStand);
+// ---------- KEY MATERIAL ----------
+const keyMat = new THREE.MeshStandardMaterial({
+    color: 0x1c1c1f,
+    roughness: 0.75,
+    metalness: 0.1
+});
+
+// ---------- KEY GRID CONFIG ----------
+const rows = [
+    { z: -0.10, count: 14 },
+    { z: -0.04, count: 14 },
+    { z:  0.02, count: 14 },
+    { z:  0.08, count: 10 }
+];
+
+const startX = -0.30;
+const spacing = 0.05;
+
+// ---------- GENERATE KEYCAPS ----------
+rows.forEach((row, rIndex) => {
+
+    for (let i = 0; i < row.count; i++) {
+
+        let sizeX = 0.035;
+        let sizeY = 0.015;
+        let sizeZ = 0.035;
+
+        // spacebar region (bigger keys in last row)
+        if (rIndex === 3 && i >= 3 && i <= 6) {
+            sizeX = 0.14;
+            sizeZ = 0.04;
+        }
+
+        const key = new THREE.Mesh(
+            new THREE.BoxGeometry(sizeX, sizeY, sizeZ),
+            keyMat
+        );
+
+        // position
+        key.position.set(
+            startX + i * spacing,
+            0.02,
+            row.z
+        );
+
+        // slight slope per row (real keyboard feel)
+        key.rotation.x = -0.06 - rIndex * 0.01;
+
+        kbd.add(key);
+    }
+});
+
+// ---------- SPACEBAR EXTRA DETAIL ----------
+const spacebar = new THREE.Mesh(
+    new THREE.BoxGeometry(0.42, 0.015, 0.06),
+    new THREE.MeshStandardMaterial({
+        color: 0x111111,
+        roughness: 0.5,
+        metalness: 0.15
+    })
+);
+
+spacebar.position.set(0, 0.02, 0.09);
+spacebar.rotation.x = -0.08;
+kbd.add(spacebar);
+
+// ---------- POSITION (UNCHANGED FROM YOUR CODE) ----------
+kbd.position.set(0, 0.81, -3.2);
+
+this.scene.add(kbd);
+
+
+// ================= MOUSE (REDESIGN) =================
+const mouse = new THREE.Group();
+
+// main body (ergonomic shape feel)
+const mouseBody = new THREE.Mesh(
+    new THREE.BoxGeometry(0.11, 0.035, 0.18),
+    new THREE.MeshStandardMaterial({
+        color: 0x151515,
+        roughness: 0.85,
+        metalness: 0.1
+    })
+);
+mouseBody.position.y = 0;
+mouse.add(mouseBody);
+
+// top shell (slight hump)
+const mouseTop = new THREE.Mesh(
+    new THREE.BoxGeometry(0.1, 0.02, 0.16),
+    new THREE.MeshStandardMaterial({
+        color: 0x222222,
+        roughness: 0.7
+    })
+);
+mouseTop.position.y = 0.02;
+mouse.add(mouseTop);
+
+// scroll wheel (tiny detail)
+const wheel = new THREE.Mesh(
+    new THREE.BoxGeometry(0.02, 0.015, 0.04),
+    new THREE.MeshStandardMaterial({
+        color: 0x555555,
+        roughness: 0.4
+    })
+);
+wheel.position.set(0, 0.03, -0.03);
+mouse.add(wheel);
+
+// position (UNCHANGED)
+mouse.position.set(0.6, 0.81, -3.2);
+
+this.scene.add(mouse);
+
+// --- PHOTO FRAME — SIMPLE STABLE VERSION ---
+
+const photoFrameStand = new THREE.Group();
+photoFrameStand.position.set(-2.2, 0.8, -3.2);
+photoFrameStand.rotation.y = 0.4;
+
+// ================= BASE =================
+const frameBase = new THREE.Mesh(
+    new THREE.BoxGeometry(0.5, 0.04, 0.24),
+    woodTeak
+);
+frameBase.position.y = 0.02;
+photoFrameStand.add(frameBase);
+
+// ================= FRAME =================
+const frameRim = new THREE.Mesh(
+    new THREE.BoxGeometry(0.4, 0.48, 0.03),
+    woodTeak
+);
+frameRim.position.set(0, 0.26, 0);
+photoFrameStand.add(frameRim);
+
+// ================= TEXTURE =================
+const profileTexture = new THREE.TextureLoader().load(
+    "https://raw.githubusercontent.com/BlankedWave/blankedwave.github.io/refs/heads/main/assets/profile1.png"
+);
+
+// force clean render
+profileTexture.colorSpace = THREE.SRGBColorSpace;
+profileTexture.minFilter = THREE.LinearFilter;
+profileTexture.magFilter = THREE.LinearFilter;
+profileTexture.generateMipmaps = false;
+
+// ================= PHOTO PLANE (dengan redup 30%) =================
+const profileImg = new THREE.Mesh(
+    new THREE.BoxGeometry(0.36, 0.44, 0.012),
+    new THREE.MeshBasicMaterial({
+        map: profileTexture,
+        color: 0xB3B3B3 // ← ini mengurangkan kecerahan ke 70% (redup 30%)
+    })
+);
+
+profileImg.position.set(0, 0.26, 0.015);
+photoFrameStand.add(profileImg);
+
+// ================= TRIGGER =================
+const photoFrameTrigger = new THREE.Mesh(
+    new THREE.BoxGeometry(0.5, 0.6, 0.4),
+    new THREE.MeshBasicMaterial({ visible: false })
+);
+
+photoFrameTrigger.position.set(0, 0.25, 0);
+photoFrameTrigger.name = "Photo Gallery";
+photoFrameTrigger.userData = {
+    id: "photowall",
+    subtitle: "My personal photos"
+};
+
+photoFrameStand.add(photoFrameTrigger);
+
+this.interactiveObjects.push(photoFrameTrigger);
+this.scene.add(photoFrameStand);
 
                 // --- TV with DVD screensaver (moved outward from frame) ---
                 const tvUnit = new THREE.Group();
@@ -3499,7 +4069,7 @@ setupMobileControls() {
             if (touch.identifier === STATE.touchLook.touchId) {
                 const dx = touch.clientX - STATE.touchLook.lastX;
                 const dy = touch.clientY - STATE.touchLook.lastY;
-                const sensitivity = 0.0035;
+                const sensitivity = 0.006; //sensitivity look
                 STATE.player.rot.x -= dx * sensitivity;
                 STATE.player.rot.y -= dy * sensitivity;
                 STATE.player.rot.y = Math.max(-Math.PI / 2.1, Math.min(Math.PI / 2.1, STATE.player.rot.y));
