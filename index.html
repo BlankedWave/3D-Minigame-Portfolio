@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Welcome to BlankedWave | Interactive 3D Portfolio</title>
+    <title>BlankedWave | Interactive 3D Portfolio</title>
     <script src="https://cdn.tailwindcss.com">
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
@@ -459,7 +459,7 @@
         <button id="start-btn" class="hidden px-8 py-3 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl shadow-lg shadow-violet-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
             BANGUN DARI TIDUR 😴
         </button>
-        <span id="loading-text" class="text-xs text-gray-500 code-font">Sedang mengemas barang dalam bilik...</span>
+        <span id="loading-text" class="text-xs text-gray-500 code-font">Sedang mengemas barang bersepak dalam bilik...</span>
     </div>
 
     <div id="canvas-container" class="absolute inset-0 w-full h-full z-0"></div>
@@ -4905,7 +4905,7 @@ if (this.engine.sejadah && !STATE.achievements.solat) {
                 if (progress >= 100) {
                     clearInterval(interval);
                     document.getElementById('loading-bar').style.width = '100%';
-                    document.getElementById('loading-text').innerText = "Malaysia Cozy Bujang Room Ready.";
+                    document.getElementById('loading-text').innerText = "Okay semua dah kemas!";
                     document.getElementById('start-btn').classList.remove('hidden');
                 } else {
                     document.getElementById('loading-bar').style.width = `${progress}%`;
