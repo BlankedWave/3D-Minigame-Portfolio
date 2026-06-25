@@ -553,32 +553,32 @@
         <span class="text-xs text-gray-400" id="prompt-key">Tekan <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-white font-mono">E</kbd> untuk buka</span>
     </div>
 
-<!-- Top Left Controls -->
-<div class="fixed top-3 left-3 z-30 flex flex-col gap-1 md:gap-2 md:top-6 md:left-6">
-    <div class="flex flex-wrap items-center gap-1 md:gap-2 bg-slate-900/80 backdrop-blur-md border border-slate-700/50 p-1 md:p-2 rounded-xl shadow-lg">
+<!-- Top Left Controls - LEBIH KECIL & PADAT -->
+<div class="fixed top-2 left-2 z-30 flex flex-col gap-0.5 md:gap-1 md:top-3 md:left-3">
+    <div class="flex flex-wrap items-center gap-0.5 md:gap-1 bg-slate-900/80 backdrop-blur-md border border-slate-700/50 p-0.5 md:p-1.5 rounded-lg shadow-lg">
 
         <!-- Toggle Audio -->
-        <button id="toggle-audio" class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
-            <i class="fa-solid fa-music text-xs md:text-sm text-violet-400"></i>
+        <button id="toggle-audio" class="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
+            <i class="fa-solid fa-music text-[10px] md:text-xs text-violet-400"></i>
         </button>
 
         <!-- Volume Slider – Sembunyi di mobile -->
-        <div class="hidden md:flex items-center gap-1">
-            <input type="range" id="volume-slider" class="volume-slider w-8 md:w-16" min="0" max="100" value="50">
+        <div class="hidden md:flex items-center gap-0.5">
+            <input type="range" id="volume-slider" class="volume-slider w-10" min="0" max="100" value="50">
         </div>
 
         <!-- Toggle Time (Malam/Siang) -->
-        <button id="toggle-time" class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
-            <i class="fa-solid fa-moon text-xs md:text-sm text-amber-400"></i>
+        <button id="toggle-time" class="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
+            <i class="fa-solid fa-moon text-[10px] md:text-xs text-amber-400"></i>
         </button>
 
         <!-- Reset Position -->
-        <button id="reset-position" class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
-            <i class="fa-solid fa-rotate text-xs md:text-sm text-gray-400"></i>
+        <button id="reset-position" class="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
+            <i class="fa-solid fa-rotate text-[10px] md:text-xs text-gray-400"></i>
         </button>
 
-        <!-- Music Visualizer – Sembunyi di mobile -->
-        <div class="hidden md:flex music-visualizer" id="music-visualizer">
+        <!-- Music Visualizer – Sembunyi di mobile, dikecilkan -->
+        <div class="hidden md:flex music-visualizer scale-75 origin-left" id="music-visualizer">
             <div class="bar"></div>
             <div class="bar"></div>
             <div class="bar"></div>
@@ -589,14 +589,14 @@
         </div>
     </div>
 
-    <!-- Achievement Banner -->
-    <div id="achievement-banner" class="opacity-0 translate-y-2 pointer-events-none transition-all duration-500 flex items-center gap-3 bg-gradient-to-r from-emerald-950/90 to-slate-900/95 border border-emerald-500/40 p-2 md:p-3 rounded-xl shadow-xl max-w-sm text-xs md:text-sm">
-        <div class="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400">
-            <i class="fa-solid fa-trophy text-sm"></i>
+    <!-- Achievement Banner - lebih kecil -->
+    <div id="achievement-banner" class="opacity-0 translate-y-2 pointer-events-none transition-all duration-500 flex items-center gap-1.5 bg-gradient-to-r from-emerald-950/90 to-slate-900/95 border border-emerald-500/40 p-1 md:p-1.5 rounded-lg shadow-xl max-w-[200px] text-[9px] md:text-[10px]">
+        <div class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400 flex-shrink-0">
+            <i class="fa-solid fa-trophy text-[9px] md:text-xs"></i>
         </div>
-        <div>
-            <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Achievement Unlocked!</p>
-            <p id="achievement-text" class="text-xs text-white font-medium">Jumped on bed!</p>
+        <div class="min-w-0">
+            <p class="text-[8px] md:text-[9px] font-bold text-emerald-400 uppercase tracking-wider truncate">Achievement Unlocked!</p>
+            <p id="achievement-text" class="text-[9px] md:text-[10px] text-white font-medium truncate">Jumped on bed!</p>
         </div>
     </div>
 </div>
@@ -3191,7 +3191,7 @@ this.scene.add(mouse);
 // --- PHOTO FRAME — SIMPLE STABLE VERSION ---
 
 const photoFrameStand = new THREE.Group();
-photoFrameStand.position.set(-2.2, 0.8, -3.2);
+photoFrameStand.position.set(-2, 0.8, -3.6);
 photoFrameStand.rotation.y = 0.4;
 
 // ================= BASE =================
@@ -3250,6 +3250,7 @@ photoFrameStand.add(photoFrameTrigger);
 
 this.interactiveObjects.push(photoFrameTrigger);
 this.scene.add(photoFrameStand);
+this.photoFrame = photoFrameStand;
 
                 // --- TV with DVD screensaver (moved outward from frame) ---
                 const tvUnit = new THREE.Group();
@@ -3309,53 +3310,60 @@ this.scene.add(photoFrameStand);
                 this.scene.add(tvUnit);
 
                 // --- BED with proper collision ---
-                const bedGroup = new THREE.Group();
-                bedGroup.position.set(-1.8, 0, 2.5);
-                bedGroup.rotation.y = Math.PI;
+// --- BED with proper collision (FIXED: no stuck on bed) ---
+const bedGroup = new THREE.Group();
+bedGroup.position.set(-1.8, 0, 2.5);
+bedGroup.rotation.y = Math.PI;
 
-                const bedFrame = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.4, 3.2), woodTeak);
-                bedFrame.position.y = 0.2;
-                bedGroup.add(bedFrame);
-                const mattress = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.35, 3.0), new THREE
-                    .MeshStandardMaterial({ color: 0x4f46e5, roughness: 0.8 }));
-                mattress.position.y = 0.55;
-                bedGroup.add(mattress);
+const bedFrame = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.4, 3.2), woodTeak);
+bedFrame.position.y = 0.2;
+bedGroup.add(bedFrame);
+const mattress = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.35, 3.0), new THREE
+    .MeshStandardMaterial({ color: 0x4f46e5, roughness: 0.8 }));
+mattress.position.y = 0.55;
+bedGroup.add(mattress);
 
-                // Solid collider on top of mattress
-                const bedCollider = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.06, 2.8), new THREE
-                    .MeshBasicMaterial({ visible: false }));
-                bedCollider.position.y = 0.75;
-                bedGroup.add(bedCollider);
-                this.colliders.push(bedCollider);
+// === COLLIDER ATAS TILAM (untuk berdiri) ===
+const bedCollider = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.06, 2.6), new THREE
+    .MeshBasicMaterial({ visible: false }));
+bedCollider.position.y = 0.75;
+bedGroup.add(bedCollider);
+this.colliders.push(bedCollider);
 
-                // Side colliders
-                const sideMat = new THREE.MeshBasicMaterial({ visible: false });
-                const sideL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.8, 2.8), sideMat);
-                sideL.position.set(-1.3, 0.4, 0);
-                bedGroup.add(sideL);
-                this.colliders.push(sideL);
-                const sideR = sideL.clone();
-                sideR.position.x = 1.3;
-                bedGroup.add(sideR);
-                this.colliders.push(sideR);
-                const sideBack = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.8, 0.06), sideMat);
-                sideBack.position.set(0, 0.4, -1.4);
-                bedGroup.add(sideBack);
-                this.colliders.push(sideBack);
+// === COLLIDER SISI (diletakkan RENDAH supaya tidak menghalang di atas tilam) ===
+const sideMat = new THREE.MeshBasicMaterial({ visible: false });
+const sideL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.3, 2.6), sideMat);
+sideL.position.set(-1.3, 0.2, 0);
+bedGroup.add(sideL);
+this.colliders.push(sideL);
 
-                const pillowL = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.15, 0.6), plasticWhite);
-                pillowL.position.set(-0.55, 0.75, -1.1);
-                pillowL.rotation.x = -0.15;
-                bedGroup.add(pillowL);
-                const pillowR = pillowL.clone();
-                pillowR.position.x = 0.55;
-                bedGroup.add(pillowR);
-                const blanket = new THREE.Mesh(new THREE.BoxGeometry(2.44, 0.25, 2.0), new THREE
-                    .MeshStandardMaterial({ color: 0x0f766e, roughness: 0.9 }));
-                blanket.position.set(0, 0.62, 0.5);
-                bedGroup.add(blanket);
+const sideR = sideL.clone();
+sideR.position.x = 1.3;
+bedGroup.add(sideR);
+this.colliders.push(sideR);
 
-                this.scene.add(bedGroup);
+const sideBack = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.3, 0.06), sideMat);
+sideBack.position.set(0, 0.2, -1.3);
+bedGroup.add(sideBack);
+this.colliders.push(sideBack);
+
+// === (Pastikan tiada collider di hadapan katil — biarkan pemain boleh melompat keluar) ===
+// (Tidak perlu collider di z = 1.3)
+
+// ... (bantal dan selimut kekal sama) ...
+const pillowL = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.15, 0.6), plasticWhite);
+pillowL.position.set(-0.55, 0.75, -1.1);
+pillowL.rotation.x = -0.15;
+bedGroup.add(pillowL);
+const pillowR = pillowL.clone();
+pillowR.position.x = 0.55;
+bedGroup.add(pillowR);
+const blanket = new THREE.Mesh(new THREE.BoxGeometry(2.44, 0.25, 2.0), new THREE
+    .MeshStandardMaterial({ color: 0x0f766e, roughness: 0.9 }));
+blanket.position.set(0, 0.62, 0.5);
+bedGroup.add(blanket);
+
+this.scene.add(bedGroup);
 
                 // --- NASI LEMAK ---
                 const nasiLemakGroup = new THREE.Group();
@@ -4943,11 +4951,42 @@ if (this.engine.sejadah && !STATE.achievements.solat) {
 
         window.addEventListener('load', () => {
             const engine = new GameEngine();
+            window.engine = engine;
             const controller = new PlayerController(engine);
             const interactions = new InteractionSystem(engine);
             uiManager = new UIManager(engine);
             audio.init();
+            
+            // ---- CHEAT CODE ----
+let cheatBuffer = '';
+const CHEAT_CODE = 'silaninggal';
 
+window.addEventListener('keydown', (e) => {
+    // Hanya jika game sudah aktif dan tidak dalam panel
+    if (!STATE.wakeUpComplete || STATE.viewingPanel) return;
+
+    // Abaikan jika menekan kekunci khas (Shift, Ctrl, dll.)
+    if (e.key.length > 1) return;
+
+    // Tambah huruf ke buffer
+    cheatBuffer += e.key.toLowerCase();
+
+    // Hadkan panjang buffer (untuk elak memory leak)
+    if (cheatBuffer.length > 20) cheatBuffer = cheatBuffer.slice(-20);
+
+    // Periksa sama ada buffer berakhir dengan cheat code
+    if (cheatBuffer.endsWith(CHEAT_CODE)) {
+        // Padam buffer supaya tidak trigger berulang
+        cheatBuffer = '';
+
+        // Panggil fungsi spawn lilin
+        if (engine && engine.photoFrame) {
+            spawnCandle(engine.photoFrame);
+            uiManager.triggerAchievement('🕯️ "Kau pergi dulu, aku menyusul." — Lilin menyala.');
+        }
+    }
+});  
+          
             let progress = 0;
             const interval = setInterval(() => {
                 progress += Math.floor(Math.random() * 20) + 15;
@@ -5019,7 +5058,99 @@ if (this.engine.sejadah && !STATE.achievements.solat) {
             let frames = 0,
                 lastFpsUpdate = 0;
             const fpsText = document.getElementById('fps-display');
+          
+ function spawnCandle(photoFrame) {
+    const pos = photoFrame.position.clone();
 
+    // arah depan & kanan ikut rotation frame
+    const forward = new THREE.Vector3(0, 0, 1)
+        .applyQuaternion(photoFrame.quaternion);
+
+    const right = new THREE.Vector3(1, 0, 0)
+        .applyQuaternion(photoFrame.quaternion);
+
+    // titik tengah di hadapan frame
+    const frontCenter = pos.clone()
+        .add(forward.multiplyScalar(0.25));
+
+    // Posisi dua lilin (kiri & kanan frame)
+    const candlePositions = [
+        frontCenter.clone().add(right.clone().multiplyScalar(-0.22)), // kiri
+        frontCenter.clone().add(right.clone().multiplyScalar(0.22))   // kanan
+    ];
+
+    candlePositions.forEach(candlePos => {
+        const group = new THREE.Group();
+        group.position.copy(candlePos);
+
+        // ---- BAHAN ----
+        const waxMat = new THREE.MeshStandardMaterial({
+            color: 0xf5f0e0,
+            roughness: 0.7
+        });
+
+        const wickMat = new THREE.MeshStandardMaterial({
+            color: 0x222222
+        });
+
+        // ---- BADAN LILIN (lebih tinggi memorial) ----
+        const candleBody = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.05, 0.06, 0.55, 16),
+            waxMat
+        );
+        candleBody.position.y = 0.275;
+        group.add(candleBody);
+
+        // ---- SUMBU ----
+        const wick = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.004, 0.006, 0.04, 6),
+            wickMat
+        );
+        wick.position.y = 0.57;
+        group.add(wick);
+
+        // ---- API ----
+        const flameGroup = new THREE.Group();
+        flameGroup.position.y = 0.62;
+
+        const flame = new THREE.Mesh(
+            new THREE.SphereGeometry(0.025, 8, 8),
+            new THREE.MeshBasicMaterial({ color: 0xff8800 })
+        );
+        flame.scale.set(0.8, 1.2, 0.8);
+        flameGroup.add(flame);
+
+        const innerFlame = new THREE.Mesh(
+            new THREE.SphereGeometry(0.015, 6, 6),
+            new THREE.MeshBasicMaterial({ color: 0xffff44 })
+        );
+        innerFlame.scale.set(0.7, 1.1, 0.7);
+        flameGroup.add(innerFlame);
+
+        group.add(flameGroup);
+
+        // ---- CAHAYA ----
+        const candleLight = new THREE.PointLight(
+            0xff8800,
+            0.9,
+            4
+        );
+        candleLight.position.y = 0.65;
+        group.add(candleLight);
+
+        group.userData = {
+            flameGroup,
+            light: candleLight,
+            time: 0
+        };
+
+        engine.scene.add(group);
+
+        if (!window._candles) window._candles = [];
+        window._candles.push(group);
+    });
+}
+          
             function tick() {
                 requestAnimationFrame(tick);
                 const delta = Math.min(engine.clock.getDelta(), 0.1);
@@ -5059,7 +5190,29 @@ if (this.engine.sejadah && !STATE.achievements.solat) {
                     const rPos = engine.animatedObjects.rain.geometry.attributes.position.array;
                     for (let i = 1; i < rPos.length; i += 3) { rPos[i] -= 12 * delta; if (rPos[i] < 0) rPos[i] = 8; }
                     engine.animatedObjects.rain.geometry.attributes.position.needsUpdate = true;
-                }
+                }// ---- ANIMASI LILIN ----
+if (window._candles) {
+    window._candles.forEach((candle) => {
+        const data = candle.userData;
+        data.time += delta;
+
+        // Flicker api (skala dan posisi)
+        const flickerX = Math.sin(data.time * 12) * 0.005;
+        const flickerZ = Math.cos(data.time * 10) * 0.005;
+        const scaleY = 0.9 + Math.sin(data.time * 15) * 0.15;
+
+        const flameGroup = data.flameGroup;
+        flameGroup.position.x = flickerX;
+        flameGroup.position.z = flickerZ;
+        flameGroup.scale.y = scaleY;
+
+        // Intensiti cahaya
+        if (data.light) {
+            const intensity = 0.5 + Math.sin(data.time * 18) * 0.15;
+            data.light.intensity = Math.max(0.3, intensity);
+        }
+    });
+}
 
                 engine.renderer.render(engine.scene, engine.camera);
             }
