@@ -4523,25 +4523,35 @@ setupMobileControls() {
 // --- TRIGGER SEJADAH (achievement solat) ---
 if (this.engine.sejadah && !STATE.achievements.solat) {
     const sejadah = this.engine.sejadah;
-    // Dapatkan bounding box sejadah (dengan sedikit toleransi)
     const box = new THREE.Box3().setFromObject(sejadah);
-    // Kembangkan sedikit supaya lebih mudah trigger
     box.expandByScalar(0.3);
-    
-    // Semak jika posisi pemain (dari bawah kaki) berada dalam box
+
     const playerPos = new THREE.Vector3(
         STATE.player.pos.x,
-        STATE.player.pos.y - CONFIG.playerHeight + 0.1, // posisi kaki
+        STATE.player.pos.y - CONFIG.playerHeight + 0.1,
         STATE.player.pos.z
     );
-    
+
     if (box.containsPoint(playerPos)) {
         STATE.achievements.solat = true;
         uiManager.triggerAchievement("Alhamdulillah! Tergerak hati untuk solat 🕌");
         audio.playSFX('hit');
         setTimeout(() => audio.playSFX('hit'), 150);
-        // (Optional) Buat sejadah bersinar sekejap
-        gsap.to(sejadah.material, { emissive: new THREE.Color(0x4ade80), emissiveIntensity: 0.5, duration: 0.3, yoyo: true, repeat: 1 });
+
+        // ✅ Cara betul – tetapkan emissive warna hijau, kemudian turunkan intensiti
+        if (sejadah.material) {
+            sejadah.material.emissive.setHex(0x4ade80);   // warna hijau terang
+            sejadah.material.emissiveIntensity = 1.0;     // mula dengan intensiti penuh
+            gsap.to(sejadah.material, {
+                emissiveIntensity: 0,                     // pudar ke 0
+                duration: 0.6,
+                delay: 0.3,
+                onComplete: () => {
+                    // (pilihan) reset semula warna emissive ke hitam jika perlu
+                    sejadah.material.emissive.setHex(0x000000);
+                }
+            });
+        }
     }
 }
                 if (this.engine.easterEggTriggers.remote) {
