@@ -1,4 +1,3 @@
-<!-- pocong test -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -433,26 +432,7 @@
         transform: translate(0,0);
     }
 }
-  /* ===== JUMPSCARE POCONG ===== */
-#jumpscare-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: black;
-    display: none;
-    align-items: center;
-    justify-content: center;
-}
-#jumpscare-overlay.open {
-/* Flash effect (optional) */
-#jumpscare-overlay.open {
-    animation: jumpscareFlash 0.15s ease 2;
-}
-@keyframes jumpscareFlash {
-    0% { background: white; }
-    50% { background: black; }
-    100% { background: black; }
-}
+ 
     </style>
 </head>
 <body class="text-gray-100">
@@ -1227,7 +1207,8 @@
                 preInteractRot: new THREE.Vector2(),
                 wasOnGround: true,
                 jumpCount: 0,
-                isAwake: false
+                isAwake: false,
+                freezeControls: false,
             },
             joystick: {
                 active: false,
@@ -4109,7 +4090,7 @@ this.scene.add(clockGroup);
 
             setupKeyboard() {
                 window.addEventListener('keydown', (e) => {
-                    if (STATE.viewingPanel || !STATE.wakeUpComplete) return;
+                    if (STATE.viewingPanel || !STATE.wakeUpComplete || STATE.freezeControls) return;
                     switch (e.code) {
                         case 'KeyW':
                         case 'ArrowUp':
@@ -4398,15 +4379,21 @@ setupMobileControls() {
     window.addEventListener('touchcancel', stopJoystick, { passive: true });
 }
 
-            update(delta) {
-                if (STATE.viewingPanel || !STATE.wakeUpComplete) return;
+update(delta) {
+    // Kemas kini kuaternion sentiasa
+    const qYaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), STATE.player.rot.x);
+    const qPitch = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), STATE.player.rot.y);
+    this.camera.quaternion.copy(qYaw).multiply(qPitch);
 
-                const currentHeight = STATE.player.pos.y - (CONFIG.playerHeight - STATE.player.targetHeight);
-                STATE.player.pos.y = currentHeight;
+    // Salin posisi dari STATE.player.pos hanya jika sudah bangun
+    if (STATE.wakeUpComplete) {
+        this.camera.position.copy(STATE.player.pos);
+    }
 
-                const qYaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), STATE.player.rot.x);
-                const qPitch = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), STATE.player.rot.y);
-                this.camera.quaternion.copy(qYaw).multiply(qPitch);
+    // Jika freeze atau belum bangun, jangan proses pergerakan
+    if (!STATE.wakeUpComplete || STATE.viewingPanel || STATE.freezeControls) {
+        return;
+    }
 
                 this.moveDir.set(0, 0, 0);
                 this.speedMultiplier = STATE.player.isSprinting ? CONFIG.sprintMultiplier : 1.0;
@@ -5194,97 +5181,169 @@ function triggerJumpscare() {
     const camera = engine.camera;
     const scene = engine.scene;
 
-    // remove existing jumpscare
-    const old = camera.getObjectByName('jumpscare-pocong');
-    if (old) camera.remove(old);
+    // ---- LOKASI TINGKAP (lebih jauh dan tinggi) ----
+    const windowPos = new THREE.Vector3(-1.8, 0.4, 5.2); // z lebih jauh, y lebih tinggi
 
     const textureLoader = new THREE.TextureLoader();
-
     const textureURL = "https://raw.githubusercontent.com/BlankedWave/3D-Minigame-Portfolio/main/assets/pocong.png";
 
     textureLoader.load(
         textureURL,
-
         (texture) => {
-            console.log("✅ Texture loaded");
+            console.log("✅ Pocong texture loaded");
 
-            const material = new THREE.MeshBasicMaterial({
+            // --- GUNA SPRITE (auto face camera) ---
+            const material = new THREE.SpriteMaterial({
                 map: texture,
                 transparent: true,
-                depthTest: false,
+                depthTest: true,
                 depthWrite: false,
-                side: THREE.DoubleSide
+                opacity: 1
             });
 
-            const geometry = new THREE.PlaneGeometry(2, 2);
-
-            const pocong = new THREE.Mesh(geometry, material);
+            const pocong = new THREE.Sprite(material);
             pocong.name = 'jumpscare-pocong';
-            pocong.renderOrder = 999;
+            pocong.position.copy(windowPos);
+            pocong.scale.set(3.5, 4.2, 1); // lebih besar
+            scene.add(pocong);
 
-            // attach to camera (always in front)
-            camera.add(pocong);
-            pocong.position.set(0, 0, -0.8);
+            // ---- KEMAS KINI KAMERA SEKARANG ----
+            camera.position.copy(STATE.player.pos);
 
-            // start small
-            pocong.scale.set(0.3, 0.3, 0.3);
+            // ---- AUTO-LOOK KE TINGKAP (tanpa roll) ----
+            const playerPos = STATE.player.pos.clone();
+            const dirToWindow = new THREE.Vector3()
+                .copy(windowPos)
+                .sub(playerPos)
+                .normalize();
 
-            // grow animation
-            gsap.to(pocong.scale, {
-                x: 2.5,
-                y: 2.5,
-                z: 2.5,
-                duration: 0.25,
-                ease: "power2.out"
-            });
+            const targetYaw = Math.atan2(-dirToWindow.x, -dirToWindow.z);
+            const targetPitch = -Math.asin(Math.max(-1, Math.min(1, dirToWindow.y)));
 
-            // SCREEN SHAKE (camera shake)
-            gsap.to(camera.position, {
-                x: "+=0.05",
-                y: "-=0.05",
-                duration: 0.05,
-                repeat: 12,
-                yoyo: true,
-                ease: "power1.inOut",
-                onComplete: () => {
-                    gsap.to(camera.position, {
-                        x: 0,
-                        y: 0,
-                        duration: 0.1
-                    });
+            const origRotX = STATE.player.rot.x;
+            const origRotY = STATE.player.rot.y;
+            const origPos = STATE.player.pos.clone();
+
+            // Zoom position: 1 unit ke arah tingkap
+            const zoomPos = new THREE.Vector3(
+                origPos.x + dirToWindow.x * 1.0,
+                origPos.y + 0.2,
+                origPos.z + dirToWindow.z * 1.0
+            );
+
+            // ---- BEKUKAN KAWALAN & LOCK MOUSE ----
+            STATE.freezeControls = true;
+            STATE.player.rot.z = 0;
+
+            if (document.body.requestPointerLock) {
+                document.body.requestPointerLock().catch(() => {});
+            }
+            STATE.pointerLocked = true;
+
+            // ---- ZOOM KAMERA (0.8 saat) ----
+            gsap.to(STATE.player.rot, {
+                x: targetYaw,
+                y: targetPitch,
+                duration: 0.8,
+                ease: "power2.inOut",
+                onUpdate: () => {
+                    STATE.player.rot.z = 0;
                 }
             });
 
-            // cleanup after 5 sec
-            clearTimeout(window._jumpscareTimer);
+            gsap.to(STATE.player.pos, {
+                x: zoomPos.x,
+                y: zoomPos.y,
+                z: zoomPos.z,
+                duration: 0.8,
+                ease: "power2.inOut",
+                onUpdate: () => {
+                    camera.position.copy(STATE.player.pos);
+                },
+                onComplete: () => {
+                    // ---- GONCANGAN ----
+                    gsap.to(camera.position, {
+                        x: "+=0.15",
+                        y: "-=0.15",
+                        z: "+=0.10",
+                        duration: 0.04,
+                        repeat: 18,
+                        yoyo: true,
+                        ease: "power1.inOut",
+                        onComplete: () => {
+                            gsap.to(camera.position, {
+                                x: STATE.player.pos.x,
+                                y: STATE.player.pos.y,
+                                z: STATE.player.pos.z,
+                                duration: 0.15
+                            });
+                        }
+                    });
+                    gsap.to(document.body, {
+                        x: 12, y: -12,
+                        duration: 0.04,
+                        repeat: 14,
+                        yoyo: true,
+                        ease: "power1.inOut",
+                        onComplete: () => {
+                            gsap.set(document.body, { x: 0, y: 0 });
+                        }
+                    });
 
-            window._jumpscareTimer = setTimeout(() => {
+                    // ---- SELEPAS 8 SAAT ----
+                    clearTimeout(window._jumpscareTimer);
+                    window._jumpscareTimer = setTimeout(() => {
+                        // Kembali ke posisi dan rotasi asal
+                        gsap.to(STATE.player.pos, {
+                            x: origPos.x,
+                            y: origPos.y,
+                            z: origPos.z,
+                            duration: 0.8,
+                            ease: "power2.inOut",
+                            onUpdate: () => {
+                                camera.position.copy(STATE.player.pos);
+                            }
+                        });
+                        gsap.to(STATE.player.rot, {
+                            x: origRotX,
+                            y: origRotY,
+                            z: 0,
+                            duration: 0.8,
+                            ease: "power2.inOut",
+                            onUpdate: () => { STATE.player.rot.z = 0; },
+                            onComplete: () => {
+                                STATE.freezeControls = false;
+                                STATE.player.rot.z = 0;
+                                if (document.pointerLockElement) {
+                                    document.exitPointerLock();
+                                }
+                                STATE.pointerLocked = false;
+                            }
+                        });
 
-                gsap.to(material, {
-                    opacity: 0,
-                    duration: 0.5,
-                    onComplete: () => {
-                        camera.remove(pocong);
-                        geometry.dispose();
-                        material.dispose();
-                    }
-                });
+                        // Hilangkan Pocong
+                        gsap.to(material, {
+                            opacity: 0,
+                            duration: 0.5,
+                            onComplete: () => {
+                                scene.remove(pocong);
+                                material.dispose();
+                                texture.dispose();
+                            }
+                        });
 
-                [audio1, audio2, audio3].forEach(a => {
-                    if (a) {
-                        a.pause();
-                        a.currentTime = 0;
-                    }
-                });
+                        // Hentikan audio
+                        [audio1, audio2, audio3].forEach(a => {
+                            if (a) { a.pause(); a.currentTime = 0; }
+                        });
+                        if (audio && audio.stopMusic) audio.stopMusic();
 
-            }, 5000);
+                    }, 5000);
+                }
+            });
         },
-
         undefined,
-
-        (err) => {
-            console.error("❌ Failed to load texture:", err);
-        }
+        (err) => console.error("❌ Gagal muat texture Pocong:", err)
     );
 }
           
