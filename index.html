@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Digital Room | Interactive 3D Portfolio</title>
+    <title>Welcome to BlankedWave | Interactive 3D Portfolio</title>
     <script src="https://cdn.tailwindcss.com">
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
@@ -333,6 +333,105 @@
             background: transparent;
             pointer-events: none;
         }
+        .glitch-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.glitch-title {
+    position: relative;
+    display: inline-block;
+
+    background: linear-gradient(
+        90deg,
+        #a78bfa,
+        #d946ef
+    );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    text-shadow:
+        0 0 8px rgba(168,85,247,.35),
+        0 0 18px rgba(217,70,239,.25);
+
+    transition: transform .1s ease;
+}
+
+/* RGB layers */
+.glitch-title::before,
+.glitch-title::after {
+    content: attr(data-text);
+
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    background: inherit;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    opacity: 0;
+}
+
+.glitch-title.glitching::before {
+    opacity: 1;
+    transform: translate(-3px, 0);
+    filter: drop-shadow(-2px 0 #ff004c);
+}
+
+.glitch-title.glitching::after {
+    opacity: 1;
+    transform: translate(3px, 0);
+    filter: drop-shadow(2px 0 #00e5ff);
+}
+
+/* scanline overlay */
+.glitch-wrapper::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,.04) 0px,
+            rgba(255,255,255,.04) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+
+    mix-blend-mode: overlay;
+    opacity: .4;
+}
+
+.glitching {
+    animation: glitchShake .08s steps(2) infinite;
+}
+
+@keyframes glitchShake {
+    0% {
+        transform: translate(0,0);
+    }
+    25% {
+        transform: translate(-2px,1px);
+    }
+    50% {
+        transform: translate(2px,-1px);
+    }
+    75% {
+        transform: translate(-1px,-2px);
+    }
+    100% {
+        transform: translate(0,0);
+    }
+}
     </style>
 </head>
 <body class="text-gray-100">
@@ -344,17 +443,23 @@
             <div class="absolute inset-0 border-4 border-t-violet-500 rounded-full animate-spin"></div>
             <i class="fa-solid fa-gamepad text-3xl text-violet-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
         </div>
-        <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2 bg-gradient-to-r from-violet-400 to-fuchsia-500 bg-clip-text text-transparent">
-            Bilik Bujang BlankedWave
-        </h1>
-        <p class="text-gray-400 text-sm max-w-xs mb-8">Memuatkan barangan bilik hostel typical Malaysia...</p>
+        <div class="glitch-wrapper">
+    <h1
+        id="glitchTitle"
+        class="glitch-title text-3xl font-extrabold tracking-tight"
+        data-text="Bilik Aqil"
+    >
+        Bilik Aqil
+    </h1>
+</div>
+        <p class="text-gray-400 text-sm max-w-xs mb-8">Selamat Datang ke Bilik Saya...</p>
         <div class="w-64 bg-slate-800 rounded-full h-1.5 mb-8 overflow-hidden">
             <div id="loading-bar" class="bg-violet-500 h-full w-0 transition-all duration-300"></div>
         </div>
         <button id="start-btn" class="hidden px-8 py-3 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl shadow-lg shadow-violet-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
             BANGUN DARI TIDUR 😴
         </button>
-        <span id="loading-text" class="text-xs text-gray-500 code-font">Membina sejadah & baju melayu...</span>
+        <span id="loading-text" class="text-xs text-gray-500 code-font">Sedang mengemas barang dalam bilik...</span>
     </div>
 
     <div id="canvas-container" class="absolute inset-0 w-full h-full z-0"></div>
@@ -4926,6 +5031,96 @@ if (this.engine.sejadah && !STATE.achievements.solat) {
                 return this;
             };
         }
+        const title = document.getElementById("glitchTitle");
+
+const texts = [
+    "Bilik Aqil",
+    "Bilik BlankedWave"
+];
+
+const chars =
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+
+let current = 0;
+
+function randomChar() {
+    return chars[Math.floor(Math.random() * chars.length)];
+}
+
+function scramble(targetText) {
+
+    let frame = 0;
+
+    const interval = setInterval(() => {
+
+        title.classList.add("glitching");
+
+        const output = targetText
+            .split("")
+            .map((char, index) => {
+
+                if (char === " ")
+                    return " ";
+
+                if (index < frame)
+                    return targetText[index];
+
+                return randomChar();
+
+            })
+            .join("");
+
+        title.textContent = output;
+        title.dataset.text = output;
+
+        frame += 0.5;
+
+        if (frame >= targetText.length) {
+
+            clearInterval(interval);
+
+            title.textContent = targetText;
+            title.dataset.text = targetText;
+
+            setTimeout(() => {
+                title.classList.remove("glitching");
+            }, 200);
+        }
+
+    }, 35);
+}
+
+function triggerGlitch() {
+
+    const next = (current + 1) % texts.length;
+
+    let flickers = 0;
+
+    const flicker = setInterval(() => {
+
+        const temp =
+            Math.random() > 0.5
+                ? texts[0]
+                : texts[1];
+
+        title.textContent = temp;
+        title.dataset.text = temp;
+
+        flickers++;
+
+        if (flickers > 8) {
+
+            clearInterval(flicker);
+
+            scramble(texts[next]);
+
+            current = next;
+        }
+
+    }, 55);
+}
+
+setInterval(triggerGlitch, 3000);
     </script>
 </body>
 </html>
