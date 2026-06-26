@@ -507,8 +507,9 @@
     </div>
 
 <!-- Top Left Controls - LEBIH KECIL & PADAT -->
-<div class="fixed top-2 left-2 z-30 flex flex-col gap-0.5 md:gap-1 md:top-3 md:left-3">
-    <div class="flex flex-wrap items-center gap-0.5 md:gap-1 bg-slate-900/80 backdrop-blur-md border border-slate-700/50 p-0.5 md:p-1.5 rounded-lg shadow-lg">
+<div class="fixed top-2 left-2 z-30 md:top-3 md:left-3">
+    <!-- Container untuk controls (relative supaya banner absolute relative kepadanya) -->
+    <div class="relative flex flex-wrap items-center gap-0.5 md:gap-1 bg-slate-900/80 backdrop-blur-md border border-slate-700/50 p-0.5 md:p-1.5 rounded-lg shadow-lg">
 
         <!-- Toggle Audio -->
         <button id="toggle-audio" class="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
@@ -529,17 +530,17 @@
         <button id="reset-position" class="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition">
             <i class="fa-solid fa-rotate text-[10px] md:text-xs text-gray-400"></i>
         </button>
+        
+    </div> <!-- tutup container controls -->
 
-
-
-    <!-- Achievement Banner - lebih kecil -->
-    <div id="achievement-banner" class="opacity-0 translate-y-2 pointer-events-none transition-all duration-500 flex items-center gap-1.5 bg-gradient-to-r from-emerald-950/90 to-slate-900/95 border border-emerald-500/40 p-1 md:p-1.5 rounded-lg shadow-xl text-[9px] md:text-[10px]">
+    <!-- Achievement Banner - muncul di bawah controls (absolute) -->
+    <div id="achievement-banner" class="absolute top-full left-0 mt-1 opacity-0 translate-y-2 pointer-events-none transition-all duration-500 flex items-center gap-1.5 bg-gradient-to-r from-emerald-950/90 to-slate-900/95 border border-emerald-500/40 p-1 md:p-1.5 rounded-lg shadow-xl text-[9px] md:text-[10px] z-20 max-w-[280px]">
         <div class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400 flex-shrink-0">
             <i class="fa-solid fa-trophy text-[9px] md:text-xs"></i>
         </div>
-        <div class="min-w-0">
+        <div class="min-w-0 flex-1">
             <p class="text-[8px] md:text-[9px] font-bold text-emerald-400 uppercase tracking-wider truncate">Achievement Unlocked!</p>
-            <p id="achievement-text" class="text-[9px] md:text-[10px] text-white font-medium truncate">Jumped on bed!</p>
+            <p id="achievement-text" class="text-[9px] md:text-[10px] text-white font-medium break-words whitespace-normal leading-tight">Jumped on bed!</p>
         </div>
     </div>
 </div>
@@ -833,55 +834,91 @@
             </div>
         </div>
 
-        <!-- Phone -->
-        <div id="tpl-phone">
-            <div class="max-w-md mx-auto bg-slate-950/40 border border-slate-800 p-6 rounded-3xl text-center space-y-5">
-                <div class="relative w-20 h-20 mx-auto">
-                    <div class="absolute inset-0 bg-violet-600/20 rounded-full blur-md"></div>
-                    <div class="relative w-20 h-20 rounded-full border border-violet-500 flex items-center justify-center bg-slate-900 text-3xl text-violet-400">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold text-white">Connect & Chat</h3>
-                    <p class="text-xs text-gray-400 max-w-xs mx-auto mt-1">Salin Discord ID atau buka social media.</p>
-                </div>
-                <div class="space-y-3">
-                    <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between text-left">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-brands fa-discord text-xl text-indigo-400 w-6 text-center"></i>
-                            <div>
-                                <p class="text-xs font-bold text-white">Discord</p>
-                                <p class="text-[10px] text-gray-400 code-font">blankedwave</p>
-                                <p class="text-[10px] text-gray-500 code-font">ID: 267958390389604362</p>
-                            </div>
-                        </div>
-                        <button id="btn-copy-discord" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px] rounded transition">Copy</button>
-                    </div>
-                    <div class="p-3 bg-gradient-to-r from-pink-950/40 to-purple-950/40 border border-pink-500/20 rounded-xl">
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">Q</div>
-                            <div class="text-left">
-                                <p class="text-xs font-bold text-white">qil.jpeg</p>
-                                <p class="text-[10px] text-gray-400">Muhammad Aqil</p>
-                            </div>
-                            <a href="https://www.instagram.com/qil.jpeg" target="_blank" class="ml-auto px-3 py-1 bg-gradient-to-r from-pink-600 to-purple-600 text-white text-[10px] font-bold rounded-full transition hover:opacity-90">Buka IG</a>
-                        </div>
-                        <div class="grid grid-cols-3 gap-1">
-                            <div class="aspect-square rounded bg-gradient-to-br from-teal-800 to-indigo-900 flex items-center justify-center"><i class="fa-brands fa-instagram text-white/40 text-lg"></i></div>
-                            <div class="aspect-square rounded bg-gradient-to-br from-rose-800 to-purple-900 flex items-center justify-center"><i class="fa-solid fa-camera text-white/40 text-lg"></i></div>
-                            <div class="aspect-square rounded bg-gradient-to-br from-amber-800 to-rose-900 flex items-center justify-center"><i class="fa-solid fa-image text-white/40 text-lg"></i></div>
-                        </div>
-                    </div>
-                    <a href="https://github.com/BlankedWave" target="_blank" class="flex items-center justify-between p-3 bg-slate-900 hover:bg-slate-800 rounded-xl border border-slate-800 transition text-gray-300 hover:text-white">
-                        <span class="flex items-center gap-3 text-xs font-semibold">
-                            <i class="fa-brands fa-github text-xl text-violet-400 w-6 text-center"></i> GitHub
-                        </span>
-                        <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
-                    </a>
-                </div>
+<!-- Phone -->
+<div id="tpl-phone">
+    <div class="max-w-md mx-auto bg-slate-950/40 border border-slate-800 p-6 rounded-3xl text-center space-y-5">
+        <div class="relative w-20 h-20 mx-auto">
+            <div class="absolute inset-0 bg-violet-600/20 rounded-full blur-md"></div>
+            <div class="relative w-20 h-20 rounded-full border border-violet-500 flex items-center justify-center bg-slate-900 text-3xl text-violet-400">
+                <i class="fa-solid fa-phone"></i>
             </div>
         </div>
+        <div>
+            <h3 class="text-lg font-bold text-white">Hubungi Saya</h3>
+            <p class="text-xs text-gray-400 max-w-xs mx-auto mt-1">Jangan segan, saya jenis mesra 😄</p>
+        </div>
+        <div class="space-y-3 text-left">
+            
+            <!-- Phone Number -->
+            <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-phone text-xl text-emerald-400 w-6 text-center"></i>
+                    <div>
+                        <p class="text-xs font-bold text-white">Telefon</p>
+                        <p class="text-[10px] text-gray-400 code-font">010-898 8245</p>
+                    </div>
+                </div>
+                <button onclick="copyText('0108988245', this)" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] rounded transition">Salin</button>
+            </div>
+
+            <!-- WhatsApp -->
+            <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-brands fa-whatsapp text-xl text-green-400 w-6 text-center"></i>
+                    <div>
+                        <p class="text-xs font-bold text-white">WhatsApp</p>
+                        <p class="text-[10px] text-gray-400 code-font">010-898 8245</p>
+                    </div>
+                </div>
+                <a href="https://wa.me/60108988245" target="_blank" class="px-2.5 py-1 bg-green-600 hover:bg-green-500 text-white font-bold text-[10px] rounded transition">Buka</a>
+            </div>
+
+            <!-- Discord -->
+            <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-brands fa-discord text-xl text-indigo-400 w-6 text-center"></i>
+                    <div>
+                        <p class="text-xs font-bold text-white">Discord</p>
+                        <p class="text-[10px] text-gray-400 code-font">@blankedwave</p>
+                        <p class="text-[9px] text-gray-500 code-font">ID: 267958390389604362</p>
+                    </div>
+                </div>
+                <div class="flex gap-1.5">
+                    <button onclick="copyText('blankedwave', this)" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px] rounded transition">Salin</button>
+                    <a href="https://discord.com/users/267958390389604362" target="_blank" class="px-2.5 py-1 bg-indigo-800 hover:bg-indigo-700 text-white font-bold text-[10px] rounded transition">Profil</a>
+                </div>
+            </div>
+
+            <!-- Email 1 -->
+            <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-envelope text-xl text-blue-400 w-6 text-center"></i>
+                    <div>
+                        <p class="text-xs font-bold text-white">Email (Utama)</p>
+                        <p class="text-[10px] text-gray-400 code-font">aqil@blankedwave.name.my</p>
+                    </div>
+                </div>
+                <button onclick="copyText('aqil@blankedwave.name.my', this)" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] rounded transition">Salin</button>
+            </div>
+
+            <!-- Email 2 -->
+            <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-envelope text-xl text-sky-400 w-6 text-center"></i>
+                    <div>
+                        <p class="text-xs font-bold text-white">Email (Alternatif)</p>
+                        <p class="text-[10px] text-gray-400 code-font">aqil2401@gmail.com</p>
+                    </div>
+                </div>
+                <button onclick="copyText('aqil2401@gmail.com', this)" class="px-2.5 py-1 bg-sky-600 hover:bg-sky-500 text-white font-bold text-[10px] rounded transition">Salin</button>
+            </div>
+
+        </div>
+        <div class="pt-2 text-[10px] text-gray-500 border-t border-slate-800">
+            <i class="fa-regular fa-circle-check text-emerald-400 mr-1"></i> Saya balas dalam masa 24 jam, insya-Allah.
+        </div>
+    </div>
+</div>
 
         <!-- Photo Wall — My Photos (no Instagram) -->
         <div id="tpl-photowall">
@@ -4059,7 +4096,7 @@ this.scene.add(clockGroup);
                                     .distanceTo(new THREE.Vector2(-1.8, 2.5));
                                 if (dToBed < 1.4 && !STATE.achievements.jumpedOnBed) {
                                     STATE.achievements.jumpedOnBed = true;
-                                    uiManager.triggerAchievement("You jumped on the soft bed mattress!");
+                                    uiManager.triggerAchievement("Katil dah jadi trampolin ke?");
                                 }
                             }
                             break;
@@ -4417,7 +4454,7 @@ update(delta) {
                         STATE.easterEggs.mirrorGazeTimer += delta;
                         if (STATE.easterEggs.mirrorGazeTimer > 3.0) {
                             STATE.achievements.mirrorGazed = true;
-                            uiManager.triggerAchievement("You gazed into the mirror — confidence +10!");
+                            uiManager.triggerAchievement("Hang ni memang hensem lah — confidence +10!");
                             audio.playSFX('hit');
                             setTimeout(() => audio.playSFX('hit'), 150);
                             const mo = this.engine.easterEggTriggers.mirror;
@@ -4434,7 +4471,7 @@ update(delta) {
                         STATE.easterEggs.fanInteractTimer += delta;
                         if (STATE.easterEggs.fanInteractTimer > 2.0) {
                             STATE.achievements.fanWhisper = true;
-                            uiManager.triggerAchievement("You heard the fan whisper: 'BlankedWave was here'");
+                            uiManager.triggerAchievement("Kipas berbisik: 'KRRRRR... KREK! KREK! BZZZZZZ... TAK! TAK! TAK!...'");
                             audio.playSFX('hit');
                             setTimeout(() => audio.playSFX('hit'), 150);
                             const fo = this.engine.easterEggTriggers.fan;
@@ -4449,7 +4486,7 @@ update(delta) {
                     this.engine.easterEggTriggers.nasiLemak.visible = true;
                     if (!STATE.achievements.foundNasiLemak) {
                         STATE.achievements.foundNasiLemak = true;
-                        uiManager.triggerAchievement("You found Nasi Lemak under the bed! 🍛");
+                        uiManager.triggerAchievement("Siapa letak nasi lemak bawh katil ni? 🍛");
                         audio.playSFX('hit');
                         setTimeout(() => audio.playSFX('hit'), 150);
                         const nt = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE
@@ -4468,7 +4505,7 @@ update(delta) {
                     if (dG < 1.2 && !STATE.achievements.foundGuitar) {
                         this.engine.easterEggTriggers.guitar.visible = true;
                         STATE.achievements.foundGuitar = true;
-                        uiManager.triggerAchievement("You found a hidden guitar! 🎸");
+                        uiManager.triggerAchievement("Iya iya je ada gitar! 🎸");
                         audio.playSFX('hit');
                         setTimeout(() => audio.playSFX('hit'), 150);
                         const gt = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE
@@ -4518,7 +4555,7 @@ if (this.engine.sejadah && !STATE.achievements.solat) {
                     if (dR < 1.2 && !STATE.achievements.foundRemote) {
                         this.engine.easterEggTriggers.remote.visible = true;
                         STATE.achievements.foundRemote = true;
-                        uiManager.triggerAchievement("You found the TV remote! 📺");
+                        uiManager.triggerAchievement("Aih, baru jumpa remote. 📺");
                         audio.playSFX('hit');
                         setTimeout(() => audio.playSFX('hit'), 150);
                         const rt = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE
@@ -5589,7 +5626,53 @@ if (window._candles) {
 
             window.playYouTubeVideo = playYouTubeVideo;
         });
+  
+      // ============================================================
+// FUNGSI SALIN TEKS (GLOBAL)
+// ============================================================
+function copyText(text, btn) {
+    const originalText = btn.innerText;
+    
+    // Cuba guna Clipboard API (moden)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            btn.innerText = '✅ Disalin!';
+            btn.classList.add('bg-green-600');
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.remove('bg-green-600');
+            }, 2000);
+        }).catch(() => {
+            fallbackCopy(text, btn, originalText);
+        });
+    } else {
+        fallbackCopy(text, btn, originalText);
+    }
+}
 
+function fallbackCopy(text, btn, originalText) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+        document.execCommand('copy');
+        btn.innerText = '✅ Disalin!';
+        btn.classList.add('bg-green-600');
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.classList.remove('bg-green-600');
+        }, 2000);
+    } catch (e) {
+        btn.innerText = '❌ Gagal';
+        setTimeout(() => btn.innerText = originalText, 2000);
+    }
+    document.body.removeChild(ta);
+}
+      
         if (!CanvasRenderingContext2D.prototype.roundRect) {
             CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                 if (r > w / 2) r = w / 2;
