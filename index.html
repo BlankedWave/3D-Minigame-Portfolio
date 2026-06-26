@@ -231,54 +231,6 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(139, 92, 246, 0.15);
         }
-        .music-visualizer {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            height: 24px;
-        }
-        .music-visualizer .bar {
-            width: 4px;
-            background: #a78bfa;
-            border-radius: 2px;
-            animation: musicBounce 0.6s ease-in-out infinite alternate;
-        }
-        .music-visualizer .bar:nth-child(1) {
-            height: 8px;
-            animation-delay: 0s;
-        }
-        .music-visualizer .bar:nth-child(2) {
-            height: 16px;
-            animation-delay: 0.1s;
-        }
-        .music-visualizer .bar:nth-child(3) {
-            height: 12px;
-            animation-delay: 0.2s;
-        }
-        .music-visualizer .bar:nth-child(4) {
-            height: 20px;
-            animation-delay: 0.3s;
-        }
-        .music-visualizer .bar:nth-child(5) {
-            height: 10px;
-            animation-delay: 0.4s;
-        }
-        .music-visualizer .bar:nth-child(6) {
-            height: 18px;
-            animation-delay: 0.15s;
-        }
-        .music-visualizer .bar:nth-child(7) {
-            height: 14px;
-            animation-delay: 0.35s;
-        }
-        @keyframes musicBounce {
-            0% {
-                transform: scaleY(0.3);
-            }
-            100% {
-                transform: scaleY(1);
-            }
-        }
         .volume-slider {
             -webkit-appearance: none;
             appearance: none;
@@ -578,17 +530,7 @@
             <i class="fa-solid fa-rotate text-[10px] md:text-xs text-gray-400"></i>
         </button>
 
-        <!-- Music Visualizer – Sembunyi di mobile, dikecilkan -->
-        <div class="hidden md:flex music-visualizer scale-75 origin-left" id="music-visualizer">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-    </div>
+
 
     <!-- Achievement Banner - lebih kecil -->
     <div id="achievement-banner" class="opacity-0 translate-y-2 pointer-events-none transition-all duration-500 flex items-center gap-1.5 bg-gradient-to-r from-emerald-950/90 to-slate-900/95 border border-emerald-500/40 p-1 md:p-1.5 rounded-lg shadow-xl text-[9px] md:text-[10px]">
@@ -1275,11 +1217,11 @@
                 try {
                     this.ctx = new(window.AudioContext || window.webkitAudioContext)();
                     this.musicGain = this.ctx.createGain();
-                    this.musicGain.gain.value = STATE.musicVolume * 0.25;
+                    this.musicGain.gain.value = STATE.musicVolume * 0.6;
                     this.musicGain.connect(this.ctx.destination);
 
                     this.sfxGain = this.ctx.createGain();
-                    this.sfxGain.gain.value = 0.35;
+                    this.sfxGain.gain.value = 0.7;
                     this.sfxGain.connect(this.ctx.destination);
 
                     this.generateMusic();
