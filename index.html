@@ -5182,7 +5182,7 @@ function triggerJumpscare() {
     const scene = engine.scene;
 
     // ---- LOKASI TINGKAP (lebih jauh dan tinggi) ----
-    const windowPos = new THREE.Vector3(-1.8, 0.4, 5.2); // z lebih jauh, y lebih tinggi
+    const windowPos = new THREE.Vector3(-1.8, 0.4, 5.2);
 
     const textureLoader = new THREE.TextureLoader();
     const textureURL = "https://raw.githubusercontent.com/BlankedWave/3D-Minigame-Portfolio/main/assets/pocong.png";
@@ -5192,7 +5192,6 @@ function triggerJumpscare() {
         (texture) => {
             console.log("✅ Pocong texture loaded");
 
-            // --- GUNA SPRITE (auto face camera) ---
             const material = new THREE.SpriteMaterial({
                 map: texture,
                 transparent: true,
@@ -5204,13 +5203,12 @@ function triggerJumpscare() {
             const pocong = new THREE.Sprite(material);
             pocong.name = 'jumpscare-pocong';
             pocong.position.copy(windowPos);
-            pocong.scale.set(3.5, 4.2, 1); // lebih besar
+            pocong.scale.set(3.5, 4.2, 1);
             scene.add(pocong);
 
-            // ---- KEMAS KINI KAMERA SEKARANG ----
             camera.position.copy(STATE.player.pos);
 
-            // ---- AUTO-LOOK KE TINGKAP (tanpa roll) ----
+            // ---- AUTO-LOOK KE TINGKAP ----
             const playerPos = STATE.player.pos.clone();
             const dirToWindow = new THREE.Vector3()
                 .copy(windowPos)
@@ -5224,14 +5222,12 @@ function triggerJumpscare() {
             const origRotY = STATE.player.rot.y;
             const origPos = STATE.player.pos.clone();
 
-            // Zoom position: 1 unit ke arah tingkap
             const zoomPos = new THREE.Vector3(
                 origPos.x + dirToWindow.x * 1.0,
                 origPos.y + 0.2,
                 origPos.z + dirToWindow.z * 1.0
             );
 
-            // ---- BEKUKAN KAWALAN & LOCK MOUSE ----
             STATE.freezeControls = true;
             STATE.player.rot.z = 0;
 
@@ -5240,11 +5236,11 @@ function triggerJumpscare() {
             }
             STATE.pointerLocked = true;
 
-            // ---- ZOOM KAMERA (0.8 saat) ----
+            // ---- ZOOM KAMERA (1 saat) ----
             gsap.to(STATE.player.rot, {
                 x: targetYaw,
                 y: targetPitch,
-                duration: 0.8,
+                duration: 1.0,
                 ease: "power2.inOut",
                 onUpdate: () => {
                     STATE.player.rot.z = 0;
@@ -5255,13 +5251,13 @@ function triggerJumpscare() {
                 x: zoomPos.x,
                 y: zoomPos.y,
                 z: zoomPos.z,
-                duration: 0.8,
+                duration: 1.0,
                 ease: "power2.inOut",
                 onUpdate: () => {
                     camera.position.copy(STATE.player.pos);
                 },
                 onComplete: () => {
-                    // ---- GONCANGAN ----
+                    // ---- GONCANGAN KAMERA SAHAJA (bukan body) ----
                     gsap.to(camera.position, {
                         x: "+=0.15",
                         y: "-=0.15",
@@ -5279,21 +5275,11 @@ function triggerJumpscare() {
                             });
                         }
                     });
-                    gsap.to(document.body, {
-                        x: 12, y: -12,
-                        duration: 0.04,
-                        repeat: 14,
-                        yoyo: true,
-                        ease: "power1.inOut",
-                        onComplete: () => {
-                            gsap.set(document.body, { x: 0, y: 0 });
-                        }
-                    });
 
-                    // ---- SELEPAS 8 SAAT ----
+                    // ---- SELEPAS 8 SAAT (1s zoom + 7s tahan) ----
                     clearTimeout(window._jumpscareTimer);
                     window._jumpscareTimer = setTimeout(() => {
-                        // Kembali ke posisi dan rotasi asal
+                        // Kembali ke posisi asal
                         gsap.to(STATE.player.pos, {
                             x: origPos.x,
                             y: origPos.y,
@@ -5338,7 +5324,7 @@ function triggerJumpscare() {
                         });
                         if (audio && audio.stopMusic) audio.stopMusic();
 
-                    }, 5000);
+                    }, 7000); // 7 saat tahan
                 }
             });
         },
