@@ -591,7 +591,7 @@
     </div>
 
     <!-- Achievement Banner - lebih kecil -->
-    <div id="achievement-banner" class="opacity-0 translate-y-2 pointer-events-none transition-all duration-500 flex items-center gap-1.5 bg-gradient-to-r from-emerald-950/90 to-slate-900/95 border border-emerald-500/40 p-1 md:p-1.5 rounded-lg shadow-xl max-w-[200px] text-[9px] md:text-[10px]">
+    <div id="achievement-banner" class="opacity-0 translate-y-2 pointer-events-none transition-all duration-500 flex items-center gap-1.5 bg-gradient-to-r from-emerald-950/90 to-slate-900/95 border border-emerald-500/40 p-1 md:p-1.5 rounded-lg shadow-xl text-[9px] md:text-[10px]">
         <div class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400 flex-shrink-0">
             <i class="fa-solid fa-trophy text-[9px] md:text-xs"></i>
         </div>
@@ -4963,6 +4963,7 @@ if (this.engine.sejadah && !STATE.achievements.solat) {
             const controller = new PlayerController(engine);
             const interactions = new InteractionSystem(engine);
             uiManager = new UIManager(engine);
+            window.uiManager = uiManager;
             audio.init();
             
             // ---- CHEAT CODE ----
@@ -5086,29 +5087,27 @@ if (cheatBuffer.endsWith(CHEAT_CODE_2)) {
 
     // titik tengah di hadapan frame
     const frontCenter = pos.clone()
-        .add(forward.multiplyScalar(0.25));
+        .add(forward.multiplyScalar(0.15));
 
     // Posisi dua lilin (kiri & kanan frame)
     const candlePositions = [
-        frontCenter.clone().add(right.clone().multiplyScalar(-0.22)), // kiri
-        frontCenter.clone().add(right.clone().multiplyScalar(0.22))   // kanan
+        frontCenter.clone().add(right.clone().multiplyScalar(-0.35)), // kiri
+        frontCenter.clone().add(right.clone().multiplyScalar(0.35))   // kanan
     ];
 
     candlePositions.forEach(candlePos => {
         const group = new THREE.Group();
         group.position.copy(candlePos);
 
-        // ---- BAHAN ----
+        // ---- BAHAN LILIN ----
         const waxMat = new THREE.MeshStandardMaterial({
             color: 0xf5f0e0,
             roughness: 0.7
         });
-
         const wickMat = new THREE.MeshStandardMaterial({
             color: 0x222222
         });
 
-        // ---- BADAN LILIN (lebih tinggi memorial) ----
         const candleBody = new THREE.Mesh(
             new THREE.CylinderGeometry(0.05, 0.06, 0.55, 16),
             waxMat
@@ -5116,7 +5115,6 @@ if (cheatBuffer.endsWith(CHEAT_CODE_2)) {
         candleBody.position.y = 0.275;
         group.add(candleBody);
 
-        // ---- SUMBU ----
         const wick = new THREE.Mesh(
             new THREE.CylinderGeometry(0.004, 0.006, 0.04, 6),
             wickMat
@@ -5124,32 +5122,23 @@ if (cheatBuffer.endsWith(CHEAT_CODE_2)) {
         wick.position.y = 0.57;
         group.add(wick);
 
-        // ---- API ----
         const flameGroup = new THREE.Group();
         flameGroup.position.y = 0.62;
-
         const flame = new THREE.Mesh(
             new THREE.SphereGeometry(0.025, 8, 8),
             new THREE.MeshBasicMaterial({ color: 0xff8800 })
         );
         flame.scale.set(0.8, 1.2, 0.8);
         flameGroup.add(flame);
-
         const innerFlame = new THREE.Mesh(
             new THREE.SphereGeometry(0.015, 6, 6),
             new THREE.MeshBasicMaterial({ color: 0xffff44 })
         );
         innerFlame.scale.set(0.7, 1.1, 0.7);
         flameGroup.add(innerFlame);
-
         group.add(flameGroup);
 
-        // ---- CAHAYA ----
-        const candleLight = new THREE.PointLight(
-            0xff8800,
-            0.9,
-            4
-        );
+        const candleLight = new THREE.PointLight(0xff8800, 0.9, 4);
         candleLight.position.y = 0.65;
         group.add(candleLight);
 
@@ -5164,9 +5153,205 @@ if (cheatBuffer.endsWith(CHEAT_CODE_2)) {
         if (!window._candles) window._candles = [];
         window._candles.push(group);
     });
+
+    // ============================================================
+    // 🌸 KALUNG BUNGA DI TEPI FRAME (sebelah kanan)
+    // ============================================================
+    createFlowerNecklace(photoFrame); //link dengan kalung
+}
+
+function createFlowerNecklace(photoFrame) {
+
+    const group = new THREE.Group();
+
+    // ikut frame
+    group.position.copy(photoFrame.position);
+    group.quaternion.copy(photoFrame.quaternion);
+
+    // sedikit ke depan supaya tak masuk dalam frame
+    group.position.add(
+        new THREE.Vector3(0,0.28,0.03).applyQuaternion(photoFrame.quaternion)
+    );
+
+    const frameWidth = 0.78;
+    const frameHeight = 1.05;
+
+    const flowerMaterials = [
+        new THREE.MeshStandardMaterial({ color:0xffa000, roughness:0.7 }), // oren
+        new THREE.MeshStandardMaterial({ color:0xffd400, roughness:0.7 }), // kuning
+        new THREE.MeshStandardMaterial({ color:0xffffff, roughness:0.8 })  // melur
+    ];
+
+    const leafMaterial = new THREE.MeshStandardMaterial({
+        color:0x2d8f45,
+        roughness:0.8
+    });
+
+    //--------------------------------------------------
+    // Fungsi bunga
+    //--------------------------------------------------
+
+    function addFlower(x,y){
+
+        const flower = new THREE.Group();
+
+        const color =
+            Math.random()<0.45 ? flowerMaterials[0] :
+            Math.random()<0.8 ? flowerMaterials[1] :
+            flowerMaterials[2];
+
+        for(let i=0;i<10;i++){
+
+            const a=i/10*Math.PI*2;
+
+            const petal=new THREE.Mesh(
+                new THREE.SphereGeometry(0.022,8,8),
+                color
+            );
+
+            petal.scale.set(1,0.45,1.2);
+
+            petal.position.set(
+                Math.cos(a)*0.022,
+                Math.sin(a)*0.022,
+                0
+            );
+
+            petal.rotation.z=a;
+
+            flower.add(petal);
+        }
+
+        const center=new THREE.Mesh(
+            new THREE.SphereGeometry(0.012,8,8),
+            new THREE.MeshStandardMaterial({
+                color:0xffee55
+            })
+        );
+
+        flower.add(center);
+
+        // daun kecil
+
+        if(Math.random()<0.65){
+
+            const leaf=new THREE.Mesh(
+                new THREE.SphereGeometry(0.018,6,6),
+                leafMaterial
+            );
+
+            leaf.scale.set(0.4,1.1,0.2);
+
+            leaf.position.set(0,-0.02,-0.01);
+
+            flower.add(leaf);
+        }
+
+        flower.position.set(x,y,0);
+
+        flower.rotation.z=Math.random()*Math.PI;
+
+        group.add(flower);
+    }
+
+    //--------------------------------------------------
+    // Laluan keliling frame
+    //--------------------------------------------------
+
+    const pts=[];
+
+    // atas
+    for(let i=0;i<=18;i++){
+        pts.push([
+            -frameWidth/2 + frameWidth*i/18,
+            frameHeight/2
+        ]);
+    }
+
+    // kanan
+    for(let i=1;i<=20;i++){
+        pts.push([
+            frameWidth/2,
+            frameHeight/2-frameHeight*i/20
+        ]);
+    }
+
+    // bawah (melengkung U)
+
+    for(let i=1;i<=18;i++){
+
+        const t=i/18;
+
+        pts.push([
+            frameWidth/2-frameWidth*t,
+            -frameHeight/2-0.08*Math.sin(Math.PI*t)
+        ]);
+    }
+
+    // kiri
+
+    for(let i=1;i<=20;i++){
+
+        pts.push([
+            -frameWidth/2,
+            -frameHeight/2+frameHeight*i/20
+        ]);
+    }
+
+    pts.forEach(p=>addFlower(p[0],p[1]));
+
+    //--------------------------------------------------
+    // Ikatan merah atas
+    //--------------------------------------------------
+
+    const ribbonMat=new THREE.MeshStandardMaterial({
+        color:0xaa1111
+    });
+
+    const ribbon=new THREE.Mesh(
+        new THREE.BoxGeometry(0.08,0.025,0.01),
+        ribbonMat
+    );
+
+    ribbon.position.set(0,frameHeight/2+0.03,0);
+
+    group.add(ribbon);
+
+    //--------------------------------------------------
+    // Tali
+    //--------------------------------------------------
+
+    const rope=new THREE.Mesh(
+
+        new THREE.TorusGeometry(
+            frameWidth/2,
+            0.004,
+            4,
+            80,
+            Math.PI*2
+        ),
+
+        new THREE.MeshStandardMaterial({
+            color:0xe0d0a0
+        })
+    );
+
+    rope.scale.y=frameHeight/frameWidth;
+    rope.position.z=-0.003;
+
+    group.add(rope);
+    group.scale.set(0.5, 0.40, 0.8);
+    window.engine.scene.add(group);
+
+    if(!window._necklaces)
+        window._necklaces=[];
+
+    window._necklaces.push(group);
+
 }
       
 function triggerJumpscare() {
+    // ===== 1. MAIN AUDIO =====
     const audio1 = document.getElementById('ghost-scream-1');
     const audio2 = document.getElementById('ghost-scream-2');
     const audio3 = document.getElementById('ghost-scream-3');
@@ -5178,10 +5363,19 @@ function triggerJumpscare() {
         }
     });
 
+    // ===== 2. TUNJUK ACHIEVEMENT (SAMA MACAM LILIN) =====
+    if (window.uiManager) {
+        window.uiManager.triggerAchievement('👻 "Buat apa dalam bilik tu?." — Cik Cong.');
+    } else if (typeof uiManager !== 'undefined' && uiManager) {
+        uiManager.triggerAchievement('👻 "Buat apa dalam bilik tu?." — Cik Cong.');
+    } else {
+        console.warn('uiManager not available for jumpscare achievement');
+    }
+
+    // ===== 3. SEBALIKNYA KOD JUMPSCARE (sama macam asal) =====
     const camera = engine.camera;
     const scene = engine.scene;
 
-    // ---- LOKASI TINGKAP (lebih jauh dan tinggi) ----
     const windowPos = new THREE.Vector3(-1.8, 0.4, 5.2);
 
     const textureLoader = new THREE.TextureLoader();
@@ -5191,7 +5385,6 @@ function triggerJumpscare() {
         textureURL,
         (texture) => {
             console.log("✅ Pocong texture loaded");
-
             const material = new THREE.SpriteMaterial({
                 map: texture,
                 transparent: true,
@@ -5199,7 +5392,6 @@ function triggerJumpscare() {
                 depthWrite: false,
                 opacity: 1
             });
-
             const pocong = new THREE.Sprite(material);
             pocong.name = 'jumpscare-pocong';
             pocong.position.copy(windowPos);
@@ -5208,7 +5400,6 @@ function triggerJumpscare() {
 
             camera.position.copy(STATE.player.pos);
 
-            // ---- AUTO-LOOK KE TINGKAP ----
             const playerPos = STATE.player.pos.clone();
             const dirToWindow = new THREE.Vector3()
                 .copy(windowPos)
@@ -5236,7 +5427,6 @@ function triggerJumpscare() {
             }
             STATE.pointerLocked = true;
 
-            // ---- ZOOM KAMERA (1 saat) ----
             gsap.to(STATE.player.rot, {
                 x: targetYaw,
                 y: targetPitch,
@@ -5257,7 +5447,6 @@ function triggerJumpscare() {
                     camera.position.copy(STATE.player.pos);
                 },
                 onComplete: () => {
-                    // ---- GONCANGAN KAMERA SAHAJA (bukan body) ----
                     gsap.to(camera.position, {
                         x: "+=0.15",
                         y: "-=0.15",
@@ -5276,10 +5465,8 @@ function triggerJumpscare() {
                         }
                     });
 
-                    // ---- SELEPAS 8 SAAT (1s zoom + 7s tahan) ----
                     clearTimeout(window._jumpscareTimer);
                     window._jumpscareTimer = setTimeout(() => {
-                        // Kembali ke posisi asal
                         gsap.to(STATE.player.pos, {
                             x: origPos.x,
                             y: origPos.y,
@@ -5307,7 +5494,6 @@ function triggerJumpscare() {
                             }
                         });
 
-                        // Hilangkan Pocong
                         gsap.to(material, {
                             opacity: 0,
                             duration: 0.5,
@@ -5318,13 +5504,12 @@ function triggerJumpscare() {
                             }
                         });
 
-                        // Hentikan audio
                         [audio1, audio2, audio3].forEach(a => {
                             if (a) { a.pause(); a.currentTime = 0; }
                         });
                         if (audio && audio.stopMusic) audio.stopMusic();
 
-                    }, 7000); // 7 saat tahan
+                    }, 7000);
                 }
             });
         },
@@ -5527,13 +5712,6 @@ document.getElementById('jumpscare-overlay')?.addEventListener('click', () => {
         .forEach(a => { a.pause(); a.currentTime = 0; });
 });
     </script>
-
-<!-- JUMPSCARE OVERLAY ('gambar' penuh skrin) -->
-<div id="jumpscare-overlay">
-    <img id="jumpscare-img" 
-         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRliz9FInrnilaTnX-cnK9KhM46Z241zOerWGelkw2M4tVJ1LubsS3G1-b2&s=10" 
-         alt="Pocong" />
-</div>
 
 <!-- TIGA AUDIO SERENTAK -->
 <audio id="ghost-scream-1" preload="auto">
