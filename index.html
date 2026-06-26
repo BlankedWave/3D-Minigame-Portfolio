@@ -4902,6 +4902,66 @@ if (this.engine.sejadah && !STATE.achievements.solat) {
         window.addEventListener('load', () => {
             const engine = new GameEngine();
             window.engine = engine;
+
+            // ============================================================
+// ZOOM DENGAN RIGHT-CLICK (tahan untuk zoom in)
+// ============================================================
+const defaultFov = 75;
+const zoomFov = 35; // lebih kecil = lebih zoom (35°)
+
+let isZooming = false;
+let zoomTween = null;
+
+// Halang menu konteks
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// Mula zoom bila tahan right-click
+document.addEventListener('mousedown', (e) => {
+    // Hanya aktif jika pointer locked, game sudah bangun, dan tidak dalam panel
+    if (e.button === 2 && STATE.pointerLocked && STATE.wakeUpComplete && !STATE.viewingPanel) {
+        e.preventDefault();
+        if (!isZooming) {
+            isZooming = true;
+            // Hentikan tween sedia ada
+            if (zoomTween) zoomTween.kill();
+            zoomTween = gsap.to(window.engine.camera, {
+                fov: zoomFov,
+                duration: 0.25,
+                ease: "power2.out",
+                onUpdate: () => window.engine.camera.updateProjectionMatrix()
+            });
+        }
+    }
+});
+
+// Kembali zoom bila lepaskan right-click
+document.addEventListener('mouseup', (e) => {
+    if (e.button === 2 && isZooming) {
+        isZooming = false;
+        if (zoomTween) zoomTween.kill();
+        zoomTween = gsap.to(window.engine.camera, {
+            fov: defaultFov,
+            duration: 0.25,
+            ease: "power2.out",
+            onUpdate: () => window.engine.camera.updateProjectionMatrix()
+        });
+    }
+});
+
+// Jika pointer lock dilepaskan, pastikan zoom balik
+document.addEventListener('pointerlockchange', () => {
+    if (!document.pointerLockElement && isZooming) {
+        isZooming = false;
+        if (zoomTween) zoomTween.kill();
+        zoomTween = gsap.to(window.engine.camera, {
+            fov: defaultFov,
+            duration: 0.2,
+            ease: "power2.out",
+            onUpdate: () => window.engine.camera.updateProjectionMatrix()
+        });
+    }
+});
+            
             const controller = new PlayerController(engine);
             const interactions = new InteractionSystem(engine);
             uiManager = new UIManager(engine);
