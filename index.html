@@ -5570,7 +5570,101 @@ function triggerJumpscare() {
         (err) => console.error("❌ Gagal muat texture Pocong:", err)
     );
 }
-          
+          // ============================================================
+// FUNGSI PROSES CHEAT DARI INPUT MOBILE
+// ============================================================
+function processCheatCode(code) {
+    const input = code.toLowerCase().trim();
+    let activated = false;
+
+    if (input === CHEAT_CODE_1) {
+        if (window.engine && window.engine.photoFrame) {
+            spawnCandle(window.engine.photoFrame);
+            if (window.uiManager) {
+                window.uiManager.triggerAchievement('🕯️ "Kau pergi dulu, aku menyusul." — Lilin menyala.');
+            }
+            activated = true;
+        }
+    } else if (input === CHEAT_CODE_2) {
+        triggerJumpscare();
+        activated = true;
+    } else {
+        // Tambah cheat lain di sini
+        // Contoh:
+        // } else if (input === 'balingkasut') {
+        //     spawnFlyingShoe();
+        //     activated = true;
+        // }
+    }
+
+    return activated;
+}
+
+// Event listeners untuk dialog cheat (hanya aktif jika elemen wujud)
+document.addEventListener('DOMContentLoaded', function() {
+    const cheatBtn = document.getElementById('mobile-btn-cheat');
+    const dialog = document.getElementById('cheat-dialog');
+    const input = document.getElementById('cheat-input');
+    const submitBtn = document.getElementById('cheat-submit');
+    const cancelBtn = document.getElementById('cheat-cancel');
+    const feedback = document.getElementById('cheat-feedback');
+
+    if (!cheatBtn || !dialog) return;
+
+    // Buka dialog
+    cheatBtn.addEventListener('click', () => {
+        dialog.classList.remove('hidden');
+        input.value = '';
+        feedback.classList.add('hidden');
+        feedback.className = 'text-xs text-center mt-3 text-amber-400 hidden';
+        setTimeout(() => input.focus(), 100);
+    });
+
+    // Tutup dialog
+    cancelBtn.addEventListener('click', () => {
+        dialog.classList.add('hidden');
+    });
+
+    // Klik di luar dialog untuk tutup (optional)
+    dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) {
+            dialog.classList.add('hidden');
+        }
+    });
+
+    // Submit cheat
+    submitBtn.addEventListener('click', () => {
+        const code = input.value.trim();
+        if (code === '') {
+            feedback.textContent = 'Sila taip cheat code.';
+            feedback.className = 'text-xs text-center mt-3 text-amber-400';
+            feedback.classList.remove('hidden');
+            return;
+        }
+
+        const success = processCheatCode(code);
+        if (success) {
+            feedback.textContent = '✅ Cheat activated!';
+            feedback.className = 'text-xs text-center mt-3 text-emerald-400';
+            feedback.classList.remove('hidden');
+            setTimeout(() => {
+                dialog.classList.add('hidden');
+            }, 1500);
+        } else {
+            feedback.textContent = '❌ Cheat code tidak dikenali.';
+            feedback.className = 'text-xs text-center mt-3 text-red-400';
+            feedback.classList.remove('hidden');
+        }
+    });
+
+    // Enter pada input
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            submitBtn.click();
+        }
+    });
+});
+            
             function tick() {
                 requestAnimationFrame(tick);
                 const delta = Math.min(engine.clock.getDelta(), 0.1);
