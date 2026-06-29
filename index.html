@@ -1330,19 +1330,11 @@
             timeOfDay: 0.1,
             achievements: {
                 jumpedOnBed: false,
-                foundSecret: false,
                 mirrorGazed: false,
-                fanWhisper: false,
-                foundNasiLemak: false,
-                foundGuitar: false,
-                foundRemote: false,
                 solat: false,          // <-- TAMBAH BARIS INI
             },
             easterEggs: {
-                mirrorGazeTimer: 0,
-                fanInteractTimer: 0,
-                guitarTimer: 0,
-                remoteTimer: 0
+                mirrorGazeTimer: 0
             },
             musicVolume: 0.5,
             wakeUpComplete: false
@@ -2126,13 +2118,7 @@ function createGamingCanvas() {
                     standFanBlade: null,
                     ceilingFanBlades: null
                 };
-                this.easterEggTriggers = {
-                    mirror: null,
-                    fan: null,
-                    guitar: null,
-                    nasiLemak: null,
-                    remote: null
-                };
+                
                 this._blissTexture = null;
                 this.setupLights();
                 this.buildMalaysianCozyRoom();
@@ -3471,40 +3457,6 @@ bedGroup.add(blanket);
 
 this.scene.add(bedGroup);
 
-                // --- NASI LEMAK ---
-                const nasiLemakGroup = new THREE.Group();
-                nasiLemakGroup.position.set(-1.8, 0.05, 3.0);
-                const nasiPlate = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.18, 0.04, 16), new THREE
-                    .MeshStandardMaterial({ color: 0xf5f5dc }));
-                nasiLemakGroup.add(nasiPlate);
-                const nasiRice = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.14, 0.06, 16), new THREE
-                    .MeshStandardMaterial({ color: 0xf5f0e0 }));
-                nasiRice.position.y = 0.04;
-                nasiLemakGroup.add(nasiRice);
-                const sambal = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), new THREE
-                    .MeshStandardMaterial({ color: 0xcc3300 }));
-                sambal.position.set(0.06, 0.08, 0.04);
-                nasiLemakGroup.add(sambal);
-                const egg = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), new THREE
-                    .MeshStandardMaterial({ color: 0xffeedd }));
-                egg.position.set(-0.05, 0.08, -0.04);
-                nasiLemakGroup.add(egg);
-                const ikanBilis = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.01, 0.08), new THREE
-                    .MeshStandardMaterial({ color: 0x8b7355 }));
-                ikanBilis.position.set(0, 0.08, 0.08);
-                nasiLemakGroup.add(ikanBilis);
-                nasiLemakGroup.visible = false;
-                this.scene.add(nasiLemakGroup);
-                this.easterEggTriggers.nasiLemak = nasiLemakGroup;
-
-                // Bed secret trigger
-                const bedSecretTrigger = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.2, 0.8), new THREE
-                    .MeshBasicMaterial({ visible: false }));
-                bedSecretTrigger.position.set(-1.8, 0.6, 3.8);
-                bedSecretTrigger.name = "BedSecret";
-                bedSecretTrigger.userData = { id: "secret", subtitle: "Hidden under bed..." };
-                this.scene.add(bedSecretTrigger);
-                this.interactiveObjects.push(bedSecretTrigger);
 
                 // --- ALMARI ---
                 const almariGroup = new THREE.Group();
@@ -3825,29 +3777,6 @@ this.animatedObjects.fan = ceilingFanBlades;
 
 // Add to scene
 this.scene.add(fanGroup);
-
-// =====================================================
-// FAN EASTER EGG
-// =====================================================
-
-const fanEggTrigger = new THREE.Mesh(
-    new THREE.BoxGeometry(2.5, 0.2, 2.5),
-    new THREE.MeshBasicMaterial({
-        visible: false
-    })
-);
-
-fanEggTrigger.position.set(0, 2.8, 0);
-fanEggTrigger.name = "FanSecret";
-fanEggTrigger.userData = {
-    id: "fan-secret",
-    subtitle: "Feel the breeze..."
-};
-
-this.scene.add(fanEggTrigger);
-this.interactiveObjects.push(fanEggTrigger);
-this.easterEggTriggers.fan = fanEggTrigger;
-
                
 // --- PHONE TABLE ---
 const phoneTableGroup = new THREE.Group();
@@ -3983,85 +3912,6 @@ this.scene.add(phoneTableGroup);
                     transparent: true, opacity: 0.4 }));
                 this.scene.add(rain);
                 this.animatedObjects.rain = rain;
-
-                // --- SECRET EGG ---
-                const secretEgg = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 8), new THREE
-                    .MeshBasicMaterial({ color: 0x10b981 }));
-                secretEgg.position.set(4.3, 0.4, -4.3);
-                secretEgg.name = "Hidden Dev Node";
-                secretEgg.userData = { id: "secret", subtitle: "Developer hidden diary log found" };
-                this.scene.add(secretEgg);
-                this.interactiveObjects.push(secretEgg);
-
-                // --- GUITAR ---
-                const guitarGroup = new THREE.Group();
-                guitarGroup.position.set(-4.2, 0.3, -3.8);
-                const guitarBody = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 8), new THREE
-                    .MeshStandardMaterial({ color: 0x8B4513, roughness: 0.6 }));
-                guitarBody.scale.set(1, 1.3, 0.6);
-                guitarGroup.add(guitarBody);
-                const guitarNeck = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.4), new THREE
-                    .MeshStandardMaterial({ color: 0x5d3a1a }));
-                guitarNeck.position.set(0, 0.3, 0);
-                guitarGroup.add(guitarNeck);
-                const headstock = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.04, 0.06), new THREE
-                    .MeshStandardMaterial({ color: 0x3d2510 }));
-                headstock.position.set(0, 0.52, 0);
-                guitarGroup.add(headstock);
-                const hole = new THREE.Mesh(new THREE.CircleGeometry(0.06, 12), new THREE
-                    .MeshBasicMaterial({ color: 0x1a0f0a }));
-                hole.position.set(0, 0.0, 0.19);
-                guitarGroup.add(hole);
-                for (let i = -0.02; i <= 0.02; i += 0.01) {
-                    const string = new THREE.Mesh(new THREE.BoxGeometry(0.001, 0.3, 0.001), new THREE
-                        .MeshStandardMaterial({ color: 0xcccccc, metalness: 0.8 }));
-                    string.position.set(i, 0.15, 0.19);
-                    guitarGroup.add(string);
-                }
-                guitarGroup.visible = false;
-                this.scene.add(guitarGroup);
-                this.easterEggTriggers.guitar = guitarGroup;
-
-                const guitarTrigger = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), new THREE
-                    .MeshBasicMaterial({ visible: false }));
-                guitarTrigger.position.set(-4.2, 0.4, -3.8);
-                guitarTrigger.name = "Guitar";
-                guitarTrigger.userData = { id: "guitar", subtitle: "Found a guitar! 🎸" };
-                this.scene.add(guitarTrigger);
-                this.interactiveObjects.push(guitarTrigger);
-
-                // --- TV REMOTE ---
-                const remoteGroup = new THREE.Group();
-                remoteGroup.position.set(2.5, 0.6, -3.6);
-                remoteGroup.rotation.z = 0.3;
-                remoteGroup.rotation.x = 0.2;
-                const remoteBody = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.18, 0.025), new THREE
-                    .MeshStandardMaterial({ color: 0x222222, roughness: 0.6 }));
-                remoteGroup.add(remoteBody);
-                const remoteScreen = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.04, 0.005), new THREE
-                    .MeshBasicMaterial({ color: 0x00ff44 }));
-                remoteScreen.position.set(0, 0.05, 0.014);
-                remoteGroup.add(remoteScreen);
-                const btnMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
-                for (let i = 0; i < 3; i++) {
-                    const btn = new THREE.Mesh(new THREE.CircleGeometry(0.008, 6), btnMat);
-                    btn.position.set(0.01, -0.02 - i * 0.03, 0.014);
-                    remoteGroup.add(btn);
-                    const btn2 = new THREE.Mesh(new THREE.CircleGeometry(0.008, 6), btnMat);
-                    btn2.position.set(-0.01, -0.02 - i * 0.03, 0.014);
-                    remoteGroup.add(btn2);
-                }
-                remoteGroup.visible = false;
-                this.scene.add(remoteGroup);
-                this.easterEggTriggers.remote = remoteGroup;
-
-                const remoteTrigger = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.3), new THREE
-                    .MeshBasicMaterial({ visible: false }));
-                remoteTrigger.position.set(2.5, 0.6, -3.6);
-                remoteTrigger.name = "TV Remote";
-                remoteTrigger.userData = { id: "remote", subtitle: "Found the TV remote! 📺" };
-                this.scene.add(remoteTrigger);
-                this.interactiveObjects.push(remoteTrigger);
 
                // --- CLOCK (IMPROVED) ---
 const clockGroup = new THREE.Group();
@@ -4588,58 +4438,7 @@ update(delta) {
                     } else if (d >= 1.8) STATE.easterEggs.mirrorGazeTimer = 0;
                 }
 
-                if (this.engine.easterEggTriggers.fan) {
-                    const fPos = new THREE.Vector3();
-                    this.engine.easterEggTriggers.fan.getWorldPosition(fPos);
-                    const d = STATE.player.pos.distanceTo(fPos);
-                    if (d < 1.5 && !STATE.achievements.fanWhisper) {
-                        STATE.easterEggs.fanInteractTimer += delta;
-                        if (STATE.easterEggs.fanInteractTimer > 2.0) {
-                            STATE.achievements.fanWhisper = true;
-                            uiManager.triggerAchievement("Kipas berbisik: 'KRRRRR... KREK! KREK! BZZZZZZ... TAK! TAK! TAK!...'");
-                            audio.playSFX('hit');
-                            setTimeout(() => audio.playSFX('hit'), 150);
-                            const fo = this.engine.easterEggTriggers.fan;
-                            if (fo) setTimeout(() => uiManager.openPanel(fo), 300);
-                        }
-                    } else if (d >= 1.5) STATE.easterEggs.fanInteractTimer = 0;
-                }
 
-                const nasiPos = new THREE.Vector3(-1.8, 0.05, 3.0);
-                const dNasi = STATE.player.pos.distanceTo(nasiPos);
-                if (dNasi < 1.2 && this.engine.easterEggTriggers.nasiLemak) {
-                    this.engine.easterEggTriggers.nasiLemak.visible = true;
-                    if (!STATE.achievements.foundNasiLemak) {
-                        STATE.achievements.foundNasiLemak = true;
-                        uiManager.triggerAchievement("Siapa letak nasi lemak bawh katil ni? 🍛");
-                        audio.playSFX('hit');
-                        setTimeout(() => audio.playSFX('hit'), 150);
-                        const nt = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE
-                            .MeshBasicMaterial({ visible: false }));
-                        nt.name = "Nasi Lemak";
-                        nt.userData = { id: "nasilemak", subtitle: "Hidden under bed — special treat!" };
-                        setTimeout(() => uiManager.openPanel(nt), 300);
-                    }
-                } else if (this.engine.easterEggTriggers.nasiLemak && dNasi >= 1.5) {
-                    this.engine.easterEggTriggers.nasiLemak.visible = false;
-                }
-
-                if (this.engine.easterEggTriggers.guitar) {
-                    const gPos = new THREE.Vector3(-4.2, 0.4, -3.8);
-                    const dG = STATE.player.pos.distanceTo(gPos);
-                    if (dG < 1.2 && !STATE.achievements.foundGuitar) {
-                        this.engine.easterEggTriggers.guitar.visible = true;
-                        STATE.achievements.foundGuitar = true;
-                        uiManager.triggerAchievement("Iya iya je ada gitar! 🎸");
-                        audio.playSFX('hit');
-                        setTimeout(() => audio.playSFX('hit'), 150);
-                        const gt = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE
-                            .MeshBasicMaterial({ visible: false }));
-                        gt.name = "Guitar";
-                        gt.userData = { id: "guitar", subtitle: "Found a guitar! 🎸" };
-                        setTimeout(() => uiManager.openPanel(gt), 300);
-                    }
-                }
 // --- TRIGGER SEJADAH (achievement solat) ---
 if (this.engine.sejadah && !STATE.achievements.solat) {
     const sejadah = this.engine.sejadah;
@@ -4674,22 +4473,7 @@ if (this.engine.sejadah && !STATE.achievements.solat) {
         }
     }
 }
-                if (this.engine.easterEggTriggers.remote) {
-                    const rPos = new THREE.Vector3(2.5, 0.6, -3.6);
-                    const dR = STATE.player.pos.distanceTo(rPos);
-                    if (dR < 1.2 && !STATE.achievements.foundRemote) {
-                        this.engine.easterEggTriggers.remote.visible = true;
-                        STATE.achievements.foundRemote = true;
-                        uiManager.triggerAchievement("Aih, baru jumpa remote. 📺");
-                        audio.playSFX('hit');
-                        setTimeout(() => audio.playSFX('hit'), 150);
-                        const rt = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE
-                            .MeshBasicMaterial({ visible: false }));
-                        rt.name = "TV Remote";
-                        rt.userData = { id: "remote", subtitle: "Found the TV remote! 📺" };
-                        setTimeout(() => uiManager.openPanel(rt), 300);
-                    }
-                }
+
 
                 if (Math.random() < 0.002) audio.playSFX('ambient');
             }
@@ -4944,13 +4728,6 @@ if (this.engine.sejadah && !STATE.achievements.solat) {
                     'whiteboard': 'tpl-whiteboard',
                     'phone': 'tpl-phone',
                     'gaming': 'tpl-gaming',
-                    'secret': 'tpl-secret',
-                    'nasilemak': 'tpl-nasilemak',
-                    'mirror-msg': 'tpl-mirror-msg',
-                    'fan-secret': 'tpl-fan-secret',
-                    'photowall': 'tpl-photowall',
-                    'guitar': 'tpl-guitar',
-                    'remote': 'tpl-remote'
                 };
                 const tplId = tplMap[id] || 'tpl-pc';
                 const tpl = document.getElementById(tplId);
