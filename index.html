@@ -29,61 +29,103 @@
             }
         }
 
-/* Achievement Banner - EXTRA KECIK UNTUK MOBILE LANDSCAPE */
+/* Achievement Banner - KECIKKAN UNTUK MOBILE LANDSCAPE (VERSI AGRESIF) */
 @media (max-width: 768px) and (orientation: landscape) {
     #achievement-banner {
-        transform: translateX(-50%) scale(0.45) !important;
-        top: 3% !important;
-        max-width: 40vw !important;
+        transform: translateX(-50%) scale(0.35) !important;
+        transform-origin: top center !important;
+        top: 2% !important;
+        max-width: 50vw !important;
         padding: 0.2rem !important;
         gap: 0.2rem !important;
+        border-radius: 0.4rem !important;
         border-width: 1px !important;
-        border-radius: 0.3rem !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
     }
-    #achievement-banner .fa-trophy {
-        font-size: 0.7rem !important;
-    }
+    
     #achievement-banner .w-10,
     #achievement-banner .w-12,
     #achievement-banner .w-14 {
         width: 1.5rem !important;
         height: 1.5rem !important;
+        min-width: 1.5rem !important;
+        min-height: 1.5rem !important;
+        border-width: 1px !important;
     }
-    #achievement-banner .text-sm,
+    
+    #achievement-banner .fa-trophy {
+        font-size: 0.7rem !important;
+    }
+    
+    #achievement-banner .text-[11px],
+    #achievement-banner .text-xs,
+    #achievement-banner .text-sm {
+        font-size: 0.4rem !important;
+        letter-spacing: 0.02rem !important;
+    }
+    
     #achievement-banner .text-base,
     #achievement-banner .text-lg {
         font-size: 0.5rem !important;
+        line-height: 1.2 !important;
     }
-    #achievement-banner .text-xs,
-    #achievement-banner .text-[11px] {
-        font-size: 0.4rem !important;
-    }
+    
     #achievement-banner .p-3,
     #achievement-banner .p-4,
     #achievement-banner .p-5 {
-        padding: 0.15rem !important;
+        padding: 0.15rem 0.3rem !important;
     }
+    
     #achievement-banner .gap-3,
     #achievement-banner .gap-4 {
         gap: 0.15rem !important;
     }
+    
     #achievement-banner .rounded-2xl {
-        border-radius: 0.2rem !important;
+        border-radius: 0.3rem !important;
     }
+    
     #achievement-banner .shadow-2xl {
-        box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.25) !important;
     }
-    /* Sembunyikan teks "Achievement Unlocked!" */
-    #achievement-banner .text-emerald-400.uppercase {
+    
+    /* Sembunyi teks "Achievement Unlocked!" pada landscape */
+    #achievement-banner .uppercase {
         display: none !important;
     }
-    #achievement-banner .min-w-0 {
-        min-width: 0 !important;
+}
+
+/* Mobile landscape - pakai class terus */
+@media (max-width: 768px) and (orientation: landscape) {
+    .landscape-small {
+        transform: translateX(-50%) scale(0.35) !important;
+        top: 2% !important;
+        padding: 0.2rem 0.4rem !important;
+        max-width: 55vw !important;
+        gap: 0.2rem !important;
+        border-radius: 0.4rem !important;
     }
-    #achievement-banner .flex-1 {
-        flex: 0 1 auto !important;
+    .landscape-small .w-10,
+    .landscape-small .w-12,
+    .landscape-small .w-14 {
+        width: 1.5rem !important;
+        height: 1.5rem !important;
+    }
+    .landscape-small .fa-trophy {
+        font-size: 0.6rem !important;
+    }
+    .landscape-small .text-sm,
+    .landscape-small .text-base,
+    .landscape-small .text-lg,
+    .landscape-small .text-xs,
+    .landscape-small .text-[11px] {
+        font-size: 0.45rem !important;
+    }
+    .landscape-small .uppercase {
+        display: none !important;
     }
 }
+
         
         .code-font {
             font-family: 'Fira Code', monospace;
@@ -603,7 +645,7 @@
     </div>
 
 <!-- Achievement Banner - Responsif, Cantik, Kedudukan Atas -->
-<div id="achievement-banner" class="fixed top-[8%] left-1/2 -translate-x-1/2 opacity-0 scale-90 pointer-events-none transition-all duration-500 ease-out flex items-center gap-3 sm:gap-4 bg-gradient-to-r from-emerald-900/95 via-slate-900/95 to-slate-900/95 border-2 border-emerald-500/60 shadow-2xl shadow-emerald-500/20 p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl z-50 max-w-[85vw] sm:max-w-sm md:max-w-md lg:max-w-lg">
+<div id="achievement-banner" class="fixed top-[8%] left-1/2 -translate-x-1/2 opacity-0 scale-90 pointer-events-none transition-all duration-500 ease-out flex items-center gap-3 sm:gap-4 bg-gradient-to-r from-emerald-900/95 via-slate-900/95 to-slate-900/95 border-2 border-emerald-500/60 shadow-2xl shadow-emerald-500/20 p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl z-50 max-w-[85vw] sm:max-w-sm md:max-w-md lg:max-w-lg landscape-small">
     
     <!-- Ikon Trofi -->
     <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-emerald-500/25 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 flex-shrink-0 shadow-lg shadow-emerald-500/20">
