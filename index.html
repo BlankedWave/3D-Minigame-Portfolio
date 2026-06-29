@@ -29,64 +29,59 @@
             }
         }
 
-        /* Achievement Banner - kecikkan untuk mobile landscape */
+/* Achievement Banner - EXTRA KECIK UNTUK MOBILE LANDSCAPE */
 @media (max-width: 768px) and (orientation: landscape) {
     #achievement-banner {
-        transform: translateX(-50%) scale(0.65) !important;
-        top: 5% !important;
-        max-width: 60vw !important;
-        padding: 0.5rem !important;
+        transform: translateX(-50%) scale(0.45) !important;
+        top: 3% !important;
+        max-width: 40vw !important;
+        padding: 0.2rem !important;
+        gap: 0.2rem !important;
+        border-width: 1px !important;
+        border-radius: 0.3rem !important;
     }
     #achievement-banner .fa-trophy {
-        font-size: 1rem !important;
-    }
-    #achievement-banner .w-10 {
-        width: 2rem !important;
-        height: 2rem !important;
-    }
-    #achievement-banner .w-12 {
-        width: 2.2rem !important;
-        height: 2.2rem !important;
-    }
-    #achievement-banner .w-14 {
-        width: 2.5rem !important;
-        height: 2.5rem !important;
-    }
-    #achievement-banner .text-sm {
-        font-size: 0.6rem !important;
-    }
-    #achievement-banner .text-base {
         font-size: 0.7rem !important;
     }
+    #achievement-banner .w-10,
+    #achievement-banner .w-12,
+    #achievement-banner .w-14 {
+        width: 1.5rem !important;
+        height: 1.5rem !important;
+    }
+    #achievement-banner .text-sm,
+    #achievement-banner .text-base,
     #achievement-banner .text-lg {
-        font-size: 0.8rem !important;
-    }
-    #achievement-banner .text-xs {
         font-size: 0.5rem !important;
     }
+    #achievement-banner .text-xs,
     #achievement-banner .text-[11px] {
-        font-size: 0.5rem !important;
+        font-size: 0.4rem !important;
     }
-    #achievement-banner .gap-3 {
-        gap: 0.3rem !important;
-    }
-    #achievement-banner .gap-4 {
-        gap: 0.3rem !important;
-    }
-    #achievement-banner .p-3 {
-        padding: 0.3rem !important;
-    }
-    #achievement-banner .p-4 {
-        padding: 0.3rem !important;
-    }
+    #achievement-banner .p-3,
+    #achievement-banner .p-4,
     #achievement-banner .p-5 {
-        padding: 0.3rem !important;
+        padding: 0.15rem !important;
+    }
+    #achievement-banner .gap-3,
+    #achievement-banner .gap-4 {
+        gap: 0.15rem !important;
     }
     #achievement-banner .rounded-2xl {
-        border-radius: 0.5rem !important;
+        border-radius: 0.2rem !important;
     }
     #achievement-banner .shadow-2xl {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+    }
+    /* Sembunyikan teks "Achievement Unlocked!" */
+    #achievement-banner .text-emerald-400.uppercase {
+        display: none !important;
+    }
+    #achievement-banner .min-w-0 {
+        min-width: 0 !important;
+    }
+    #achievement-banner .flex-1 {
+        flex: 0 1 auto !important;
     }
 }
         
