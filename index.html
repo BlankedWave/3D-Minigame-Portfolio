@@ -392,6 +392,11 @@
     }
 }
  
+    #cheat-dialog {
+    top: 15%;
+    transform: translateY(0);
+    transition: top 0.25s ease;
+}
     </style>
 </head>
 <body class="text-gray-100">
@@ -461,7 +466,7 @@
 <div id="crosshair" class="hidden md:block"></div>
 
 <!-- Desktop Help -->
-<div id="desktop-instructions" class="hidden md:flex fixed bottom-6 left-6 bg-slate-900/85 backdrop-blur-md border border-slate-700/50 p-3 rounded-xl flex-row items-center gap-4 text-xs code-font z-30 pointer-events-none shadow-xl">
+<div id="desktop-instructions" class="hidden lg:flex fixed bottom-6 left-6 bg-slate-900/85 backdrop-blur-md border border-slate-700/50 p-3 rounded-xl flex-row items-center gap-4 text-xs code-font z-30 pointer-events-none shadow-xl">
     <div class="flex items-center gap-1.5">
         <span class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-[10px] font-bold">W</span>
         <span class="px-1.5 py-0.5 bg-slate-800 border border-slate-600 rounded text-[10px] font-bold">A</span>
@@ -5090,7 +5095,7 @@ function processCheatCode(code) {
 }
 
 // ============================================================
-// DIALOG CHEAT UNTUK MOBILE
+// DIALOG CHEAT UNTUK MOBILE (dengan auto-adjust atas)
 // ============================================================
 const cheatBtn = document.getElementById('mobile-btn-cheat');
 const dialog = document.getElementById('cheat-dialog');
@@ -5100,6 +5105,23 @@ const cancelBtn = document.getElementById('cheat-cancel');
 const feedback = document.getElementById('cheat-feedback');
 
 if (cheatBtn && dialog) {
+    let viewportHandler = null;
+
+    function adjustDialogPosition() {
+        if (!dialog.classList.contains('hidden')) {
+            if (window.visualViewport) {
+                const viewportHeight = window.visualViewport.height;
+                const windowHeight = window.innerHeight;
+                // Jika viewport menyusut (keyboard terbuka), naikkan dialog
+                if (viewportHeight < windowHeight * 0.7) {
+                    dialog.style.top = '5%';
+                } else {
+                    dialog.style.top = '15%';
+                }
+            }
+        }
+    }
+
     // Buka dialog
     cheatBtn.addEventListener('click', () => {
         dialog.classList.remove('hidden');
@@ -5107,17 +5129,36 @@ if (cheatBtn && dialog) {
         feedback.classList.add('hidden');
         feedback.className = 'text-xs text-center mt-3 text-amber-400 hidden';
         setTimeout(() => inputField.focus(), 100);
+
+        // Pasang listener untuk visualViewport
+        if (window.visualViewport) {
+            if (viewportHandler) {
+                window.visualViewport.removeEventListener('resize', viewportHandler);
+            }
+            viewportHandler = adjustDialogPosition;
+            window.visualViewport.addEventListener('resize', viewportHandler);
+            // Panggil sekali untuk tetapkan posisi awal
+            adjustDialogPosition();
+        }
     });
 
-    // Tutup dialog
+    // Tutup dialog (butang Batal)
     cancelBtn.addEventListener('click', () => {
         dialog.classList.add('hidden');
+        if (window.visualViewport && viewportHandler) {
+            window.visualViewport.removeEventListener('resize', viewportHandler);
+            viewportHandler = null;
+        }
     });
 
     // Klik di luar dialog
     dialog.addEventListener('click', (e) => {
         if (e.target === dialog) {
             dialog.classList.add('hidden');
+            if (window.visualViewport && viewportHandler) {
+                window.visualViewport.removeEventListener('resize', viewportHandler);
+                viewportHandler = null;
+            }
         }
     });
 
@@ -5138,6 +5179,10 @@ if (cheatBtn && dialog) {
             feedback.classList.remove('hidden');
             setTimeout(() => {
                 dialog.classList.add('hidden');
+                if (window.visualViewport && viewportHandler) {
+                    window.visualViewport.removeEventListener('resize', viewportHandler);
+                    viewportHandler = null;
+                }
             }, 1500);
         } else {
             feedback.textContent = '❌ Cheat code tidak dikenali.';
